@@ -3,12 +3,14 @@
 #include <iostream>
 #include <sstream>
 #include <vector>
-#include <memory>
+#include <cstdio>
 #include "classes/BoolNode.h"
 #include "classes/IntegerNode.h"
 #include "classes/OperationNode.h"
 
 std::stringstream out;
+
+extern FILE* yyin;
 
 int yylex(void);
 void yyerror(const char*);
@@ -28,6 +30,7 @@ void yyerror(const char*);
 %token <boolPtr> BOOL
 %token <intPtr> INTEGER
 
+%nonassoc '<' '>'
 %left '+' '-'
 %left '*' '/'
 
@@ -36,17 +39,55 @@ void yyerror(const char*);
 %%
 
 program:
-    program expr                {$2->print(out); std::cout << out.c_str();}
-    |                           {std::cout << "There is nothing here...";}
+    program expr                {
+                                    $2->print(out);
+                                    std::cout << out.str() << std::endl;
+                                }
+    |                           
+;
 
 expr:
-    INTEGER                     {$<ptr>$ = $1;}
-    expr '+' expr               {
-                                    std::vector<std::shared_ptr<Node>> kids; 
+    INTEGER                     {$$ = $1;}
+    BOOL                        {$$ = $1;}
+    | expr '+' expr             {
+                                    std::vector<Interpreter::Node*> kids; 
                                     kids.push_back($1); 
                                     kids.push_back($3);
-                                    $$ = std::make_shared<Interpreter::OperationNode>(plus, kids);
+                                    $$ = new Interpreter::OperationNode(plus, kids);
                                 }
+    | expr '-' expr             {
+                                    std::vector<Interpreter::Node*> kids; 
+                                    kids.push_back($1); 
+                                    kids.push_back($3);
+                                    $$ = new Interpreter::OperationNode(minus, kids);
+                                }
+    | expr '*' expr             {
+                                    std::vector<Interpreter::Node*> kids; 
+                                    kids.push_back($1); 
+                                    kids.push_back($3);
+                                    $$ = new Interpreter::OperationNode(multiply, kids);
+                                }
+    | expr '/' expr             {
+                                    std::vector<Interpreter::Node*> kids; 
+                                    kids.push_back($1); 
+                                    kids.push_back($3);
+                                    $$ = new Interpreter::OperationNode(divide, kids);
+                                }
+    | expr '<' expr              {
+                                    std::vector<Interpreter::Node*> kids; 
+                                    kids.push_back($1); 
+                                    kids.push_back($3);
+                                    $$ = new Interpreter::OperationNode(less, kids);
+                                }
+    | expr '>' expr             {
+                                    std::vector<Interpreter::Node*> kids; 
+                                    kids.push_back($1); 
+                                    kids.push_back($3);
+                                    $$ = new Interpreter::OperationNode(greater, kids);
+                                }
+    
+    | '(' expr ')'              {$$ = $2;}
+;
 
 %%
 
@@ -55,6 +96,8 @@ void yyerror(const char* error) {
 }
 
 int main(void) {
+    yyin = std::fopen("test.txt", "r");
     yyparse();
+    std::fclose(yyin);
     return 0;
 }

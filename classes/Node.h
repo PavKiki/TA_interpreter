@@ -15,9 +15,10 @@ class Node {
     public:
         nodeType nType;
         virtual void print(std::stringstream& strm) = 0;
+        virtual int getData() = 0;
         
-        Node() {nType = ABSTRACTNODE;};
-        Node(nodeType ttype) {nType = ttype;};
+        Node();
+        Node(nodeType ttype);
         ~Node() {};
 };
 
