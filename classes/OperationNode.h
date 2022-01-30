@@ -6,6 +6,7 @@
 
 enum operName {
     nothing,
+    uminus,
     plus,
     minus,
     multiply,

@@ -3,14 +3,15 @@
    END
 
 
-Состояние 34 конфликты: 1 сдвига/вывода
-Состояние 57 конфликты: 7 сдвига/вывода
-Состояние 58 конфликты: 1 сдвига/вывода
-Состояние 59 конфликты: 1 сдвига/вывода
+Состояние 35 конфликты: 1 сдвига/вывода
+Состояние 36 конфликты: 1 сдвига/вывода
+Состояние 59 конфликты: 7 сдвига/вывода
 Состояние 60 конфликты: 1 сдвига/вывода
 Состояние 61 конфликты: 1 сдвига/вывода
 Состояние 62 конфликты: 1 сдвига/вывода
 Состояние 63 конфликты: 1 сдвига/вывода
+Состояние 64 конфликты: 1 сдвига/вывода
+Состояние 65 конфликты: 1 сдвига/вывода
 
 
 Грамматика
@@ -45,100 +46,102 @@
 
    19 expr: const
    20     | VARIABLE
-   21     | expr '+' expr
-   22     | expr '-' expr
-   23     | expr '*' expr
-   24     | expr '/' expr
-   25     | expr '<' expr
-   26     | expr '>' expr
-   27     | '!' expr
-   28     | expr CONJUNCTION expr
-   29     | '(' expr ')'
+   21     | '-' expr
+   22     | expr '+' expr
+   23     | expr '-' expr
+   24     | expr '*' expr
+   25     | expr '/' expr
+   26     | expr '<' expr
+   27     | expr '>' expr
+   28     | '!' expr
+   29     | expr CONJUNCTION expr
+   30     | '(' expr ')'
 
-   30 type: INT
-   31     | CINT
-   32     | VINT
-   33     | MINT
-   34     | CVINT
-   35     | CMINT
-   36     | BOOLEAN
-   37     | CBOOLEAN
-   38     | VBOOLEAN
-   39     | MBOOLEAN
-   40     | CVBOOLEAN
-   41     | CMBOOLEAN
+   31 type: INT
+   32     | CINT
+   33     | VINT
+   34     | MINT
+   35     | CVINT
+   36     | CMINT
+   37     | BOOLEAN
+   38     | CBOOLEAN
+   39     | VBOOLEAN
+   40     | MBOOLEAN
+   41     | CVBOOLEAN
+   42     | CMBOOLEAN
 
-   42 const: INTEGER
-   43      | BOOL
+   43 const: INTEGER
+   44      | BOOL
 
 
 Терминальные символы с правилами, в которых они появляются
 
 $end (0) 0
-'!' (33) 27
-'(' (40) 11 18 29
-')' (41) 11 18 29
-'*' (42) 23
-'+' (43) 21
+'!' (33) 28
+'(' (40) 11 18 30
+')' (41) 11 18 30
+'*' (42) 24
+'+' (43) 22
 ',' (44) 12 13
-'-' (45) 22
-'/' (47) 24
-'<' (60) 25
-'>' (62) 26
+'-' (45) 21 23
+'/' (47) 25
+'<' (60) 26
+'>' (62) 27
 '{' (123) 15 17
 '}' (125) 15 17
 error (256)
 END (258)
-BOOL <boolPtr> (259) 43
-INTEGER <intPtr> (260) 42
+BOOL <boolPtr> (259) 44
+INTEGER <intPtr> (260) 43
 VARIABLE <varName> (261) 14 15 16 17 20
-CINT <vtype> (262) 31
-VINT <vtype> (263) 32
-MINT <vtype> (264) 33
-INT <vtype> (265) 30
-CVINT <vtype> (266) 34
-CMINT <vtype> (267) 35
-BOOLEAN <vtype> (268) 36
-CBOOLEAN <vtype> (269) 37
-VBOOLEAN <vtype> (270) 38
-MBOOLEAN <vtype> (271) 39
-CVBOOLEAN <vtype> (272) 40
-CMBOOLEAN <vtype> (273) 41
+CINT <vtype> (262) 32
+VINT <vtype> (263) 33
+MINT <vtype> (264) 34
+INT <vtype> (265) 31
+CVINT <vtype> (266) 35
+CMINT <vtype> (267) 36
+BOOLEAN <vtype> (268) 37
+CBOOLEAN <vtype> (269) 38
+VBOOLEAN <vtype> (270) 39
+MBOOLEAN <vtype> (271) 40
+CVBOOLEAN <vtype> (272) 41
+CMBOOLEAN <vtype> (273) 42
 NEWLINE (274) 6 7 8 9 10
 PRINT (275) 18
-CONJUNCTION (276) 28
+CONJUNCTION (276) 29
 ASSIGN (277) 16 17
 DECLARE (278) 14 15
+UMINUS (279)
 
 
 Нетерминальные символы с правилами, в которых они появляются
 
-$accept (36)
+$accept (37)
     налево: 0
-program (37)
+program (38)
     налево: 1, направо: 0
-function (38)
+function (39)
     налево: 2 3, направо: 1 2
-stmts <ptr> (39)
+stmts <ptr> (40)
     налево: 4 5, направо: 5 11
-stmt <ptr> (40)
+stmt <ptr> (41)
     налево: 6 7 8 9 10 11, направо: 2 4 5
-exprs <ptr> (41)
+exprs <ptr> (42)
     налево: 12 13, направо: 13 15 17
-declaration <varOpPtr> (42)
+declaration <varOpPtr> (43)
     налево: 14 15, направо: 9
-assignment <varOpPtr> (43)
+assignment <varOpPtr> (44)
     налево: 16 17, направо: 10
-print <ptr> (44)
+print <ptr> (45)
     налево: 18, направо: 8
-expr <ptr> (45)
-    налево: 19 20 21 22 23 24 25 26 27 28 29, направо:
-    7 12 13 14 16 18 21 22 23 24 25 26 27 28 29
-type <vtype> (46)
-    налево: 30 31 32 33 34 35 36 37 38 39 40 41, направо:
+expr <ptr> (46)
+    налево: 19 20 21 22 23 24 25 26 27 28 29 30, направо:
+    7 12 13 14 16 18 21 22 23 24 25 26 27 28 29 30
+type <vtype> (47)
+    налево: 31 32 33 34 35 36 37 38 39 40 41 42, направо:
     14 15
-const <ptr> (47)
-    налево: 42 43, направо: 19
+const <ptr> (48)
+    налево: 43 44, направо: 19
 
 
 State 0
@@ -178,29 +181,30 @@ State 2
    18 print: . PRINT '(' expr ')'
    19 expr: . const
    20     | . VARIABLE
-   21     | . expr '+' expr
-   22     | . expr '-' expr
-   23     | . expr '*' expr
-   24     | . expr '/' expr
-   25     | . expr '<' expr
-   26     | . expr '>' expr
-   27     | . '!' expr
-   28     | . expr CONJUNCTION expr
-   29     | . '(' expr ')'
-   30 type: . INT
-   31     | . CINT
-   32     | . VINT
-   33     | . MINT
-   34     | . CVINT
-   35     | . CMINT
-   36     | . BOOLEAN
-   37     | . CBOOLEAN
-   38     | . VBOOLEAN
-   39     | . MBOOLEAN
-   40     | . CVBOOLEAN
-   41     | . CMBOOLEAN
-   42 const: . INTEGER
-   43      | . BOOL
+   21     | . '-' expr
+   22     | . expr '+' expr
+   23     | . expr '-' expr
+   24     | . expr '*' expr
+   25     | . expr '/' expr
+   26     | . expr '<' expr
+   27     | . expr '>' expr
+   28     | . '!' expr
+   29     | . expr CONJUNCTION expr
+   30     | . '(' expr ')'
+   31 type: . INT
+   32     | . CINT
+   33     | . VINT
+   34     | . MINT
+   35     | . CVINT
+   36     | . CMINT
+   37     | . BOOLEAN
+   38     | . CBOOLEAN
+   39     | . VBOOLEAN
+   40     | . MBOOLEAN
+   41     | . CVBOOLEAN
+   42     | . CMBOOLEAN
+   43 const: . INTEGER
+   44      | . BOOL
 
     BOOL       сдвиг, и переход в состояние 4
     INTEGER    сдвиг, и переход в состояние 5
@@ -219,18 +223,19 @@ State 2
     CMBOOLEAN  сдвиг, и переход в состояние 18
     NEWLINE    сдвиг, и переход в состояние 19
     PRINT      сдвиг, и переход в состояние 20
-    '!'        сдвиг, и переход в состояние 21
-    '('        сдвиг, и переход в состояние 22
+    '-'        сдвиг, и переход в состояние 21
+    '!'        сдвиг, и переход в состояние 22
+    '('        сдвиг, и переход в состояние 23
 
     $default  вывод с использованием правила 1 (program)
 
-    stmt         переход в состояние 23
-    declaration  переход в состояние 24
-    assignment   переход в состояние 25
-    print        переход в состояние 26
-    expr         переход в состояние 27
-    type         переход в состояние 28
-    const        переход в состояние 29
+    stmt         переход в состояние 24
+    declaration  переход в состояние 25
+    assignment   переход в состояние 26
+    print        переход в состояние 27
+    expr         переход в состояние 28
+    type         переход в состояние 29
+    const        переход в состояние 30
 
 
 State 3
@@ -242,16 +247,16 @@ State 3
 
 State 4
 
-   43 const: BOOL .
+   44 const: BOOL .
 
-    $default  вывод с использованием правила 43 (const)
+    $default  вывод с использованием правила 44 (const)
 
 
 State 5
 
-   42 const: INTEGER .
+   43 const: INTEGER .
 
-    $default  вывод с использованием правила 42 (const)
+    $default  вывод с использованием правила 43 (const)
 
 
 State 6
@@ -260,93 +265,93 @@ State 6
    17           | VARIABLE . ASSIGN '{' exprs '}'
    20 expr: VARIABLE .  [NEWLINE, CONJUNCTION, '<', '>', '+', '-', '*', '/', ')']
 
-    ASSIGN  сдвиг, и переход в состояние 30
+    ASSIGN  сдвиг, и переход в состояние 31
 
     $default  вывод с использованием правила 20 (expr)
 
 
 State 7
 
-   31 type: CINT .
-
-    $default  вывод с использованием правила 31 (type)
-
-
-State 8
-
-   32 type: VINT .
+   32 type: CINT .
 
     $default  вывод с использованием правила 32 (type)
 
 
-State 9
+State 8
 
-   33 type: MINT .
+   33 type: VINT .
 
     $default  вывод с использованием правила 33 (type)
 
 
-State 10
+State 9
 
-   30 type: INT .
-
-    $default  вывод с использованием правила 30 (type)
-
-
-State 11
-
-   34 type: CVINT .
+   34 type: MINT .
 
     $default  вывод с использованием правила 34 (type)
 
 
-State 12
+State 10
 
-   35 type: CMINT .
+   31 type: INT .
+
+    $default  вывод с использованием правила 31 (type)
+
+
+State 11
+
+   35 type: CVINT .
 
     $default  вывод с использованием правила 35 (type)
 
 
-State 13
+State 12
 
-   36 type: BOOLEAN .
+   36 type: CMINT .
 
     $default  вывод с использованием правила 36 (type)
 
 
-State 14
+State 13
 
-   37 type: CBOOLEAN .
+   37 type: BOOLEAN .
 
     $default  вывод с использованием правила 37 (type)
 
 
-State 15
+State 14
 
-   38 type: VBOOLEAN .
+   38 type: CBOOLEAN .
 
     $default  вывод с использованием правила 38 (type)
 
 
-State 16
+State 15
 
-   39 type: MBOOLEAN .
+   39 type: VBOOLEAN .
 
     $default  вывод с использованием правила 39 (type)
 
 
-State 17
+State 16
 
-   40 type: CVBOOLEAN .
+   40 type: MBOOLEAN .
 
     $default  вывод с использованием правила 40 (type)
 
 
-State 18
+State 17
 
-   41 type: CMBOOLEAN .
+   41 type: CVBOOLEAN .
 
     $default  вывод с использованием правила 41 (type)
+
+
+State 18
+
+   42 type: CMBOOLEAN .
+
+    $default  вывод с использованием правила 42 (type)
 
 
 State 19
@@ -360,37 +365,68 @@ State 20
 
    18 print: PRINT . '(' expr ')'
 
-    '('  сдвиг, и переход в состояние 31
+    '('  сдвиг, и переход в состояние 32
 
 
 State 21
 
    19 expr: . const
    20     | . VARIABLE
-   21     | . expr '+' expr
-   22     | . expr '-' expr
-   23     | . expr '*' expr
-   24     | . expr '/' expr
-   25     | . expr '<' expr
-   26     | . expr '>' expr
-   27     | . '!' expr
-   27     | '!' . expr
-   28     | . expr CONJUNCTION expr
-   29     | . '(' expr ')'
-   42 const: . INTEGER
-   43      | . BOOL
+   21     | . '-' expr
+   21     | '-' . expr
+   22     | . expr '+' expr
+   23     | . expr '-' expr
+   24     | . expr '*' expr
+   25     | . expr '/' expr
+   26     | . expr '<' expr
+   27     | . expr '>' expr
+   28     | . '!' expr
+   29     | . expr CONJUNCTION expr
+   30     | . '(' expr ')'
+   43 const: . INTEGER
+   44      | . BOOL
 
     BOOL      сдвиг, и переход в состояние 4
     INTEGER   сдвиг, и переход в состояние 5
-    VARIABLE  сдвиг, и переход в состояние 32
-    '!'       сдвиг, и переход в состояние 21
-    '('       сдвиг, и переход в состояние 33
+    VARIABLE  сдвиг, и переход в состояние 33
+    '-'       сдвиг, и переход в состояние 21
+    '!'       сдвиг, и переход в состояние 22
+    '('       сдвиг, и переход в состояние 34
 
-    expr   переход в состояние 34
-    const  переход в состояние 29
+    expr   переход в состояние 35
+    const  переход в состояние 30
 
 
 State 22
+
+   19 expr: . const
+   20     | . VARIABLE
+   21     | . '-' expr
+   22     | . expr '+' expr
+   23     | . expr '-' expr
+   24     | . expr '*' expr
+   25     | . expr '/' expr
+   26     | . expr '<' expr
+   27     | . expr '>' expr
+   28     | . '!' expr
+   28     | '!' . expr
+   29     | . expr CONJUNCTION expr
+   30     | . '(' expr ')'
+   43 const: . INTEGER
+   44      | . BOOL
+
+    BOOL      сдвиг, и переход в состояние 4
+    INTEGER   сдвиг, и переход в состояние 5
+    VARIABLE  сдвиг, и переход в состояние 33
+    '-'       сдвиг, и переход в состояние 21
+    '!'       сдвиг, и переход в состояние 22
+    '('       сдвиг, и переход в состояние 34
+
+    expr   переход в состояние 36
+    const  переход в состояние 30
+
+
+State 23
 
     4 stmts: . stmt
     5      | . stmts stmt
@@ -408,30 +444,31 @@ State 22
    18 print: . PRINT '(' expr ')'
    19 expr: . const
    20     | . VARIABLE
-   21     | . expr '+' expr
-   22     | . expr '-' expr
-   23     | . expr '*' expr
-   24     | . expr '/' expr
-   25     | . expr '<' expr
-   26     | . expr '>' expr
-   27     | . '!' expr
-   28     | . expr CONJUNCTION expr
-   29     | . '(' expr ')'
-   29     | '(' . expr ')'
-   30 type: . INT
-   31     | . CINT
-   32     | . VINT
-   33     | . MINT
-   34     | . CVINT
-   35     | . CMINT
-   36     | . BOOLEAN
-   37     | . CBOOLEAN
-   38     | . VBOOLEAN
-   39     | . MBOOLEAN
-   40     | . CVBOOLEAN
-   41     | . CMBOOLEAN
-   42 const: . INTEGER
-   43      | . BOOL
+   21     | . '-' expr
+   22     | . expr '+' expr
+   23     | . expr '-' expr
+   24     | . expr '*' expr
+   25     | . expr '/' expr
+   26     | . expr '<' expr
+   27     | . expr '>' expr
+   28     | . '!' expr
+   29     | . expr CONJUNCTION expr
+   30     | . '(' expr ')'
+   30     | '(' . expr ')'
+   31 type: . INT
+   32     | . CINT
+   33     | . VINT
+   34     | . MINT
+   35     | . CVINT
+   36     | . CMINT
+   37     | . BOOLEAN
+   38     | . CBOOLEAN
+   39     | . VBOOLEAN
+   40     | . MBOOLEAN
+   41     | . CVBOOLEAN
+   42     | . CMBOOLEAN
+   43 const: . INTEGER
+   44      | . BOOL
 
     BOOL       сдвиг, и переход в состояние 4
     INTEGER    сдвиг, и переход в состояние 5
@@ -450,198 +487,229 @@ State 22
     CMBOOLEAN  сдвиг, и переход в состояние 18
     NEWLINE    сдвиг, и переход в состояние 19
     PRINT      сдвиг, и переход в состояние 20
-    '!'        сдвиг, и переход в состояние 21
-    '('        сдвиг, и переход в состояние 22
+    '-'        сдвиг, и переход в состояние 21
+    '!'        сдвиг, и переход в состояние 22
+    '('        сдвиг, и переход в состояние 23
 
-    stmts        переход в состояние 35
-    stmt         переход в состояние 36
-    declaration  переход в состояние 24
-    assignment   переход в состояние 25
-    print        переход в состояние 26
-    expr         переход в состояние 37
-    type         переход в состояние 28
-    const        переход в состояние 29
+    stmts        переход в состояние 37
+    stmt         переход в состояние 38
+    declaration  переход в состояние 25
+    assignment   переход в состояние 26
+    print        переход в состояние 27
+    expr         переход в состояние 39
+    type         переход в состояние 29
+    const        переход в состояние 30
 
 
-State 23
+State 24
 
     2 function: function stmt .
 
     $default  вывод с использованием правила 2 (function)
 
 
-State 24
-
-    9 stmt: declaration . NEWLINE
-
-    NEWLINE  сдвиг, и переход в состояние 38
-
-
 State 25
 
-   10 stmt: assignment . NEWLINE
-
-    NEWLINE  сдвиг, и переход в состояние 39
-
-
-State 26
-
-    8 stmt: print . NEWLINE
+    9 stmt: declaration . NEWLINE
 
     NEWLINE  сдвиг, и переход в состояние 40
 
 
+State 26
+
+   10 stmt: assignment . NEWLINE
+
+    NEWLINE  сдвиг, и переход в состояние 41
+
+
 State 27
 
-    7 stmt: expr . NEWLINE
-   21 expr: expr . '+' expr
-   22     | expr . '-' expr
-   23     | expr . '*' expr
-   24     | expr . '/' expr
-   25     | expr . '<' expr
-   26     | expr . '>' expr
-   28     | expr . CONJUNCTION expr
+    8 stmt: print . NEWLINE
 
-    NEWLINE      сдвиг, и переход в состояние 41
-    CONJUNCTION  сдвиг, и переход в состояние 42
-    '<'          сдвиг, и переход в состояние 43
-    '>'          сдвиг, и переход в состояние 44
-    '+'          сдвиг, и переход в состояние 45
-    '-'          сдвиг, и переход в состояние 46
-    '*'          сдвиг, и переход в состояние 47
-    '/'          сдвиг, и переход в состояние 48
+    NEWLINE  сдвиг, и переход в состояние 42
 
 
 State 28
 
-   14 declaration: type . VARIABLE DECLARE expr
-   15            | type . VARIABLE DECLARE '{' exprs '}'
+    7 stmt: expr . NEWLINE
+   22 expr: expr . '+' expr
+   23     | expr . '-' expr
+   24     | expr . '*' expr
+   25     | expr . '/' expr
+   26     | expr . '<' expr
+   27     | expr . '>' expr
+   29     | expr . CONJUNCTION expr
 
-    VARIABLE  сдвиг, и переход в состояние 49
+    NEWLINE      сдвиг, и переход в состояние 43
+    CONJUNCTION  сдвиг, и переход в состояние 44
+    '<'          сдвиг, и переход в состояние 45
+    '>'          сдвиг, и переход в состояние 46
+    '+'          сдвиг, и переход в состояние 47
+    '-'          сдвиг, и переход в состояние 48
+    '*'          сдвиг, и переход в состояние 49
+    '/'          сдвиг, и переход в состояние 50
 
 
 State 29
+
+   14 declaration: type . VARIABLE DECLARE expr
+   15            | type . VARIABLE DECLARE '{' exprs '}'
+
+    VARIABLE  сдвиг, и переход в состояние 51
+
+
+State 30
 
    19 expr: const .
 
     $default  вывод с использованием правила 19 (expr)
 
 
-State 30
+State 31
 
    16 assignment: VARIABLE ASSIGN . expr
    17           | VARIABLE ASSIGN . '{' exprs '}'
    19 expr: . const
    20     | . VARIABLE
-   21     | . expr '+' expr
-   22     | . expr '-' expr
-   23     | . expr '*' expr
-   24     | . expr '/' expr
-   25     | . expr '<' expr
-   26     | . expr '>' expr
-   27     | . '!' expr
-   28     | . expr CONJUNCTION expr
-   29     | . '(' expr ')'
-   42 const: . INTEGER
-   43      | . BOOL
+   21     | . '-' expr
+   22     | . expr '+' expr
+   23     | . expr '-' expr
+   24     | . expr '*' expr
+   25     | . expr '/' expr
+   26     | . expr '<' expr
+   27     | . expr '>' expr
+   28     | . '!' expr
+   29     | . expr CONJUNCTION expr
+   30     | . '(' expr ')'
+   43 const: . INTEGER
+   44      | . BOOL
 
     BOOL      сдвиг, и переход в состояние 4
     INTEGER   сдвиг, и переход в состояние 5
-    VARIABLE  сдвиг, и переход в состояние 32
-    '!'       сдвиг, и переход в состояние 21
-    '('       сдвиг, и переход в состояние 33
-    '{'       сдвиг, и переход в состояние 50
+    VARIABLE  сдвиг, и переход в состояние 33
+    '-'       сдвиг, и переход в состояние 21
+    '!'       сдвиг, и переход в состояние 22
+    '('       сдвиг, и переход в состояние 34
+    '{'       сдвиг, и переход в состояние 52
 
-    expr   переход в состояние 51
-    const  переход в состояние 29
+    expr   переход в состояние 53
+    const  переход в состояние 30
 
 
-State 31
+State 32
 
    18 print: PRINT '(' . expr ')'
    19 expr: . const
    20     | . VARIABLE
-   21     | . expr '+' expr
-   22     | . expr '-' expr
-   23     | . expr '*' expr
-   24     | . expr '/' expr
-   25     | . expr '<' expr
-   26     | . expr '>' expr
-   27     | . '!' expr
-   28     | . expr CONJUNCTION expr
-   29     | . '(' expr ')'
-   42 const: . INTEGER
-   43      | . BOOL
+   21     | . '-' expr
+   22     | . expr '+' expr
+   23     | . expr '-' expr
+   24     | . expr '*' expr
+   25     | . expr '/' expr
+   26     | . expr '<' expr
+   27     | . expr '>' expr
+   28     | . '!' expr
+   29     | . expr CONJUNCTION expr
+   30     | . '(' expr ')'
+   43 const: . INTEGER
+   44      | . BOOL
 
     BOOL      сдвиг, и переход в состояние 4
     INTEGER   сдвиг, и переход в состояние 5
-    VARIABLE  сдвиг, и переход в состояние 32
-    '!'       сдвиг, и переход в состояние 21
-    '('       сдвиг, и переход в состояние 33
+    VARIABLE  сдвиг, и переход в состояние 33
+    '-'       сдвиг, и переход в состояние 21
+    '!'       сдвиг, и переход в состояние 22
+    '('       сдвиг, и переход в состояние 34
 
-    expr   переход в состояние 52
-    const  переход в состояние 29
+    expr   переход в состояние 54
+    const  переход в состояние 30
 
 
-State 32
+State 33
 
    20 expr: VARIABLE .
 
     $default  вывод с использованием правила 20 (expr)
 
 
-State 33
+State 34
 
    19 expr: . const
    20     | . VARIABLE
-   21     | . expr '+' expr
-   22     | . expr '-' expr
-   23     | . expr '*' expr
-   24     | . expr '/' expr
-   25     | . expr '<' expr
-   26     | . expr '>' expr
-   27     | . '!' expr
-   28     | . expr CONJUNCTION expr
-   29     | . '(' expr ')'
-   29     | '(' . expr ')'
-   42 const: . INTEGER
-   43      | . BOOL
+   21     | . '-' expr
+   22     | . expr '+' expr
+   23     | . expr '-' expr
+   24     | . expr '*' expr
+   25     | . expr '/' expr
+   26     | . expr '<' expr
+   27     | . expr '>' expr
+   28     | . '!' expr
+   29     | . expr CONJUNCTION expr
+   30     | . '(' expr ')'
+   30     | '(' . expr ')'
+   43 const: . INTEGER
+   44      | . BOOL
 
     BOOL      сдвиг, и переход в состояние 4
     INTEGER   сдвиг, и переход в состояние 5
-    VARIABLE  сдвиг, и переход в состояние 32
-    '!'       сдвиг, и переход в состояние 21
-    '('       сдвиг, и переход в состояние 33
+    VARIABLE  сдвиг, и переход в состояние 33
+    '-'       сдвиг, и переход в состояние 21
+    '!'       сдвиг, и переход в состояние 22
+    '('       сдвиг, и переход в состояние 34
 
-    expr   переход в состояние 53
-    const  переход в состояние 29
-
-
-State 34
-
-   21 expr: expr . '+' expr
-   22     | expr . '-' expr
-   23     | expr . '*' expr
-   24     | expr . '/' expr
-   25     | expr . '<' expr
-   26     | expr . '>' expr
-   27     | '!' expr .  [NEWLINE, CONJUNCTION, ',', '<', '>', '+', '-', '*', '/', ')', '}']
-   28     | expr . CONJUNCTION expr
-
-    CONJUNCTION  сдвиг, и переход в состояние 42
-
-    CONJUNCTION  [вывод с использованием правила 27 (expr)]
-    $default     вывод с использованием правила 27 (expr)
-
-    Конфликт между правилом 27 и лексемой '<' разрешен выводом ('<' < '!').
-    Конфликт между правилом 27 и лексемой '>' разрешен выводом ('>' < '!').
-    Конфликт между правилом 27 и лексемой '+' разрешен выводом ('+' < '!').
-    Конфликт между правилом 27 и лексемой '-' разрешен выводом ('-' < '!').
-    Конфликт между правилом 27 и лексемой '*' разрешен выводом ('*' < '!').
-    Конфликт между правилом 27 и лексемой '/' разрешен выводом ('/' < '!').
+    expr   переход в состояние 55
+    const  переход в состояние 30
 
 
 State 35
+
+   21 expr: '-' expr .  [NEWLINE, CONJUNCTION, ',', '<', '>', '+', '-', '*', '/', ')', '}']
+   22     | expr . '+' expr
+   23     | expr . '-' expr
+   24     | expr . '*' expr
+   25     | expr . '/' expr
+   26     | expr . '<' expr
+   27     | expr . '>' expr
+   29     | expr . CONJUNCTION expr
+
+    CONJUNCTION  сдвиг, и переход в состояние 44
+
+    CONJUNCTION  [вывод с использованием правила 21 (expr)]
+    $default     вывод с использованием правила 21 (expr)
+
+    Конфликт между правилом 21 и лексемой '<' разрешен выводом ('<' < UMINUS).
+    Конфликт между правилом 21 и лексемой '>' разрешен выводом ('>' < UMINUS).
+    Конфликт между правилом 21 и лексемой '+' разрешен выводом ('+' < UMINUS).
+    Конфликт между правилом 21 и лексемой '-' разрешен выводом ('-' < UMINUS).
+    Конфликт между правилом 21 и лексемой '*' разрешен выводом ('*' < UMINUS).
+    Конфликт между правилом 21 и лексемой '/' разрешен выводом ('/' < UMINUS).
+
+
+State 36
+
+   22 expr: expr . '+' expr
+   23     | expr . '-' expr
+   24     | expr . '*' expr
+   25     | expr . '/' expr
+   26     | expr . '<' expr
+   27     | expr . '>' expr
+   28     | '!' expr .  [NEWLINE, CONJUNCTION, ',', '<', '>', '+', '-', '*', '/', ')', '}']
+   29     | expr . CONJUNCTION expr
+
+    CONJUNCTION  сдвиг, и переход в состояние 44
+
+    CONJUNCTION  [вывод с использованием правила 28 (expr)]
+    $default     вывод с использованием правила 28 (expr)
+
+    Конфликт между правилом 28 и лексемой '<' разрешен выводом ('<' < '!').
+    Конфликт между правилом 28 и лексемой '>' разрешен выводом ('>' < '!').
+    Конфликт между правилом 28 и лексемой '+' разрешен выводом ('+' < '!').
+    Конфликт между правилом 28 и лексемой '-' разрешен выводом ('-' < '!').
+    Конфликт между правилом 28 и лексемой '*' разрешен выводом ('*' < '!').
+    Конфликт между правилом 28 и лексемой '/' разрешен выводом ('/' < '!').
+
+
+State 37
 
     5 stmts: stmts . stmt
     6 stmt: . NEWLINE
@@ -658,29 +726,30 @@ State 35
    18 print: . PRINT '(' expr ')'
    19 expr: . const
    20     | . VARIABLE
-   21     | . expr '+' expr
-   22     | . expr '-' expr
-   23     | . expr '*' expr
-   24     | . expr '/' expr
-   25     | . expr '<' expr
-   26     | . expr '>' expr
-   27     | . '!' expr
-   28     | . expr CONJUNCTION expr
-   29     | . '(' expr ')'
-   30 type: . INT
-   31     | . CINT
-   32     | . VINT
-   33     | . MINT
-   34     | . CVINT
-   35     | . CMINT
-   36     | . BOOLEAN
-   37     | . CBOOLEAN
-   38     | . VBOOLEAN
-   39     | . MBOOLEAN
-   40     | . CVBOOLEAN
-   41     | . CMBOOLEAN
-   42 const: . INTEGER
-   43      | . BOOL
+   21     | . '-' expr
+   22     | . expr '+' expr
+   23     | . expr '-' expr
+   24     | . expr '*' expr
+   25     | . expr '/' expr
+   26     | . expr '<' expr
+   27     | . expr '>' expr
+   28     | . '!' expr
+   29     | . expr CONJUNCTION expr
+   30     | . '(' expr ')'
+   31 type: . INT
+   32     | . CINT
+   33     | . VINT
+   34     | . MINT
+   35     | . CVINT
+   36     | . CMINT
+   37     | . BOOLEAN
+   38     | . CBOOLEAN
+   39     | . VBOOLEAN
+   40     | . MBOOLEAN
+   41     | . CVBOOLEAN
+   42     | . CMBOOLEAN
+   43 const: . INTEGER
+   44      | . BOOL
 
     BOOL       сдвиг, и переход в состояние 4
     INTEGER    сдвиг, и переход в состояние 5
@@ -699,807 +768,832 @@ State 35
     CMBOOLEAN  сдвиг, и переход в состояние 18
     NEWLINE    сдвиг, и переход в состояние 19
     PRINT      сдвиг, и переход в состояние 20
-    '!'        сдвиг, и переход в состояние 21
-    '('        сдвиг, и переход в состояние 22
-    ')'        сдвиг, и переход в состояние 54
+    '-'        сдвиг, и переход в состояние 21
+    '!'        сдвиг, и переход в состояние 22
+    '('        сдвиг, и переход в состояние 23
+    ')'        сдвиг, и переход в состояние 56
 
-    stmt         переход в состояние 55
-    declaration  переход в состояние 24
-    assignment   переход в состояние 25
-    print        переход в состояние 26
-    expr         переход в состояние 27
-    type         переход в состояние 28
-    const        переход в состояние 29
+    stmt         переход в состояние 57
+    declaration  переход в состояние 25
+    assignment   переход в состояние 26
+    print        переход в состояние 27
+    expr         переход в состояние 28
+    type         переход в состояние 29
+    const        переход в состояние 30
 
 
-State 36
+State 38
 
     4 stmts: stmt .
 
     $default  вывод с использованием правила 4 (stmts)
 
 
-State 37
+State 39
 
     7 stmt: expr . NEWLINE
-   21 expr: expr . '+' expr
-   22     | expr . '-' expr
-   23     | expr . '*' expr
-   24     | expr . '/' expr
-   25     | expr . '<' expr
-   26     | expr . '>' expr
-   28     | expr . CONJUNCTION expr
-   29     | '(' expr . ')'
+   22 expr: expr . '+' expr
+   23     | expr . '-' expr
+   24     | expr . '*' expr
+   25     | expr . '/' expr
+   26     | expr . '<' expr
+   27     | expr . '>' expr
+   29     | expr . CONJUNCTION expr
+   30     | '(' expr . ')'
 
-    NEWLINE      сдвиг, и переход в состояние 41
-    CONJUNCTION  сдвиг, и переход в состояние 42
-    '<'          сдвиг, и переход в состояние 43
-    '>'          сдвиг, и переход в состояние 44
-    '+'          сдвиг, и переход в состояние 45
-    '-'          сдвиг, и переход в состояние 46
-    '*'          сдвиг, и переход в состояние 47
-    '/'          сдвиг, и переход в состояние 48
-    ')'          сдвиг, и переход в состояние 56
+    NEWLINE      сдвиг, и переход в состояние 43
+    CONJUNCTION  сдвиг, и переход в состояние 44
+    '<'          сдвиг, и переход в состояние 45
+    '>'          сдвиг, и переход в состояние 46
+    '+'          сдвиг, и переход в состояние 47
+    '-'          сдвиг, и переход в состояние 48
+    '*'          сдвиг, и переход в состояние 49
+    '/'          сдвиг, и переход в состояние 50
+    ')'          сдвиг, и переход в состояние 58
 
 
-State 38
+State 40
 
     9 stmt: declaration NEWLINE .
 
     $default  вывод с использованием правила 9 (stmt)
 
 
-State 39
+State 41
 
    10 stmt: assignment NEWLINE .
 
     $default  вывод с использованием правила 10 (stmt)
 
 
-State 40
+State 42
 
     8 stmt: print NEWLINE .
 
     $default  вывод с использованием правила 8 (stmt)
 
 
-State 41
+State 43
 
     7 stmt: expr NEWLINE .
 
     $default  вывод с использованием правила 7 (stmt)
 
 
-State 42
-
-   19 expr: . const
-   20     | . VARIABLE
-   21     | . expr '+' expr
-   22     | . expr '-' expr
-   23     | . expr '*' expr
-   24     | . expr '/' expr
-   25     | . expr '<' expr
-   26     | . expr '>' expr
-   27     | . '!' expr
-   28     | . expr CONJUNCTION expr
-   28     | expr CONJUNCTION . expr
-   29     | . '(' expr ')'
-   42 const: . INTEGER
-   43      | . BOOL
-
-    BOOL      сдвиг, и переход в состояние 4
-    INTEGER   сдвиг, и переход в состояние 5
-    VARIABLE  сдвиг, и переход в состояние 32
-    '!'       сдвиг, и переход в состояние 21
-    '('       сдвиг, и переход в состояние 33
-
-    expr   переход в состояние 57
-    const  переход в состояние 29
-
-
-State 43
-
-   19 expr: . const
-   20     | . VARIABLE
-   21     | . expr '+' expr
-   22     | . expr '-' expr
-   23     | . expr '*' expr
-   24     | . expr '/' expr
-   25     | . expr '<' expr
-   25     | expr '<' . expr
-   26     | . expr '>' expr
-   27     | . '!' expr
-   28     | . expr CONJUNCTION expr
-   29     | . '(' expr ')'
-   42 const: . INTEGER
-   43      | . BOOL
-
-    BOOL      сдвиг, и переход в состояние 4
-    INTEGER   сдвиг, и переход в состояние 5
-    VARIABLE  сдвиг, и переход в состояние 32
-    '!'       сдвиг, и переход в состояние 21
-    '('       сдвиг, и переход в состояние 33
-
-    expr   переход в состояние 58
-    const  переход в состояние 29
-
-
 State 44
 
    19 expr: . const
    20     | . VARIABLE
-   21     | . expr '+' expr
-   22     | . expr '-' expr
-   23     | . expr '*' expr
-   24     | . expr '/' expr
-   25     | . expr '<' expr
-   26     | . expr '>' expr
-   26     | expr '>' . expr
-   27     | . '!' expr
-   28     | . expr CONJUNCTION expr
-   29     | . '(' expr ')'
-   42 const: . INTEGER
-   43      | . BOOL
+   21     | . '-' expr
+   22     | . expr '+' expr
+   23     | . expr '-' expr
+   24     | . expr '*' expr
+   25     | . expr '/' expr
+   26     | . expr '<' expr
+   27     | . expr '>' expr
+   28     | . '!' expr
+   29     | . expr CONJUNCTION expr
+   29     | expr CONJUNCTION . expr
+   30     | . '(' expr ')'
+   43 const: . INTEGER
+   44      | . BOOL
 
     BOOL      сдвиг, и переход в состояние 4
     INTEGER   сдвиг, и переход в состояние 5
-    VARIABLE  сдвиг, и переход в состояние 32
-    '!'       сдвиг, и переход в состояние 21
-    '('       сдвиг, и переход в состояние 33
+    VARIABLE  сдвиг, и переход в состояние 33
+    '-'       сдвиг, и переход в состояние 21
+    '!'       сдвиг, и переход в состояние 22
+    '('       сдвиг, и переход в состояние 34
 
     expr   переход в состояние 59
-    const  переход в состояние 29
+    const  переход в состояние 30
 
 
 State 45
 
    19 expr: . const
    20     | . VARIABLE
-   21     | . expr '+' expr
-   21     | expr '+' . expr
-   22     | . expr '-' expr
-   23     | . expr '*' expr
-   24     | . expr '/' expr
-   25     | . expr '<' expr
-   26     | . expr '>' expr
-   27     | . '!' expr
-   28     | . expr CONJUNCTION expr
-   29     | . '(' expr ')'
-   42 const: . INTEGER
-   43      | . BOOL
+   21     | . '-' expr
+   22     | . expr '+' expr
+   23     | . expr '-' expr
+   24     | . expr '*' expr
+   25     | . expr '/' expr
+   26     | . expr '<' expr
+   26     | expr '<' . expr
+   27     | . expr '>' expr
+   28     | . '!' expr
+   29     | . expr CONJUNCTION expr
+   30     | . '(' expr ')'
+   43 const: . INTEGER
+   44      | . BOOL
 
     BOOL      сдвиг, и переход в состояние 4
     INTEGER   сдвиг, и переход в состояние 5
-    VARIABLE  сдвиг, и переход в состояние 32
-    '!'       сдвиг, и переход в состояние 21
-    '('       сдвиг, и переход в состояние 33
+    VARIABLE  сдвиг, и переход в состояние 33
+    '-'       сдвиг, и переход в состояние 21
+    '!'       сдвиг, и переход в состояние 22
+    '('       сдвиг, и переход в состояние 34
 
     expr   переход в состояние 60
-    const  переход в состояние 29
+    const  переход в состояние 30
 
 
 State 46
 
    19 expr: . const
    20     | . VARIABLE
-   21     | . expr '+' expr
-   22     | . expr '-' expr
-   22     | expr '-' . expr
-   23     | . expr '*' expr
-   24     | . expr '/' expr
-   25     | . expr '<' expr
-   26     | . expr '>' expr
-   27     | . '!' expr
-   28     | . expr CONJUNCTION expr
-   29     | . '(' expr ')'
-   42 const: . INTEGER
-   43      | . BOOL
+   21     | . '-' expr
+   22     | . expr '+' expr
+   23     | . expr '-' expr
+   24     | . expr '*' expr
+   25     | . expr '/' expr
+   26     | . expr '<' expr
+   27     | . expr '>' expr
+   27     | expr '>' . expr
+   28     | . '!' expr
+   29     | . expr CONJUNCTION expr
+   30     | . '(' expr ')'
+   43 const: . INTEGER
+   44      | . BOOL
 
     BOOL      сдвиг, и переход в состояние 4
     INTEGER   сдвиг, и переход в состояние 5
-    VARIABLE  сдвиг, и переход в состояние 32
-    '!'       сдвиг, и переход в состояние 21
-    '('       сдвиг, и переход в состояние 33
+    VARIABLE  сдвиг, и переход в состояние 33
+    '-'       сдвиг, и переход в состояние 21
+    '!'       сдвиг, и переход в состояние 22
+    '('       сдвиг, и переход в состояние 34
 
     expr   переход в состояние 61
-    const  переход в состояние 29
+    const  переход в состояние 30
 
 
 State 47
 
    19 expr: . const
    20     | . VARIABLE
-   21     | . expr '+' expr
-   22     | . expr '-' expr
-   23     | . expr '*' expr
-   23     | expr '*' . expr
-   24     | . expr '/' expr
-   25     | . expr '<' expr
-   26     | . expr '>' expr
-   27     | . '!' expr
-   28     | . expr CONJUNCTION expr
-   29     | . '(' expr ')'
-   42 const: . INTEGER
-   43      | . BOOL
+   21     | . '-' expr
+   22     | . expr '+' expr
+   22     | expr '+' . expr
+   23     | . expr '-' expr
+   24     | . expr '*' expr
+   25     | . expr '/' expr
+   26     | . expr '<' expr
+   27     | . expr '>' expr
+   28     | . '!' expr
+   29     | . expr CONJUNCTION expr
+   30     | . '(' expr ')'
+   43 const: . INTEGER
+   44      | . BOOL
 
     BOOL      сдвиг, и переход в состояние 4
     INTEGER   сдвиг, и переход в состояние 5
-    VARIABLE  сдвиг, и переход в состояние 32
-    '!'       сдвиг, и переход в состояние 21
-    '('       сдвиг, и переход в состояние 33
+    VARIABLE  сдвиг, и переход в состояние 33
+    '-'       сдвиг, и переход в состояние 21
+    '!'       сдвиг, и переход в состояние 22
+    '('       сдвиг, и переход в состояние 34
 
     expr   переход в состояние 62
-    const  переход в состояние 29
+    const  переход в состояние 30
 
 
 State 48
 
    19 expr: . const
    20     | . VARIABLE
-   21     | . expr '+' expr
-   22     | . expr '-' expr
-   23     | . expr '*' expr
-   24     | . expr '/' expr
-   24     | expr '/' . expr
-   25     | . expr '<' expr
-   26     | . expr '>' expr
-   27     | . '!' expr
-   28     | . expr CONJUNCTION expr
-   29     | . '(' expr ')'
-   42 const: . INTEGER
-   43      | . BOOL
+   21     | . '-' expr
+   22     | . expr '+' expr
+   23     | . expr '-' expr
+   23     | expr '-' . expr
+   24     | . expr '*' expr
+   25     | . expr '/' expr
+   26     | . expr '<' expr
+   27     | . expr '>' expr
+   28     | . '!' expr
+   29     | . expr CONJUNCTION expr
+   30     | . '(' expr ')'
+   43 const: . INTEGER
+   44      | . BOOL
 
     BOOL      сдвиг, и переход в состояние 4
     INTEGER   сдвиг, и переход в состояние 5
-    VARIABLE  сдвиг, и переход в состояние 32
-    '!'       сдвиг, и переход в состояние 21
-    '('       сдвиг, и переход в состояние 33
+    VARIABLE  сдвиг, и переход в состояние 33
+    '-'       сдвиг, и переход в состояние 21
+    '!'       сдвиг, и переход в состояние 22
+    '('       сдвиг, и переход в состояние 34
 
     expr   переход в состояние 63
-    const  переход в состояние 29
+    const  переход в состояние 30
 
 
 State 49
 
-   14 declaration: type VARIABLE . DECLARE expr
-   15            | type VARIABLE . DECLARE '{' exprs '}'
+   19 expr: . const
+   20     | . VARIABLE
+   21     | . '-' expr
+   22     | . expr '+' expr
+   23     | . expr '-' expr
+   24     | . expr '*' expr
+   24     | expr '*' . expr
+   25     | . expr '/' expr
+   26     | . expr '<' expr
+   27     | . expr '>' expr
+   28     | . '!' expr
+   29     | . expr CONJUNCTION expr
+   30     | . '(' expr ')'
+   43 const: . INTEGER
+   44      | . BOOL
 
-    DECLARE  сдвиг, и переход в состояние 64
+    BOOL      сдвиг, и переход в состояние 4
+    INTEGER   сдвиг, и переход в состояние 5
+    VARIABLE  сдвиг, и переход в состояние 33
+    '-'       сдвиг, и переход в состояние 21
+    '!'       сдвиг, и переход в состояние 22
+    '('       сдвиг, и переход в состояние 34
+
+    expr   переход в состояние 64
+    const  переход в состояние 30
 
 
 State 50
+
+   19 expr: . const
+   20     | . VARIABLE
+   21     | . '-' expr
+   22     | . expr '+' expr
+   23     | . expr '-' expr
+   24     | . expr '*' expr
+   25     | . expr '/' expr
+   25     | expr '/' . expr
+   26     | . expr '<' expr
+   27     | . expr '>' expr
+   28     | . '!' expr
+   29     | . expr CONJUNCTION expr
+   30     | . '(' expr ')'
+   43 const: . INTEGER
+   44      | . BOOL
+
+    BOOL      сдвиг, и переход в состояние 4
+    INTEGER   сдвиг, и переход в состояние 5
+    VARIABLE  сдвиг, и переход в состояние 33
+    '-'       сдвиг, и переход в состояние 21
+    '!'       сдвиг, и переход в состояние 22
+    '('       сдвиг, и переход в состояние 34
+
+    expr   переход в состояние 65
+    const  переход в состояние 30
+
+
+State 51
+
+   14 declaration: type VARIABLE . DECLARE expr
+   15            | type VARIABLE . DECLARE '{' exprs '}'
+
+    DECLARE  сдвиг, и переход в состояние 66
+
+
+State 52
 
    12 exprs: . expr ',' expr
    13      | . exprs ',' expr
    17 assignment: VARIABLE ASSIGN '{' . exprs '}'
    19 expr: . const
    20     | . VARIABLE
-   21     | . expr '+' expr
-   22     | . expr '-' expr
-   23     | . expr '*' expr
-   24     | . expr '/' expr
-   25     | . expr '<' expr
-   26     | . expr '>' expr
-   27     | . '!' expr
-   28     | . expr CONJUNCTION expr
-   29     | . '(' expr ')'
-   42 const: . INTEGER
-   43      | . BOOL
+   21     | . '-' expr
+   22     | . expr '+' expr
+   23     | . expr '-' expr
+   24     | . expr '*' expr
+   25     | . expr '/' expr
+   26     | . expr '<' expr
+   27     | . expr '>' expr
+   28     | . '!' expr
+   29     | . expr CONJUNCTION expr
+   30     | . '(' expr ')'
+   43 const: . INTEGER
+   44      | . BOOL
 
     BOOL      сдвиг, и переход в состояние 4
     INTEGER   сдвиг, и переход в состояние 5
-    VARIABLE  сдвиг, и переход в состояние 32
-    '!'       сдвиг, и переход в состояние 21
-    '('       сдвиг, и переход в состояние 33
+    VARIABLE  сдвиг, и переход в состояние 33
+    '-'       сдвиг, и переход в состояние 21
+    '!'       сдвиг, и переход в состояние 22
+    '('       сдвиг, и переход в состояние 34
 
-    exprs  переход в состояние 65
-    expr   переход в состояние 66
-    const  переход в состояние 29
-
-
-State 51
-
-   16 assignment: VARIABLE ASSIGN expr .  [NEWLINE]
-   21 expr: expr . '+' expr
-   22     | expr . '-' expr
-   23     | expr . '*' expr
-   24     | expr . '/' expr
-   25     | expr . '<' expr
-   26     | expr . '>' expr
-   28     | expr . CONJUNCTION expr
-
-    CONJUNCTION  сдвиг, и переход в состояние 42
-    '<'          сдвиг, и переход в состояние 43
-    '>'          сдвиг, и переход в состояние 44
-    '+'          сдвиг, и переход в состояние 45
-    '-'          сдвиг, и переход в состояние 46
-    '*'          сдвиг, и переход в состояние 47
-    '/'          сдвиг, и переход в состояние 48
-
-    $default  вывод с использованием правила 16 (assignment)
-
-
-State 52
-
-   18 print: PRINT '(' expr . ')'
-   21 expr: expr . '+' expr
-   22     | expr . '-' expr
-   23     | expr . '*' expr
-   24     | expr . '/' expr
-   25     | expr . '<' expr
-   26     | expr . '>' expr
-   28     | expr . CONJUNCTION expr
-
-    CONJUNCTION  сдвиг, и переход в состояние 42
-    '<'          сдвиг, и переход в состояние 43
-    '>'          сдвиг, и переход в состояние 44
-    '+'          сдвиг, и переход в состояние 45
-    '-'          сдвиг, и переход в состояние 46
-    '*'          сдвиг, и переход в состояние 47
-    '/'          сдвиг, и переход в состояние 48
-    ')'          сдвиг, и переход в состояние 67
+    exprs  переход в состояние 67
+    expr   переход в состояние 68
+    const  переход в состояние 30
 
 
 State 53
 
-   21 expr: expr . '+' expr
-   22     | expr . '-' expr
-   23     | expr . '*' expr
-   24     | expr . '/' expr
-   25     | expr . '<' expr
-   26     | expr . '>' expr
-   28     | expr . CONJUNCTION expr
-   29     | '(' expr . ')'
+   16 assignment: VARIABLE ASSIGN expr .  [NEWLINE]
+   22 expr: expr . '+' expr
+   23     | expr . '-' expr
+   24     | expr . '*' expr
+   25     | expr . '/' expr
+   26     | expr . '<' expr
+   27     | expr . '>' expr
+   29     | expr . CONJUNCTION expr
 
-    CONJUNCTION  сдвиг, и переход в состояние 42
-    '<'          сдвиг, и переход в состояние 43
-    '>'          сдвиг, и переход в состояние 44
-    '+'          сдвиг, и переход в состояние 45
-    '-'          сдвиг, и переход в состояние 46
-    '*'          сдвиг, и переход в состояние 47
-    '/'          сдвиг, и переход в состояние 48
-    ')'          сдвиг, и переход в состояние 56
+    CONJUNCTION  сдвиг, и переход в состояние 44
+    '<'          сдвиг, и переход в состояние 45
+    '>'          сдвиг, и переход в состояние 46
+    '+'          сдвиг, и переход в состояние 47
+    '-'          сдвиг, и переход в состояние 48
+    '*'          сдвиг, и переход в состояние 49
+    '/'          сдвиг, и переход в состояние 50
+
+    $default  вывод с использованием правила 16 (assignment)
 
 
 State 54
+
+   18 print: PRINT '(' expr . ')'
+   22 expr: expr . '+' expr
+   23     | expr . '-' expr
+   24     | expr . '*' expr
+   25     | expr . '/' expr
+   26     | expr . '<' expr
+   27     | expr . '>' expr
+   29     | expr . CONJUNCTION expr
+
+    CONJUNCTION  сдвиг, и переход в состояние 44
+    '<'          сдвиг, и переход в состояние 45
+    '>'          сдвиг, и переход в состояние 46
+    '+'          сдвиг, и переход в состояние 47
+    '-'          сдвиг, и переход в состояние 48
+    '*'          сдвиг, и переход в состояние 49
+    '/'          сдвиг, и переход в состояние 50
+    ')'          сдвиг, и переход в состояние 69
+
+
+State 55
+
+   22 expr: expr . '+' expr
+   23     | expr . '-' expr
+   24     | expr . '*' expr
+   25     | expr . '/' expr
+   26     | expr . '<' expr
+   27     | expr . '>' expr
+   29     | expr . CONJUNCTION expr
+   30     | '(' expr . ')'
+
+    CONJUNCTION  сдвиг, и переход в состояние 44
+    '<'          сдвиг, и переход в состояние 45
+    '>'          сдвиг, и переход в состояние 46
+    '+'          сдвиг, и переход в состояние 47
+    '-'          сдвиг, и переход в состояние 48
+    '*'          сдвиг, и переход в состояние 49
+    '/'          сдвиг, и переход в состояние 50
+    ')'          сдвиг, и переход в состояние 58
+
+
+State 56
 
    11 stmt: '(' stmts ')' .
 
     $default  вывод с использованием правила 11 (stmt)
 
 
-State 55
+State 57
 
     5 stmts: stmts stmt .
 
     $default  вывод с использованием правила 5 (stmts)
 
 
-State 56
-
-   29 expr: '(' expr ')' .
-
-    $default  вывод с использованием правила 29 (expr)
-
-
-State 57
-
-   21 expr: expr . '+' expr
-   22     | expr . '-' expr
-   23     | expr . '*' expr
-   24     | expr . '/' expr
-   25     | expr . '<' expr
-   26     | expr . '>' expr
-   28     | expr . CONJUNCTION expr
-   28     | expr CONJUNCTION expr .  [NEWLINE, CONJUNCTION, ',', '<', '>', '+', '-', '*', '/', ')', '}']
-
-    CONJUNCTION  сдвиг, и переход в состояние 42
-    '<'          сдвиг, и переход в состояние 43
-    '>'          сдвиг, и переход в состояние 44
-    '+'          сдвиг, и переход в состояние 45
-    '-'          сдвиг, и переход в состояние 46
-    '*'          сдвиг, и переход в состояние 47
-    '/'          сдвиг, и переход в состояние 48
-
-    CONJUNCTION  [вывод с использованием правила 28 (expr)]
-    '<'          [вывод с использованием правила 28 (expr)]
-    '>'          [вывод с использованием правила 28 (expr)]
-    '+'          [вывод с использованием правила 28 (expr)]
-    '-'          [вывод с использованием правила 28 (expr)]
-    '*'          [вывод с использованием правила 28 (expr)]
-    '/'          [вывод с использованием правила 28 (expr)]
-    $default     вывод с использованием правила 28 (expr)
-
-
 State 58
 
-   21 expr: expr . '+' expr
-   22     | expr . '-' expr
-   23     | expr . '*' expr
-   24     | expr . '/' expr
-   25     | expr . '<' expr
-   25     | expr '<' expr .  [NEWLINE, CONJUNCTION, ',', '<', '>', ')', '}']
-   26     | expr . '>' expr
-   28     | expr . CONJUNCTION expr
+   30 expr: '(' expr ')' .
 
-    CONJUNCTION  сдвиг, и переход в состояние 42
-    '+'          сдвиг, и переход в состояние 45
-    '-'          сдвиг, и переход в состояние 46
-    '*'          сдвиг, и переход в состояние 47
-    '/'          сдвиг, и переход в состояние 48
-
-    CONJUNCTION  [вывод с использованием правила 25 (expr)]
-    $default     вывод с использованием правила 25 (expr)
-
-    Конфликт между правилом 25 и лексемой '<' разрешен выводом (%left '<').
-    Конфликт между правилом 25 и лексемой '>' разрешен выводом (%left '>').
-    Конфликт между правилом 25 и лексемой '+' разрешен сдвигом ('<' < '+').
-    Конфликт между правилом 25 и лексемой '-' разрешен сдвигом ('<' < '-').
-    Конфликт между правилом 25 и лексемой '*' разрешен сдвигом ('<' < '*').
-    Конфликт между правилом 25 и лексемой '/' разрешен сдвигом ('<' < '/').
+    $default  вывод с использованием правила 30 (expr)
 
 
 State 59
 
-   21 expr: expr . '+' expr
-   22     | expr . '-' expr
-   23     | expr . '*' expr
-   24     | expr . '/' expr
-   25     | expr . '<' expr
-   26     | expr . '>' expr
-   26     | expr '>' expr .  [NEWLINE, CONJUNCTION, ',', '<', '>', ')', '}']
-   28     | expr . CONJUNCTION expr
+   22 expr: expr . '+' expr
+   23     | expr . '-' expr
+   24     | expr . '*' expr
+   25     | expr . '/' expr
+   26     | expr . '<' expr
+   27     | expr . '>' expr
+   29     | expr . CONJUNCTION expr
+   29     | expr CONJUNCTION expr .  [NEWLINE, CONJUNCTION, ',', '<', '>', '+', '-', '*', '/', ')', '}']
 
-    CONJUNCTION  сдвиг, и переход в состояние 42
-    '+'          сдвиг, и переход в состояние 45
-    '-'          сдвиг, и переход в состояние 46
-    '*'          сдвиг, и переход в состояние 47
-    '/'          сдвиг, и переход в состояние 48
+    CONJUNCTION  сдвиг, и переход в состояние 44
+    '<'          сдвиг, и переход в состояние 45
+    '>'          сдвиг, и переход в состояние 46
+    '+'          сдвиг, и переход в состояние 47
+    '-'          сдвиг, и переход в состояние 48
+    '*'          сдвиг, и переход в состояние 49
+    '/'          сдвиг, и переход в состояние 50
+
+    CONJUNCTION  [вывод с использованием правила 29 (expr)]
+    '<'          [вывод с использованием правила 29 (expr)]
+    '>'          [вывод с использованием правила 29 (expr)]
+    '+'          [вывод с использованием правила 29 (expr)]
+    '-'          [вывод с использованием правила 29 (expr)]
+    '*'          [вывод с использованием правила 29 (expr)]
+    '/'          [вывод с использованием правила 29 (expr)]
+    $default     вывод с использованием правила 29 (expr)
+
+
+State 60
+
+   22 expr: expr . '+' expr
+   23     | expr . '-' expr
+   24     | expr . '*' expr
+   25     | expr . '/' expr
+   26     | expr . '<' expr
+   26     | expr '<' expr .  [NEWLINE, CONJUNCTION, ',', '<', '>', ')', '}']
+   27     | expr . '>' expr
+   29     | expr . CONJUNCTION expr
+
+    CONJUNCTION  сдвиг, и переход в состояние 44
+    '+'          сдвиг, и переход в состояние 47
+    '-'          сдвиг, и переход в состояние 48
+    '*'          сдвиг, и переход в состояние 49
+    '/'          сдвиг, и переход в состояние 50
 
     CONJUNCTION  [вывод с использованием правила 26 (expr)]
     $default     вывод с использованием правила 26 (expr)
 
     Конфликт между правилом 26 и лексемой '<' разрешен выводом (%left '<').
     Конфликт между правилом 26 и лексемой '>' разрешен выводом (%left '>').
-    Конфликт между правилом 26 и лексемой '+' разрешен сдвигом ('>' < '+').
-    Конфликт между правилом 26 и лексемой '-' разрешен сдвигом ('>' < '-').
-    Конфликт между правилом 26 и лексемой '*' разрешен сдвигом ('>' < '*').
-    Конфликт между правилом 26 и лексемой '/' разрешен сдвигом ('>' < '/').
-
-
-State 60
-
-   21 expr: expr . '+' expr
-   21     | expr '+' expr .  [NEWLINE, CONJUNCTION, ',', '<', '>', '+', '-', ')', '}']
-   22     | expr . '-' expr
-   23     | expr . '*' expr
-   24     | expr . '/' expr
-   25     | expr . '<' expr
-   26     | expr . '>' expr
-   28     | expr . CONJUNCTION expr
-
-    CONJUNCTION  сдвиг, и переход в состояние 42
-    '*'          сдвиг, и переход в состояние 47
-    '/'          сдвиг, и переход в состояние 48
-
-    CONJUNCTION  [вывод с использованием правила 21 (expr)]
-    $default     вывод с использованием правила 21 (expr)
-
-    Конфликт между правилом 21 и лексемой '<' разрешен выводом ('<' < '+').
-    Конфликт между правилом 21 и лексемой '>' разрешен выводом ('>' < '+').
-    Конфликт между правилом 21 и лексемой '+' разрешен выводом (%left '+').
-    Конфликт между правилом 21 и лексемой '-' разрешен выводом (%left '-').
-    Конфликт между правилом 21 и лексемой '*' разрешен сдвигом ('+' < '*').
-    Конфликт между правилом 21 и лексемой '/' разрешен сдвигом ('+' < '/').
+    Конфликт между правилом 26 и лексемой '+' разрешен сдвигом ('<' < '+').
+    Конфликт между правилом 26 и лексемой '-' разрешен сдвигом ('<' < '-').
+    Конфликт между правилом 26 и лексемой '*' разрешен сдвигом ('<' < '*').
+    Конфликт между правилом 26 и лексемой '/' разрешен сдвигом ('<' < '/').
 
 
 State 61
 
-   21 expr: expr . '+' expr
-   22     | expr . '-' expr
-   22     | expr '-' expr .  [NEWLINE, CONJUNCTION, ',', '<', '>', '+', '-', ')', '}']
-   23     | expr . '*' expr
-   24     | expr . '/' expr
-   25     | expr . '<' expr
-   26     | expr . '>' expr
-   28     | expr . CONJUNCTION expr
+   22 expr: expr . '+' expr
+   23     | expr . '-' expr
+   24     | expr . '*' expr
+   25     | expr . '/' expr
+   26     | expr . '<' expr
+   27     | expr . '>' expr
+   27     | expr '>' expr .  [NEWLINE, CONJUNCTION, ',', '<', '>', ')', '}']
+   29     | expr . CONJUNCTION expr
 
-    CONJUNCTION  сдвиг, и переход в состояние 42
-    '*'          сдвиг, и переход в состояние 47
-    '/'          сдвиг, и переход в состояние 48
+    CONJUNCTION  сдвиг, и переход в состояние 44
+    '+'          сдвиг, и переход в состояние 47
+    '-'          сдвиг, и переход в состояние 48
+    '*'          сдвиг, и переход в состояние 49
+    '/'          сдвиг, и переход в состояние 50
 
-    CONJUNCTION  [вывод с использованием правила 22 (expr)]
-    $default     вывод с использованием правила 22 (expr)
+    CONJUNCTION  [вывод с использованием правила 27 (expr)]
+    $default     вывод с использованием правила 27 (expr)
 
-    Конфликт между правилом 22 и лексемой '<' разрешен выводом ('<' < '-').
-    Конфликт между правилом 22 и лексемой '>' разрешен выводом ('>' < '-').
-    Конфликт между правилом 22 и лексемой '+' разрешен выводом (%left '+').
-    Конфликт между правилом 22 и лексемой '-' разрешен выводом (%left '-').
-    Конфликт между правилом 22 и лексемой '*' разрешен сдвигом ('-' < '*').
-    Конфликт между правилом 22 и лексемой '/' разрешен сдвигом ('-' < '/').
+    Конфликт между правилом 27 и лексемой '<' разрешен выводом (%left '<').
+    Конфликт между правилом 27 и лексемой '>' разрешен выводом (%left '>').
+    Конфликт между правилом 27 и лексемой '+' разрешен сдвигом ('>' < '+').
+    Конфликт между правилом 27 и лексемой '-' разрешен сдвигом ('>' < '-').
+    Конфликт между правилом 27 и лексемой '*' разрешен сдвигом ('>' < '*').
+    Конфликт между правилом 27 и лексемой '/' разрешен сдвигом ('>' < '/').
 
 
 State 62
 
-   21 expr: expr . '+' expr
-   22     | expr . '-' expr
-   23     | expr . '*' expr
-   23     | expr '*' expr .  [NEWLINE, CONJUNCTION, ',', '<', '>', '+', '-', '*', '/', ')', '}']
-   24     | expr . '/' expr
-   25     | expr . '<' expr
-   26     | expr . '>' expr
-   28     | expr . CONJUNCTION expr
+   22 expr: expr . '+' expr
+   22     | expr '+' expr .  [NEWLINE, CONJUNCTION, ',', '<', '>', '+', '-', ')', '}']
+   23     | expr . '-' expr
+   24     | expr . '*' expr
+   25     | expr . '/' expr
+   26     | expr . '<' expr
+   27     | expr . '>' expr
+   29     | expr . CONJUNCTION expr
 
-    CONJUNCTION  сдвиг, и переход в состояние 42
+    CONJUNCTION  сдвиг, и переход в состояние 44
+    '*'          сдвиг, и переход в состояние 49
+    '/'          сдвиг, и переход в состояние 50
 
-    CONJUNCTION  [вывод с использованием правила 23 (expr)]
-    $default     вывод с использованием правила 23 (expr)
+    CONJUNCTION  [вывод с использованием правила 22 (expr)]
+    $default     вывод с использованием правила 22 (expr)
 
-    Конфликт между правилом 23 и лексемой '<' разрешен выводом ('<' < '*').
-    Конфликт между правилом 23 и лексемой '>' разрешен выводом ('>' < '*').
-    Конфликт между правилом 23 и лексемой '+' разрешен выводом ('+' < '*').
-    Конфликт между правилом 23 и лексемой '-' разрешен выводом ('-' < '*').
-    Конфликт между правилом 23 и лексемой '*' разрешен выводом (%left '*').
-    Конфликт между правилом 23 и лексемой '/' разрешен выводом (%left '/').
+    Конфликт между правилом 22 и лексемой '<' разрешен выводом ('<' < '+').
+    Конфликт между правилом 22 и лексемой '>' разрешен выводом ('>' < '+').
+    Конфликт между правилом 22 и лексемой '+' разрешен выводом (%left '+').
+    Конфликт между правилом 22 и лексемой '-' разрешен выводом (%left '-').
+    Конфликт между правилом 22 и лексемой '*' разрешен сдвигом ('+' < '*').
+    Конфликт между правилом 22 и лексемой '/' разрешен сдвигом ('+' < '/').
 
 
 State 63
 
-   21 expr: expr . '+' expr
-   22     | expr . '-' expr
-   23     | expr . '*' expr
-   24     | expr . '/' expr
-   24     | expr '/' expr .  [NEWLINE, CONJUNCTION, ',', '<', '>', '+', '-', '*', '/', ')', '}']
-   25     | expr . '<' expr
-   26     | expr . '>' expr
-   28     | expr . CONJUNCTION expr
+   22 expr: expr . '+' expr
+   23     | expr . '-' expr
+   23     | expr '-' expr .  [NEWLINE, CONJUNCTION, ',', '<', '>', '+', '-', ')', '}']
+   24     | expr . '*' expr
+   25     | expr . '/' expr
+   26     | expr . '<' expr
+   27     | expr . '>' expr
+   29     | expr . CONJUNCTION expr
 
-    CONJUNCTION  сдвиг, и переход в состояние 42
+    CONJUNCTION  сдвиг, и переход в состояние 44
+    '*'          сдвиг, и переход в состояние 49
+    '/'          сдвиг, и переход в состояние 50
+
+    CONJUNCTION  [вывод с использованием правила 23 (expr)]
+    $default     вывод с использованием правила 23 (expr)
+
+    Конфликт между правилом 23 и лексемой '<' разрешен выводом ('<' < '-').
+    Конфликт между правилом 23 и лексемой '>' разрешен выводом ('>' < '-').
+    Конфликт между правилом 23 и лексемой '+' разрешен выводом (%left '+').
+    Конфликт между правилом 23 и лексемой '-' разрешен выводом (%left '-').
+    Конфликт между правилом 23 и лексемой '*' разрешен сдвигом ('-' < '*').
+    Конфликт между правилом 23 и лексемой '/' разрешен сдвигом ('-' < '/').
+
+
+State 64
+
+   22 expr: expr . '+' expr
+   23     | expr . '-' expr
+   24     | expr . '*' expr
+   24     | expr '*' expr .  [NEWLINE, CONJUNCTION, ',', '<', '>', '+', '-', '*', '/', ')', '}']
+   25     | expr . '/' expr
+   26     | expr . '<' expr
+   27     | expr . '>' expr
+   29     | expr . CONJUNCTION expr
+
+    CONJUNCTION  сдвиг, и переход в состояние 44
 
     CONJUNCTION  [вывод с использованием правила 24 (expr)]
     $default     вывод с использованием правила 24 (expr)
 
-    Конфликт между правилом 24 и лексемой '<' разрешен выводом ('<' < '/').
-    Конфликт между правилом 24 и лексемой '>' разрешен выводом ('>' < '/').
-    Конфликт между правилом 24 и лексемой '+' разрешен выводом ('+' < '/').
-    Конфликт между правилом 24 и лексемой '-' разрешен выводом ('-' < '/').
+    Конфликт между правилом 24 и лексемой '<' разрешен выводом ('<' < '*').
+    Конфликт между правилом 24 и лексемой '>' разрешен выводом ('>' < '*').
+    Конфликт между правилом 24 и лексемой '+' разрешен выводом ('+' < '*').
+    Конфликт между правилом 24 и лексемой '-' разрешен выводом ('-' < '*').
     Конфликт между правилом 24 и лексемой '*' разрешен выводом (%left '*').
     Конфликт между правилом 24 и лексемой '/' разрешен выводом (%left '/').
 
 
-State 64
+State 65
+
+   22 expr: expr . '+' expr
+   23     | expr . '-' expr
+   24     | expr . '*' expr
+   25     | expr . '/' expr
+   25     | expr '/' expr .  [NEWLINE, CONJUNCTION, ',', '<', '>', '+', '-', '*', '/', ')', '}']
+   26     | expr . '<' expr
+   27     | expr . '>' expr
+   29     | expr . CONJUNCTION expr
+
+    CONJUNCTION  сдвиг, и переход в состояние 44
+
+    CONJUNCTION  [вывод с использованием правила 25 (expr)]
+    $default     вывод с использованием правила 25 (expr)
+
+    Конфликт между правилом 25 и лексемой '<' разрешен выводом ('<' < '/').
+    Конфликт между правилом 25 и лексемой '>' разрешен выводом ('>' < '/').
+    Конфликт между правилом 25 и лексемой '+' разрешен выводом ('+' < '/').
+    Конфликт между правилом 25 и лексемой '-' разрешен выводом ('-' < '/').
+    Конфликт между правилом 25 и лексемой '*' разрешен выводом (%left '*').
+    Конфликт между правилом 25 и лексемой '/' разрешен выводом (%left '/').
+
+
+State 66
 
    14 declaration: type VARIABLE DECLARE . expr
    15            | type VARIABLE DECLARE . '{' exprs '}'
    19 expr: . const
    20     | . VARIABLE
-   21     | . expr '+' expr
-   22     | . expr '-' expr
-   23     | . expr '*' expr
-   24     | . expr '/' expr
-   25     | . expr '<' expr
-   26     | . expr '>' expr
-   27     | . '!' expr
-   28     | . expr CONJUNCTION expr
-   29     | . '(' expr ')'
-   42 const: . INTEGER
-   43      | . BOOL
+   21     | . '-' expr
+   22     | . expr '+' expr
+   23     | . expr '-' expr
+   24     | . expr '*' expr
+   25     | . expr '/' expr
+   26     | . expr '<' expr
+   27     | . expr '>' expr
+   28     | . '!' expr
+   29     | . expr CONJUNCTION expr
+   30     | . '(' expr ')'
+   43 const: . INTEGER
+   44      | . BOOL
 
     BOOL      сдвиг, и переход в состояние 4
     INTEGER   сдвиг, и переход в состояние 5
-    VARIABLE  сдвиг, и переход в состояние 32
-    '!'       сдвиг, и переход в состояние 21
-    '('       сдвиг, и переход в состояние 33
-    '{'       сдвиг, и переход в состояние 68
+    VARIABLE  сдвиг, и переход в состояние 33
+    '-'       сдвиг, и переход в состояние 21
+    '!'       сдвиг, и переход в состояние 22
+    '('       сдвиг, и переход в состояние 34
+    '{'       сдвиг, и переход в состояние 70
 
-    expr   переход в состояние 69
-    const  переход в состояние 29
+    expr   переход в состояние 71
+    const  переход в состояние 30
 
 
-State 65
+State 67
 
    13 exprs: exprs . ',' expr
    17 assignment: VARIABLE ASSIGN '{' exprs . '}'
 
-    ','  сдвиг, и переход в состояние 70
-    '}'  сдвиг, и переход в состояние 71
+    ','  сдвиг, и переход в состояние 72
+    '}'  сдвиг, и переход в состояние 73
 
 
-State 66
+State 68
 
    12 exprs: expr . ',' expr
-   21 expr: expr . '+' expr
-   22     | expr . '-' expr
-   23     | expr . '*' expr
-   24     | expr . '/' expr
-   25     | expr . '<' expr
-   26     | expr . '>' expr
-   28     | expr . CONJUNCTION expr
+   22 expr: expr . '+' expr
+   23     | expr . '-' expr
+   24     | expr . '*' expr
+   25     | expr . '/' expr
+   26     | expr . '<' expr
+   27     | expr . '>' expr
+   29     | expr . CONJUNCTION expr
 
-    CONJUNCTION  сдвиг, и переход в состояние 42
-    ','          сдвиг, и переход в состояние 72
-    '<'          сдвиг, и переход в состояние 43
-    '>'          сдвиг, и переход в состояние 44
-    '+'          сдвиг, и переход в состояние 45
-    '-'          сдвиг, и переход в состояние 46
-    '*'          сдвиг, и переход в состояние 47
-    '/'          сдвиг, и переход в состояние 48
+    CONJUNCTION  сдвиг, и переход в состояние 44
+    ','          сдвиг, и переход в состояние 74
+    '<'          сдвиг, и переход в состояние 45
+    '>'          сдвиг, и переход в состояние 46
+    '+'          сдвиг, и переход в состояние 47
+    '-'          сдвиг, и переход в состояние 48
+    '*'          сдвиг, и переход в состояние 49
+    '/'          сдвиг, и переход в состояние 50
 
 
-State 67
+State 69
 
    18 print: PRINT '(' expr ')' .
 
     $default  вывод с использованием правила 18 (print)
 
 
-State 68
+State 70
 
    12 exprs: . expr ',' expr
    13      | . exprs ',' expr
    15 declaration: type VARIABLE DECLARE '{' . exprs '}'
    19 expr: . const
    20     | . VARIABLE
-   21     | . expr '+' expr
-   22     | . expr '-' expr
-   23     | . expr '*' expr
-   24     | . expr '/' expr
-   25     | . expr '<' expr
-   26     | . expr '>' expr
-   27     | . '!' expr
-   28     | . expr CONJUNCTION expr
-   29     | . '(' expr ')'
-   42 const: . INTEGER
-   43      | . BOOL
+   21     | . '-' expr
+   22     | . expr '+' expr
+   23     | . expr '-' expr
+   24     | . expr '*' expr
+   25     | . expr '/' expr
+   26     | . expr '<' expr
+   27     | . expr '>' expr
+   28     | . '!' expr
+   29     | . expr CONJUNCTION expr
+   30     | . '(' expr ')'
+   43 const: . INTEGER
+   44      | . BOOL
 
     BOOL      сдвиг, и переход в состояние 4
     INTEGER   сдвиг, и переход в состояние 5
-    VARIABLE  сдвиг, и переход в состояние 32
-    '!'       сдвиг, и переход в состояние 21
-    '('       сдвиг, и переход в состояние 33
+    VARIABLE  сдвиг, и переход в состояние 33
+    '-'       сдвиг, и переход в состояние 21
+    '!'       сдвиг, и переход в состояние 22
+    '('       сдвиг, и переход в состояние 34
 
-    exprs  переход в состояние 73
-    expr   переход в состояние 66
-    const  переход в состояние 29
+    exprs  переход в состояние 75
+    expr   переход в состояние 68
+    const  переход в состояние 30
 
 
-State 69
+State 71
 
    14 declaration: type VARIABLE DECLARE expr .  [NEWLINE]
-   21 expr: expr . '+' expr
-   22     | expr . '-' expr
-   23     | expr . '*' expr
-   24     | expr . '/' expr
-   25     | expr . '<' expr
-   26     | expr . '>' expr
-   28     | expr . CONJUNCTION expr
+   22 expr: expr . '+' expr
+   23     | expr . '-' expr
+   24     | expr . '*' expr
+   25     | expr . '/' expr
+   26     | expr . '<' expr
+   27     | expr . '>' expr
+   29     | expr . CONJUNCTION expr
 
-    CONJUNCTION  сдвиг, и переход в состояние 42
-    '<'          сдвиг, и переход в состояние 43
-    '>'          сдвиг, и переход в состояние 44
-    '+'          сдвиг, и переход в состояние 45
-    '-'          сдвиг, и переход в состояние 46
-    '*'          сдвиг, и переход в состояние 47
-    '/'          сдвиг, и переход в состояние 48
+    CONJUNCTION  сдвиг, и переход в состояние 44
+    '<'          сдвиг, и переход в состояние 45
+    '>'          сдвиг, и переход в состояние 46
+    '+'          сдвиг, и переход в состояние 47
+    '-'          сдвиг, и переход в состояние 48
+    '*'          сдвиг, и переход в состояние 49
+    '/'          сдвиг, и переход в состояние 50
 
     $default  вывод с использованием правила 14 (declaration)
 
 
-State 70
+State 72
 
    13 exprs: exprs ',' . expr
    19 expr: . const
    20     | . VARIABLE
-   21     | . expr '+' expr
-   22     | . expr '-' expr
-   23     | . expr '*' expr
-   24     | . expr '/' expr
-   25     | . expr '<' expr
-   26     | . expr '>' expr
-   27     | . '!' expr
-   28     | . expr CONJUNCTION expr
-   29     | . '(' expr ')'
-   42 const: . INTEGER
-   43      | . BOOL
+   21     | . '-' expr
+   22     | . expr '+' expr
+   23     | . expr '-' expr
+   24     | . expr '*' expr
+   25     | . expr '/' expr
+   26     | . expr '<' expr
+   27     | . expr '>' expr
+   28     | . '!' expr
+   29     | . expr CONJUNCTION expr
+   30     | . '(' expr ')'
+   43 const: . INTEGER
+   44      | . BOOL
 
     BOOL      сдвиг, и переход в состояние 4
     INTEGER   сдвиг, и переход в состояние 5
-    VARIABLE  сдвиг, и переход в состояние 32
-    '!'       сдвиг, и переход в состояние 21
-    '('       сдвиг, и переход в состояние 33
+    VARIABLE  сдвиг, и переход в состояние 33
+    '-'       сдвиг, и переход в состояние 21
+    '!'       сдвиг, и переход в состояние 22
+    '('       сдвиг, и переход в состояние 34
 
-    expr   переход в состояние 74
-    const  переход в состояние 29
+    expr   переход в состояние 76
+    const  переход в состояние 30
 
 
-State 71
+State 73
 
    17 assignment: VARIABLE ASSIGN '{' exprs '}' .
 
     $default  вывод с использованием правила 17 (assignment)
 
 
-State 72
+State 74
 
    12 exprs: expr ',' . expr
    19 expr: . const
    20     | . VARIABLE
-   21     | . expr '+' expr
-   22     | . expr '-' expr
-   23     | . expr '*' expr
-   24     | . expr '/' expr
-   25     | . expr '<' expr
-   26     | . expr '>' expr
-   27     | . '!' expr
-   28     | . expr CONJUNCTION expr
-   29     | . '(' expr ')'
-   42 const: . INTEGER
-   43      | . BOOL
+   21     | . '-' expr
+   22     | . expr '+' expr
+   23     | . expr '-' expr
+   24     | . expr '*' expr
+   25     | . expr '/' expr
+   26     | . expr '<' expr
+   27     | . expr '>' expr
+   28     | . '!' expr
+   29     | . expr CONJUNCTION expr
+   30     | . '(' expr ')'
+   43 const: . INTEGER
+   44      | . BOOL
 
     BOOL      сдвиг, и переход в состояние 4
     INTEGER   сдвиг, и переход в состояние 5
-    VARIABLE  сдвиг, и переход в состояние 32
-    '!'       сдвиг, и переход в состояние 21
-    '('       сдвиг, и переход в состояние 33
+    VARIABLE  сдвиг, и переход в состояние 33
+    '-'       сдвиг, и переход в состояние 21
+    '!'       сдвиг, и переход в состояние 22
+    '('       сдвиг, и переход в состояние 34
 
-    expr   переход в состояние 75
-    const  переход в состояние 29
-
-
-State 73
-
-   13 exprs: exprs . ',' expr
-   15 declaration: type VARIABLE DECLARE '{' exprs . '}'
-
-    ','  сдвиг, и переход в состояние 70
-    '}'  сдвиг, и переход в состояние 76
-
-
-State 74
-
-   13 exprs: exprs ',' expr .  [',', '}']
-   21 expr: expr . '+' expr
-   22     | expr . '-' expr
-   23     | expr . '*' expr
-   24     | expr . '/' expr
-   25     | expr . '<' expr
-   26     | expr . '>' expr
-   28     | expr . CONJUNCTION expr
-
-    CONJUNCTION  сдвиг, и переход в состояние 42
-    '<'          сдвиг, и переход в состояние 43
-    '>'          сдвиг, и переход в состояние 44
-    '+'          сдвиг, и переход в состояние 45
-    '-'          сдвиг, и переход в состояние 46
-    '*'          сдвиг, и переход в состояние 47
-    '/'          сдвиг, и переход в состояние 48
-
-    $default  вывод с использованием правила 13 (exprs)
+    expr   переход в состояние 77
+    const  переход в состояние 30
 
 
 State 75
 
-   12 exprs: expr ',' expr .  [',', '}']
-   21 expr: expr . '+' expr
-   22     | expr . '-' expr
-   23     | expr . '*' expr
-   24     | expr . '/' expr
-   25     | expr . '<' expr
-   26     | expr . '>' expr
-   28     | expr . CONJUNCTION expr
+   13 exprs: exprs . ',' expr
+   15 declaration: type VARIABLE DECLARE '{' exprs . '}'
 
-    CONJUNCTION  сдвиг, и переход в состояние 42
-    '<'          сдвиг, и переход в состояние 43
-    '>'          сдвиг, и переход в состояние 44
-    '+'          сдвиг, и переход в состояние 45
-    '-'          сдвиг, и переход в состояние 46
-    '*'          сдвиг, и переход в состояние 47
-    '/'          сдвиг, и переход в состояние 48
+    ','  сдвиг, и переход в состояние 72
+    '}'  сдвиг, и переход в состояние 78
+
+
+State 76
+
+   13 exprs: exprs ',' expr .  [',', '}']
+   22 expr: expr . '+' expr
+   23     | expr . '-' expr
+   24     | expr . '*' expr
+   25     | expr . '/' expr
+   26     | expr . '<' expr
+   27     | expr . '>' expr
+   29     | expr . CONJUNCTION expr
+
+    CONJUNCTION  сдвиг, и переход в состояние 44
+    '<'          сдвиг, и переход в состояние 45
+    '>'          сдвиг, и переход в состояние 46
+    '+'          сдвиг, и переход в состояние 47
+    '-'          сдвиг, и переход в состояние 48
+    '*'          сдвиг, и переход в состояние 49
+    '/'          сдвиг, и переход в состояние 50
+
+    $default  вывод с использованием правила 13 (exprs)
+
+
+State 77
+
+   12 exprs: expr ',' expr .  [',', '}']
+   22 expr: expr . '+' expr
+   23     | expr . '-' expr
+   24     | expr . '*' expr
+   25     | expr . '/' expr
+   26     | expr . '<' expr
+   27     | expr . '>' expr
+   29     | expr . CONJUNCTION expr
+
+    CONJUNCTION  сдвиг, и переход в состояние 44
+    '<'          сдвиг, и переход в состояние 45
+    '>'          сдвиг, и переход в состояние 46
+    '+'          сдвиг, и переход в состояние 47
+    '-'          сдвиг, и переход в состояние 48
+    '*'          сдвиг, и переход в состояние 49
+    '/'          сдвиг, и переход в состояние 50
 
     $default  вывод с использованием правила 12 (exprs)
 
 
-State 76
+State 78
 
    15 declaration: type VARIABLE DECLARE '{' exprs '}' .
 

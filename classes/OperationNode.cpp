@@ -12,7 +12,7 @@ bool Interpreter::suitForArithm(Interpreter::Node* node) {
         case Interpreter::OPNODE: {
             operName tmp = dynamic_cast<Interpreter::OperationNode*>(node)->getOperation();
             switch (tmp) {
-                case plus: case minus: case divide: case multiply:
+                case plus: case minus: case divide: case multiply: case uminus:
                     return true;
 
                 default:
@@ -63,6 +63,14 @@ void Interpreter::OperationNode::print(std::ostringstream& strm) {
 int Interpreter::OperationNode::execute() {
     switch (operation)
     {
+    case uminus:
+        if (!Interpreter::suitForArithm(kids[0])) {
+            throw "Semantic error! Wrong types of operands.";
+        }
+        else {
+            int tmp = kids[0]->execute();
+            return -tmp;
+        }
     case plus:
         if (!Interpreter::suitForArithm(kids[0]) || !Interpreter::suitForArithm(kids[1])) {
             throw "Semantic error! Wrong types of operands.";

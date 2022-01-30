@@ -14,7 +14,7 @@ print(f and d)
 a <- 4
 print(a)
 print(a+b)
-vint g = {2+4, 4+1, 10 + -7, 1}
+vint g = {2+4, 4+1, 10 - -7, 1}
 print(g)
 vint h = {1,2,3,4,5}
 print(h)

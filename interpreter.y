@@ -43,6 +43,7 @@ void yyerror(const char*);
 %left '+' '-'
 %left '*' '/'
 %right '!'
+%nonassoc UMINUS
 
 %type <ptr> expr const stmt stmts print exprs
 %type <varOpPtr> declaration assignment
@@ -140,6 +141,11 @@ expr:
                                         std::string tmp = std::string("Variable ") + *$1 + " is not declared!";
                                         yyerror(tmp.c_str());
                                     }
+                                }
+    | '-' expr %prec UMINUS     {
+                                    std::vector<Interpreter::Node*> kids; 
+                                    kids.push_back($2);
+                                    $$ = new Interpreter::OperationNode(uminus, kids);
                                 }
     | expr '+' expr             {
                                     std::vector<Interpreter::Node*> kids; 
