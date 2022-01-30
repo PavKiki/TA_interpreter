@@ -12,7 +12,15 @@ enum operName {
     divide,
     less,
     greater,
-    denial
+    denial,
+    newline,
+    pprint
+};
+
+enum varOperName {
+    varnothing,
+    declare,
+    assign
 };
 
 namespace Interpreter {
@@ -24,9 +32,9 @@ private:
 public:
     operName getOperation() {return operation;};
 
-    int getData() override;
+    int execute() override;
 
-    void print(std::stringstream& strm) override;
+    void print(std::ostringstream& strm) override;
 
     OperationNode(): Node(OPNODE) {operation = nothing;};
     OperationNode(operName name, std::vector<Node*> kids);
@@ -34,4 +42,46 @@ public:
 };
 
 bool suitForArithm(Node*);
+
+class VariableOperationNode: public OperationNode {
+private:
+    std::string varName;
+    varType vType;
+    varOperName vopType;
+    Node* scalarData;
+    std::vector<Node*> vectorData;
+    size_t vector_x;
+    std::vector<std::vector<Node*>> matrixData;
+    size_t matrix_x, matrix_y;
+public:
+    varType getVarType() {return vType;}
+
+    varOperName getVarOpName() {return vopType;}
+
+    // int getScalarData() {return scalarData;}
+
+    // void getVectorData(std::vector<int>& data) {data = vectorData;} 
+
+    int getVectorSize() {return vector_x;}
+
+    // void getMatrixData(std::vector<std::vector<int>>& data) {data = matrixData;}
+
+    void getMatrixSize(size_t& x, size_t& y) {x = matrix_x; y = matrix_y;}
+    
+    int execute() override;   
+
+    void print(std::ostringstream& strm) override;
+
+    //default constructor
+    VariableOperationNode(): OperationNode(), vType(ABSTRACT), vopType(varnothing) {};  
+    //constructor for scalar
+    VariableOperationNode(varType vType, varOperName vopName, std::string name, Node* data);
+    //constructor for vector 
+    VariableOperationNode(varType vType, varOperName vopName, std::string name, std::vector<Node*> data, size_t size);
+    //constructor for matrix
+    VariableOperationNode(varType vType, varOperName vopName, std::string name, std::vector<std::vector<Node*>> data, size_t x, size_t y);
+    //destructor
+    ~VariableOperationNode() {};
+};
+
 }

@@ -51,7 +51,24 @@ extern int yydebug;
   {
     END = 258,
     BOOL = 259,
-    INTEGER = 260
+    INTEGER = 260,
+    VARIABLE = 261,
+    CINT = 262,
+    VINT = 263,
+    MINT = 264,
+    INT = 265,
+    CVINT = 266,
+    CMINT = 267,
+    BOOLEAN = 268,
+    CBOOLEAN = 269,
+    VBOOLEAN = 270,
+    MBOOLEAN = 271,
+    CVBOOLEAN = 272,
+    CMBOOLEAN = 273,
+    NEWLINE = 274,
+    PRINT = 275,
+    ASSIGN = 276,
+    DECLARE = 277
   };
 #endif
 
@@ -60,13 +77,16 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 23 "interpreter.y" /* yacc.c:1921  */
+#line 24 "interpreter.y" /* yacc.c:1921  */
 
     Interpreter::BoolNode* boolPtr;
     Interpreter::IntegerNode* intPtr;
     Interpreter::Node* ptr;
+    std::string* varName;
+    Interpreter::VariableOperationNode* varOpPtr;
+    Interpreter::varType vtype;
 
-#line 70 "interpreter.tab.h" /* yacc.c:1921  */
+#line 90 "interpreter.tab.h" /* yacc.c:1921  */
 };
 
 typedef union YYSTYPE YYSTYPE;

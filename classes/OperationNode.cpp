@@ -1,4 +1,8 @@
 #include "OperationNode.h"
+#include "IntegerNode.h"
+#include "BoolNode.h"
+
+extern std::ostringstream Interpreter::out;
 
 bool Interpreter::suitForArithm(Interpreter::Node* node) {
     switch (node->nType) {
@@ -20,12 +24,6 @@ bool Interpreter::suitForArithm(Interpreter::Node* node) {
                 case multiply:
                     return true;
 
-                case less:
-                    return false;
-
-                case greater:
-                    return false;
-
                 default:
                     return false;
             }
@@ -36,16 +34,9 @@ bool Interpreter::suitForArithm(Interpreter::Node* node) {
     }
 }
 
-void Interpreter::OperationNode::print(std::stringstream& strm) {
-    try {
-        strm << this->getData();
-    }
-    catch (const char* error) {
-        std::cerr << error << std::endl;
-    }
-}
+void Interpreter::OperationNode::print(std::ostringstream& strm) {}
 
-int Interpreter::OperationNode::getData() {
+int Interpreter::OperationNode::execute() {
     switch (operation)
     {
     case plus:
@@ -53,7 +44,7 @@ int Interpreter::OperationNode::getData() {
             throw "Semantic error! Wrong types of operands.";
         }
         else {
-            return kids[0]->getData() + kids[1]->getData();
+            return kids[0]->execute() + kids[1]->execute();
         }
         break;
 
@@ -62,7 +53,7 @@ int Interpreter::OperationNode::getData() {
             throw "Semantic error! Wrong types of operands.";
         }
         else {
-            return kids[0]->getData() - kids[1]->getData();
+            return kids[0]->execute() - kids[1]->execute();
         }
         break;
 
@@ -71,7 +62,7 @@ int Interpreter::OperationNode::getData() {
             throw "Semantic error! Wrong types of operands.";
         }
         else {
-            return kids[0]->getData() * kids[1]->getData();
+            return kids[0]->execute() * kids[1]->execute();
         }
         break;
 
@@ -80,7 +71,7 @@ int Interpreter::OperationNode::getData() {
             throw "Semantic error! Wrong types of operands.";
         }
         else {
-            return kids[0]->getData() / kids[1]->getData();
+            return kids[0]->execute() / kids[1]->execute();
         }
         break;
     
@@ -89,7 +80,7 @@ int Interpreter::OperationNode::getData() {
             throw "Semantic error! Wrong types of operands.";
         }
         else {
-            return (kids[0]->getData() < kids[1]->getData());
+            return (kids[0]->execute() < kids[1]->execute());
         }
         break;
 
@@ -98,24 +89,27 @@ int Interpreter::OperationNode::getData() {
             throw "Semantic error! Wrong types of operands.";
         }
         else {
-            return (kids[0]->getData() > kids[1]->getData());
+            return (kids[0]->execute() > kids[1]->execute());
         }
         break;
 
-    // case denial:
-    //     if (kids[0]->nType == INTNODE) {
-    //         strm << (dynamic_cast<Interpreter::IntegerNode*>(kids[0])->getData()) ? 0 : 1;
-    //     }
-    //     else if (kids[0]->nType == BOOLNODE) {
-    //         strm << !(dynamic_cast<Interpreter::BoolNode*>(kids[0])->getData());
-    //     }
-    //     else {
-    //         throw "Semantic error! Wrong type of operand.";
-    //     }
-    //     break;
+    case denial:
+        return !kids[0]->execute();
+
+    case newline: {
+        for (auto& kid: kids) {
+            kid->execute();
+        }
+        return 0;
+    }
+
+    case pprint: {
+        kids[0]->print(Interpreter::out);
+        return 0;
+    }
+
     default:
         throw "Unknown operand type!";
-        break;
     }
     return -1;
 }
@@ -123,4 +117,83 @@ int Interpreter::OperationNode::getData() {
 Interpreter::OperationNode::OperationNode(operName name, std::vector<Interpreter::Node*> kids): Interpreter::Node(Interpreter::OPNODE) {
     operation = name;
     for (auto& kid: kids) this->kids.push_back(kid);
+}
+
+Interpreter::VariableOperationNode::VariableOperationNode(varType vType, varOperName vopName, std::string name, Interpreter::Node* data): vType(vType), vopType(vopName), varName(name) {
+    scalarData = data;
+}
+
+Interpreter::VariableOperationNode::VariableOperationNode(varType vType, varOperName vopName, std::string name, std::vector<Interpreter::Node*> data, size_t size): vType(vType), vopType(vopName), vector_x(size), varName(name) {
+    vectorData = data;
+}
+
+Interpreter::VariableOperationNode::VariableOperationNode(varType vType, varOperName vopName, std::string name, std::vector<std::vector<Interpreter::Node*>> data, size_t x, size_t y) {
+    this->vType = vType;
+    vopType = vopName;
+    varName = name;
+    matrix_x = x;
+    matrix_y = y;
+    matrixData.resize(x);
+    for (size_t i = 0; i < x; i++) {
+        matrixData[i].resize(y);
+    }
+    for (size_t i = 0; i < matrix_x; i++) {
+        for (size_t j = 0; j < matrix_y; j++) {
+            matrixData[i][j] = data[i][j];
+        }
+    }
+}
+
+void Interpreter::VariableOperationNode::print(std::ostringstream& strm) {}
+
+int Interpreter::VariableOperationNode::execute() {
+    if (vType == Interpreter::INT || vType == Interpreter::CINT) {
+        Interpreter::IntegerNode* newNode = nullptr;
+        if (scalarData->nType == Interpreter::OPNODE) {
+            Interpreter::OperationNode* tmp = dynamic_cast<Interpreter::OperationNode*>(scalarData);
+            switch (tmp->getOperation())
+            {
+            case plus: case minus: case divide: case multiply: {
+                newNode = new Interpreter::IntegerNode(decimal, std::to_string(scalarData->execute()));
+            }
+
+            default:
+                throw "Can't declare variable by this expression!";
+            }
+        }
+        else if (scalarData->nType == INTNODE) {
+            Interpreter::IntegerNode* tmp = dynamic_cast<Interpreter::IntegerNode*>(scalarData);
+            newNode = tmp;
+        }
+        else {
+            throw "Incorrect declaration!";
+        }
+        if (varStorage.find(varName) != varStorage.end()) std::free(varStorage[varName]);
+        varStorage.insert_or_assign(varName, newNode);
+    }
+    else if (vType == Interpreter::BOOL || vType == Interpreter::CBOOL) {
+        Interpreter::BoolNode* newNode = nullptr;
+        if (scalarData->nType == Interpreter::OPNODE) {
+            Interpreter::OperationNode* tmp = dynamic_cast<Interpreter::OperationNode*>(scalarData);
+            switch (tmp->getOperation())
+            {
+            case less: case greater: case denial: { //and more and more and more
+                Interpreter::BoolNode* newNode = new Interpreter::BoolNode(scalarData->execute() ? std::string("true") : std::string("false"));
+            } 
+
+            default:
+                throw "Can't declare variable by this expression!";
+            }
+        }
+        else if (scalarData->nType == BOOLNODE) {
+            Interpreter::BoolNode* tmp = dynamic_cast<Interpreter::BoolNode*>(scalarData);
+            newNode = tmp;
+        }
+        else {
+            throw "Incorrect declaration!";
+        }
+        if (varStorage.find(varName) != varStorage.end()) std::free(varStorage[varName]);
+        varStorage.insert_or_assign(varName, newNode);
+    }
+    return 0;
 }
