@@ -13,6 +13,7 @@ enum operName {
     less,
     greater,
     denial,
+    conjunction,
     newline,
     pprint
 };
@@ -42,6 +43,7 @@ public:
 };
 
 bool suitForArithm(Node*);
+bool suitForLogic(Node*);
 
 class VariableOperationNode: public OperationNode {
 private:
@@ -53,6 +55,7 @@ private:
     size_t vector_x;
     std::vector<std::vector<Node*>> matrixData;
     size_t matrix_x, matrix_y;
+    Node* getScalarExprResult(varType, Node*);
 public:
     varType getVarType() {return vType;}
 

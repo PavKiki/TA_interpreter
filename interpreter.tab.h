@@ -67,8 +67,9 @@ extern int yydebug;
     CMBOOLEAN = 273,
     NEWLINE = 274,
     PRINT = 275,
-    ASSIGN = 276,
-    DECLARE = 277
+    CONJUNCTION = 276,
+    ASSIGN = 277,
+    DECLARE = 278
   };
 #endif
 
@@ -77,7 +78,7 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 24 "interpreter.y" /* yacc.c:1921  */
+#line 25 "interpreter.y" /* yacc.c:1921  */
 
     Interpreter::BoolNode* boolPtr;
     Interpreter::IntegerNode* intPtr;
@@ -86,7 +87,7 @@ union YYSTYPE
     Interpreter::VariableOperationNode* varOpPtr;
     Interpreter::varType vtype;
 
-#line 90 "interpreter.tab.h" /* yacc.c:1921  */
+#line 91 "interpreter.tab.h" /* yacc.c:1921  */
 };
 
 typedef union YYSTYPE YYSTYPE;

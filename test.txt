@@ -1,9 +1,16 @@
 int a = 5
 int b = 3
 int c = a + b + 100
-bool d = a > b
+bool d = a > b + a
+int e = c * 4
+bool f = false
 print(a)
 print(b)
 print(c)
 print(d)
-
+print(e)
+print(f)
+print(f and d)
+a <- 4
+print(a)
+print(a+b)

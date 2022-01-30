@@ -23,7 +23,9 @@ true|false              {yylloc.last_line = yylloc.first_line = yylineno; yylval
 
 \=                      {return DECLARE;}
 
-[-+*/()<>!]             {return *yytext;}
+[-+*/()<>!{},]          {return *yytext;}
+
+and|&&                  {return CONJUNCTION;}
 
 print                   {return PRINT;}
 

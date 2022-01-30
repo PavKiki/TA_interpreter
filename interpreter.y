@@ -11,6 +11,7 @@
 #include "AuxFunctions.h"
 
 extern FILE* yyin;
+extern std::unordered_map<std::string, bool> Interpreter::isConst;
 extern std::unordered_map<std::string, Interpreter::Node*> Interpreter::varStorage;
 
 int yylex(void);
@@ -35,7 +36,7 @@ void yyerror(const char*);
 %token <intPtr> INTEGER
 %token <varName> VARIABLE
 %token <vtype> CINT VINT MINT INT CVINT CMINT BOOLEAN CBOOLEAN VBOOLEAN MBOOLEAN CVBOOLEAN CMBOOLEAN
-%token NEWLINE PRINT
+%token NEWLINE PRINT CONJUNCTION
 
 %left ASSIGN DECLARE
 %left '<' '>' 
@@ -44,7 +45,7 @@ void yyerror(const char*);
 %right '!'
 
 %type <ptr> expr const stmt stmts print
-%type <varOpPtr> declaration
+%type <varOpPtr> declaration assignment
 %type <vtype> type
 
 %%
@@ -78,12 +79,24 @@ stmt:
     | expr NEWLINE              {$$ = $1;}
     | print NEWLINE             {$$ = $1;}
     | declaration NEWLINE       {$$ = $1;}
+    | assignment NEWLINE        {$$ = $1;}
     | '(' stmts ')'             {$$ = $2;}
 ;
 
 
 declaration:
-    type VARIABLE DECLARE expr       {$$ = new Interpreter::VariableOperationNode($1, declare, *$2, $4);}
+    type VARIABLE DECLARE expr      {$$ = new Interpreter::VariableOperationNode($1, declare, *$2, $4);}
+;
+
+assignment:
+    VARIABLE ASSIGN expr            {
+                                        auto search = Interpreter::varStorage.find(*$1);
+                                        if (search != Interpreter::varStorage.end() && !Interpreter::isConst[*$1]) $$ = new Interpreter::VariableOperationNode(Interpreter::ABSTRACT, assign, *$1, $3);
+                                        else {
+                                            std::string tmp = std::string("Variable ") + *$1 + " doesn't exist or can not be changed!";
+                                            yyerror(tmp.c_str());
+                                        }
+                                    }
 ;
 
 print:
@@ -145,18 +158,15 @@ expr:
                                     kids.push_back($2);
                                     $$ = new Interpreter::OperationNode(denial, kids); 
                                 }
+    | expr CONJUNCTION expr     {
+                                    std::vector<Interpreter::Node*> kids; 
+                                    kids.push_back($1);
+                                    kids.push_back($3);
+                                    $$ = new Interpreter::OperationNode(conjunction, kids);
+                                }
     | '(' expr ')'              {$$ = $2;}
     
 ;
-
-/* assignment:
-    INT VARIABLE ASSIGN const       {}
-    | INT VARIABLE ASSIGN expr      {}
-    | INT VARIABLE ASSIGN VARIABLE  {}
-    | VARIABLE ASSIGN const         {}
-    | VARIABLE ASSIGN expr          {}
-    | VARIABLE ASSIGN VARIABLE      {}
-; */
 
 type:   
     INT                         {$$ = $1;}

@@ -3,6 +3,7 @@
 #include "BoolNode.h"
 
 std::unordered_map<std::string, Interpreter::Node*> Interpreter::varStorage;
+std::unordered_map<std::string, bool> Interpreter::isConst;
 std::ostringstream Interpreter::out;
 
 Interpreter::Node::Node() {

@@ -54,6 +54,7 @@ class Node {
 // };
 
 extern std::unordered_map<std::string, Node*> varStorage;
+extern std::unordered_map<std::string, bool> isConst;
 extern std::ostringstream out;
 
 // void variableScalarDistribution(VariableNode*, varType, std::string, Node*);
