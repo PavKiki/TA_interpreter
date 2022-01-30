@@ -34,5 +34,13 @@ public:
     ~IntegerNode() {};
 };
 
+class IntegerVectorNode: public AbstractVectorNode {
+private:
+
+public:
+    IntegerVectorNode(): AbstractVectorNode() {};
+    IntegerVectorNode(std::vector<Node*> dat, size_t siz): AbstractVectorNode(Interpreter::INTVECNODE, dat, siz) {};
+    ~IntegerVectorNode() {};
+};
 
 }

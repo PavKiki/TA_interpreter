@@ -19,4 +19,13 @@ public:
     ~BoolNode() {};
 };
 
+class BoolVectorNode: public AbstractVectorNode {
+private:
+
+public:
+    BoolVectorNode(): AbstractVectorNode() {};
+    BoolVectorNode(std::vector<Node*> dat, size_t siz): AbstractVectorNode(Interpreter::BOOLVECNODE, dat, siz) {};
+    ~BoolVectorNode() {};
+};
+
 }

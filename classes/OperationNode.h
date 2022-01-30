@@ -15,7 +15,7 @@ enum operName {
     denial,
     conjunction,
     newline,
-    pprint
+    pprint,
 };
 
 enum varOperName {
@@ -55,21 +55,14 @@ private:
     size_t vector_x;
     std::vector<std::vector<Node*>> matrixData;
     size_t matrix_x, matrix_y;
-    Node* getScalarExprResult(varType, Node*);
 public:
     varType getVarType() {return vType;}
 
     varOperName getVarOpName() {return vopType;}
 
-    // int getScalarData() {return scalarData;}
+    // int getVectorSize() {return vector_x;}
 
-    // void getVectorData(std::vector<int>& data) {data = vectorData;} 
-
-    int getVectorSize() {return vector_x;}
-
-    // void getMatrixData(std::vector<std::vector<int>>& data) {data = matrixData;}
-
-    void getMatrixSize(size_t& x, size_t& y) {x = matrix_x; y = matrix_y;}
+    // void getMatrixSize(size_t& x, size_t& y) {x = matrix_x; y = matrix_y;}
     
     int execute() override;   
 
@@ -86,5 +79,9 @@ public:
     //destructor
     ~VariableOperationNode() {};
 };
+
+Node* getScalarExprResult(varType, Node*);
+std::vector<Node*> getVectorExprResult(varType, std::vector<Node*>&);
+
 
 }

@@ -171,7 +171,19 @@ Interpreter::VariableOperationNode::VariableOperationNode(varType vType, varOper
     }
 }
 
-Interpreter::Node* Interpreter::VariableOperationNode::getScalarExprResult(Interpreter::varType vType, Interpreter::Node* scalarData) {
+std::vector<Interpreter::Node*> Interpreter::getVectorExprResult(Interpreter::varType type, std::vector<Interpreter::Node*>& src) {
+    std::vector<Interpreter::Node*> dest;
+    Interpreter::varType pattern = Interpreter::ABSTRACT;
+    if (type == Interpreter::VINT || type == Interpreter::CVINT) pattern = Interpreter::INT;
+    else if (type == Interpreter::VBOOL || type == Interpreter::CVBOOL) pattern = Interpreter::BOOL;
+    for (auto& node: src) {
+        Interpreter::Node* tmp = getScalarExprResult(pattern, node);
+        dest.push_back(tmp);
+    }
+    return dest;
+}
+
+Interpreter::Node* Interpreter::getScalarExprResult(Interpreter::varType vType, Interpreter::Node* scalarData) {
     if (vType == Interpreter::INT || vType == Interpreter::CINT) {
         Interpreter::IntegerNode* newNode = nullptr;
         if (scalarData->nType == Interpreter::OPNODE) {
@@ -220,9 +232,11 @@ Interpreter::Node* Interpreter::VariableOperationNode::getScalarExprResult(Inter
         }
         return newNode;
     }
+    else {
+        throw "Wrong type!";
+    }
     return nullptr;
 }
-
 
 void Interpreter::VariableOperationNode::print(std::ostringstream& strm) {}
 
@@ -239,8 +253,15 @@ int Interpreter::VariableOperationNode::execute() {
             newNode = getScalarExprResult(vType, scalarData);
             isConst.insert_or_assign(varName, true);
             break;
-        case Interpreter::VINT: case Interpreter::CVINT: case Interpreter::VBOOL: case Interpreter::CVBOOL:
+        case Interpreter::VINT: case Interpreter::VBOOL:
+            newNode = new Interpreter::IntegerVectorNode(getVectorExprResult(vType, vectorData), vector_x);
+            isConst.insert_or_assign(varName, false);
+            break;
 
+        case Interpreter::CVBOOL: case Interpreter::CVINT: 
+            newNode = new Interpreter::IntegerVectorNode(getVectorExprResult(vType, vectorData), vector_x);
+            isConst.insert_or_assign(varName, true);
+            break;
         
         case Interpreter::MINT: case Interpreter::CMINT: case Interpreter::MBOOL: case Interpreter::CMBOOL:
 
@@ -259,7 +280,14 @@ int Interpreter::VariableOperationNode::execute() {
         else if (search->second->nType == Interpreter::BOOLNODE) {
             newNode = getScalarExprResult(Interpreter::BOOL, scalarData);
         }
+        else if (search->second->nType == Interpreter::INTVECNODE) {
+            newNode = new Interpreter::IntegerVectorNode(getVectorExprResult(Interpreter::VINT, vectorData), vector_x);
+        }
+        else if (search->second->nType == Interpreter::BOOLVECNODE) {
+            newNode = new Interpreter::IntegerVectorNode(getVectorExprResult(Interpreter::VBOOL, vectorData), vector_x);
+        }
         else throw "Invalid variable type!";
+        std::free(varStorage[varName]);
         varStorage.insert_or_assign(varName, newNode);
     }
     else throw "Invalid operation!";

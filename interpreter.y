@@ -38,13 +38,13 @@ void yyerror(const char*);
 %token <vtype> CINT VINT MINT INT CVINT CMINT BOOLEAN CBOOLEAN VBOOLEAN MBOOLEAN CVBOOLEAN CMBOOLEAN
 %token NEWLINE PRINT CONJUNCTION
 
-%left ASSIGN DECLARE
+%left ASSIGN DECLARE ','
 %left '<' '>' 
 %left '+' '-'
 %left '*' '/'
 %right '!'
 
-%type <ptr> expr const stmt stmts print
+%type <ptr> expr const stmt stmts print exprs
 %type <varOpPtr> declaration assignment
 %type <vtype> type
 
@@ -83,15 +83,39 @@ stmt:
     | '(' stmts ')'             {$$ = $2;}
 ;
 
+exprs:
+    expr ',' expr               {
+                                    $$ = new Interpreter::ContainerVectorNode($1);
+                                    dynamic_cast<Interpreter::ContainerVectorNode*>($$)->addData($3);
+                                }
+    | exprs ',' expr            {dynamic_cast<Interpreter::ContainerVectorNode*>($$)->addData($3);}
+;
 
 declaration:
-    type VARIABLE DECLARE expr      {$$ = new Interpreter::VariableOperationNode($1, declare, *$2, $4);}
+    type VARIABLE DECLARE expr              {$$ = new Interpreter::VariableOperationNode($1, declare, *$2, $4);}
+    | type VARIABLE DECLARE '{' exprs '}'   {
+                                                std::vector<Interpreter::Node*> tmp;
+                                                dynamic_cast<Interpreter::ContainerVectorNode*>($5)->getVector(tmp);    
+                                                $$ = new Interpreter::VariableOperationNode($1, declare, *$2, tmp, dynamic_cast<Interpreter::ContainerVectorNode*>($5)->getSize());
+                                            }
 ;
 
 assignment:
     VARIABLE ASSIGN expr            {
                                         auto search = Interpreter::varStorage.find(*$1);
                                         if (search != Interpreter::varStorage.end() && !Interpreter::isConst[*$1]) $$ = new Interpreter::VariableOperationNode(Interpreter::ABSTRACT, assign, *$1, $3);
+                                        else {
+                                            std::string tmp = std::string("Variable ") + *$1 + " doesn't exist or can not be changed!";
+                                            yyerror(tmp.c_str());
+                                        }
+                                    }
+    | VARIABLE ASSIGN '{' exprs '}'   {
+                                        auto search = Interpreter::varStorage.find(*$1);
+                                        if (search != Interpreter::varStorage.end() && !Interpreter::isConst[*$1]) {
+                                            std::vector<Interpreter::Node*> tmp;
+                                            dynamic_cast<Interpreter::ContainerVectorNode*>($4)->getVector(tmp);
+                                            $$ = new Interpreter::VariableOperationNode(Interpreter::ABSTRACT, assign, *$1, tmp, dynamic_cast<Interpreter::ContainerVectorNode*>($4)->getSize());
+                                        }
                                         else {
                                             std::string tmp = std::string("Variable ") + *$1 + " doesn't exist or can not be changed!";
                                             yyerror(tmp.c_str());
