@@ -16,11 +16,3 @@ Interpreter::IntegerNode::IntegerNode(NumSys typ, std::string dat): Node(INTNODE
     if (typ == binary) data.setBin(dat);
     else data.dec = std::stoi(dat);
 }
-
-// int Interpreter::IntegerVariableNode::execute() {
-//     return data;
-// }
-
-// void Interpreter::IntegerVariableNode::print(std::stringstream& strm) {
-//     strm << data;
-// }

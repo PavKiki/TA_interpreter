@@ -44,7 +44,8 @@ int Interpreter::OperationNode::execute() {
             throw "Semantic error! Wrong types of operands.";
         }
         else {
-            return kids[0]->execute() + kids[1]->execute();
+            int tmp = kids[0]->execute() + kids[1]->execute();
+            return tmp;
         }
         break;
 
@@ -155,6 +156,7 @@ int Interpreter::VariableOperationNode::execute() {
             {
             case plus: case minus: case divide: case multiply: {
                 newNode = new Interpreter::IntegerNode(decimal, std::to_string(scalarData->execute()));
+                break;
             }
 
             default:
@@ -178,7 +180,8 @@ int Interpreter::VariableOperationNode::execute() {
             switch (tmp->getOperation())
             {
             case less: case greater: case denial: { //and more and more and more
-                Interpreter::BoolNode* newNode = new Interpreter::BoolNode(scalarData->execute() ? std::string("true") : std::string("false"));
+                newNode = new Interpreter::BoolNode(scalarData->execute() ? std::string("true") : std::string("false"));
+                break;
             } 
 
             default:

@@ -37,7 +37,8 @@ void yyerror(const char*);
 %token <vtype> CINT VINT MINT INT CVINT CMINT BOOLEAN CBOOLEAN VBOOLEAN MBOOLEAN CVBOOLEAN CMBOOLEAN
 %token NEWLINE PRINT
 
-%left '<' '>' ASSIGN DECLARE
+%left ASSIGN DECLARE
+%left '<' '>' 
 %left '+' '-'
 %left '*' '/'
 %right '!'
@@ -49,7 +50,7 @@ void yyerror(const char*);
 %%
 
 program:
-    function                    {outputOut();exit(0);}
+    function                    {outputOut(); exit(0);}
 ;
 
 function:
