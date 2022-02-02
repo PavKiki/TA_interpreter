@@ -105,7 +105,7 @@ matrix:
                                         kids.push_back(dynamic_cast<Interpreter::ContainerMatrixNode*>($3));
                                         $$ = new Interpreter::ContainerMatrixNode(kids, mmultiply);
                                     }
-    | matrix ELEMMULT matrix     {
+    | matrix ELEMMULT matrix        {
                                         std::vector<Interpreter::ContainerMatrixNode*> kids;
                                         kids.push_back(dynamic_cast<Interpreter::ContainerMatrixNode*>($1));
                                         kids.push_back(dynamic_cast<Interpreter::ContainerMatrixNode*>($3));
@@ -125,6 +125,24 @@ matrix:
                                         std::vector<Interpreter::ContainerMatrixNode*> kids;
                                         kids.push_back(dynamic_cast<Interpreter::ContainerMatrixNode*>($1));
                                         $$ = new Interpreter::ContainerMatrixNode(kids, mcycshiftleft);
+                                    }
+    | vector '\''                   {
+                                        auto kid = new Interpreter::ContainerMatrixNode(dynamic_cast<Interpreter::ContainerVectorNode*>($1));
+                                        std::vector<Interpreter::ContainerMatrixNode*> kids;
+                                        kids.push_back(dynamic_cast<Interpreter::ContainerMatrixNode*>(kid));
+                                        $$ = new Interpreter::ContainerMatrixNode(kids, mtransposition);
+                                    }
+    | matrix ELEMMULT vector        {
+                                        std::vector<Interpreter::ContainerMatrixNode*> kids;
+                                        kids.push_back(dynamic_cast<Interpreter::ContainerMatrixNode*>($1));
+                                        kids.push_back(static_cast<Interpreter::ContainerMatrixNode*>($3));
+                                        $$ = new Interpreter::ContainerMatrixNode(kids, MEMvec);
+                                    }
+    | matrix ELEMMULT expr          {
+                                        std::vector<Interpreter::ContainerMatrixNode*> kids;
+                                        kids.push_back(dynamic_cast<Interpreter::ContainerMatrixNode*>($1));
+                                        kids.push_back(static_cast<Interpreter::ContainerMatrixNode*>($3));
+                                        $$ = new Interpreter::ContainerMatrixNode(kids, MEMexpr);
                                     }
 ;
 
@@ -164,6 +182,12 @@ vector:
                                             std::vector<Interpreter::ContainerVectorNode*> kids;
                                             kids.push_back(dynamic_cast<Interpreter::ContainerVectorNode*>($1));
                                             $$ = new Interpreter::ContainerVectorNode(kids, vcycshiftleft);
+                                        }
+    | vector ELEMMULT expr              {
+                                            std::vector<Interpreter::ContainerVectorNode*> kids;
+                                            kids.push_back(dynamic_cast<Interpreter::ContainerVectorNode*>($1));
+                                            kids.push_back(static_cast<Interpreter::ContainerVectorNode*>($3));
+                                            $$ = new Interpreter::ContainerVectorNode(kids, VEMexpr);
                                         }
 ;
 

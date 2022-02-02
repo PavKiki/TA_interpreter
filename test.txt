@@ -1,28 +1,8 @@
-vint a = {5,6,7}
-print(a)
-vint b = a
+mint b = {{1,2},{3,4}}
 print(b)
-mint c = {{1,2},{3,4}}
+mint c = b.*5
 print(c)
-cmint d = c
+vint a = {3,4}
+print(a)
+mint d = b.*a
 print(d)
-mint e = {{1,2},{3,4},{9,10}}
-mint f = {{5,6},{7,8}}
-print(e)
-print(f)
-mint g = e * f
-print(g)
-mint h = g'
-print(h)
-vint i = {9,10,11}
-print(i)
-vint j = a .* i
-print(j)
-vint k = a >>
-print(k)
-vint l = a <<
-print(l)
-mint m = h >>
-print(m)
-mint n = h <<
-print(n)

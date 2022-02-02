@@ -64,9 +64,25 @@ int Interpreter::ContainerVectorNode::execute() {
             data = vec;
             break;
         }
+        case VEMexpr: {
+            kids[0]->execute();
+            std::vector<Interpreter::Node*> vec;
+            kids[0]->getVector(vec);
+            Interpreter::Node* multiplier = dynamic_cast<Interpreter::Node*>(kids[1]);
+            for (size_t i = 0; i < vec.size(); i++) {
+                if (Interpreter::suitForArithm(vec[i]) && Interpreter::suitForArithm(multiplier)) {
+                    auto tmp = new Interpreter::IntegerNode(decimal, std::to_string(vec[i]->execute() * multiplier->execute()));
+                    data.push_back(tmp);
+                    x++;
+                }
+                else throw "Type mismatch!";
+            }
+            break;
+        }
         default:
             throw "Incorrect operation type!";
     }
+    vecOperType = vnothing;
     return 0;
 }
 
@@ -212,7 +228,7 @@ int Interpreter::ContainerMatrixNode::execute() {
         x = resX;
         y = resY;
         for (size_t i = 0; i < x; i++) {
-            std::vector<ContainerVectorNode*> vkids;
+            std::vector<Interpreter::ContainerVectorNode*> vkids;
             vkids.push_back(mat1[i]);
             auto newRow = new Interpreter::ContainerVectorNode(vkids, vcycshiftright);
             newRow->execute();
@@ -229,9 +245,48 @@ int Interpreter::ContainerMatrixNode::execute() {
         x = resX;
         y = resY;
         for (size_t i = 0; i < x; i++) {
-            std::vector<ContainerVectorNode*> vkids;
+            std::vector<Interpreter::ContainerVectorNode*> vkids;
             vkids.push_back(mat1[i]);
             auto newRow = new Interpreter::ContainerVectorNode(vkids, vcycshiftleft);
+            newRow->execute();
+            this->addData(newRow);
+        }
+        break;
+    }
+    case MEMexpr: {
+        kids[0]->execute();
+        size_t resX = kids[0]->getSizeX();
+        size_t resY = kids[0]->getSizeY();
+        std::vector<Interpreter::ContainerVectorNode*> mat1;
+        kids[0]->getMatrix(mat1);
+        x = resX;
+        y = resY;
+        Interpreter::Node* tmp = kids[1];
+        for (size_t i = 0; i < x; i++) {
+            std::vector<Interpreter::ContainerVectorNode*> vkids;
+            vkids.push_back(mat1[i]);
+            vkids.push_back(static_cast<Interpreter::ContainerVectorNode*>(tmp));
+            auto newRow = new Interpreter::ContainerVectorNode(vkids, VEMexpr);
+            newRow->execute();
+            this->addData(newRow);
+        }
+        break;
+    }
+    case MEMvec: {
+        kids[0]->execute();
+        size_t resX = kids[0]->getSizeX();
+        size_t resY = kids[0]->getSizeY();
+        std::vector<Interpreter::ContainerVectorNode*> mat1;
+        kids[0]->getMatrix(mat1);
+        x = resX;
+        y = resY;
+        Interpreter::ContainerVectorNode* tmp = static_cast<Interpreter::ContainerVectorNode*>((Node*)(kids[1]));
+        if (tmp->getSize() != y) throw "Size mismatch!";
+        for (size_t i = 0; i < x; i++) {
+            std::vector<Interpreter::ContainerVectorNode*> vkids;
+            vkids.push_back(mat1[i]);
+            vkids.push_back(static_cast<Interpreter::ContainerVectorNode*>(tmp));
+            auto newRow = new Interpreter::ContainerVectorNode(vkids, velemmultiply);
             newRow->execute();
             this->addData(newRow);
         }
@@ -241,6 +296,7 @@ int Interpreter::ContainerMatrixNode::execute() {
         throw "Invalid operation type!";
         break;
     }
+    matOperType = mnothing;
     return 0;
 }
 

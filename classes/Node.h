@@ -10,14 +10,18 @@ enum mOpType {
     melemmultiply,
     mtransposition,
     mcycshiftright,     
-    mcycshiftleft       
+    mcycshiftleft,
+    vtransposition,
+    MEMexpr,
+    MEMvec
 };
 
 enum vecOpType {
     vnothing,
     velemmultiply,      
     vcycshiftright,     
-    vcycshiftleft       
+    vcycshiftleft,
+    VEMexpr
 };
 
 namespace Interpreter {
