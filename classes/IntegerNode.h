@@ -27,6 +27,8 @@ public:
 
     void print(std::ostringstream& strm) override;
 
+    Node* copy() {auto src = new IntegerNode(type, (std::to_string(type == decimal ? data.dec : static_cast<int>(data.bin.to_ulong())))); return src;}
+
     NumSys getType() {return type;}
 
     IntegerNode(): type(decimal), Node(INTNODE) {data.dec = 0;};
@@ -41,6 +43,15 @@ public:
     IntegerVectorNode(): AbstractVectorNode() {};
     IntegerVectorNode(std::vector<Node*> dat, size_t siz): AbstractVectorNode(Interpreter::INTVECNODE, dat, siz) {};
     ~IntegerVectorNode() {};
+};
+
+class IntegerMatrixNode: public AbstractMatrixNode {
+private:
+
+public:
+    IntegerMatrixNode(): AbstractMatrixNode() {};
+    IntegerMatrixNode(std::vector<AbstractVectorNode*> dat, size_t xx, size_t yy): AbstractMatrixNode(Interpreter::INTMATNODE, dat, xx, yy) {};
+    ~IntegerMatrixNode() {};
 };
 
 }

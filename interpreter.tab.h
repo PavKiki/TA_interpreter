@@ -53,24 +53,27 @@ extern int yydebug;
     BOOL = 259,
     INTEGER = 260,
     VARIABLE = 261,
-    CINT = 262,
-    VINT = 263,
-    MINT = 264,
-    INT = 265,
-    CVINT = 266,
-    CMINT = 267,
-    BOOLEAN = 268,
-    CBOOLEAN = 269,
-    VBOOLEAN = 270,
-    MBOOLEAN = 271,
-    CVBOOLEAN = 272,
-    CMBOOLEAN = 273,
-    NEWLINE = 274,
-    PRINT = 275,
-    CONJUNCTION = 276,
-    ASSIGN = 277,
-    DECLARE = 278,
-    UMINUS = 279
+    VVARIABLE = 262,
+    MVARIABLE = 263,
+    CINT = 264,
+    VINT = 265,
+    MINT = 266,
+    INT = 267,
+    CVINT = 268,
+    CMINT = 269,
+    BOOLEAN = 270,
+    CBOOLEAN = 271,
+    VBOOLEAN = 272,
+    MBOOLEAN = 273,
+    CVBOOLEAN = 274,
+    CMBOOLEAN = 275,
+    NEWLINE = 276,
+    PRINT = 277,
+    CONJUNCTION = 278,
+    MATELEMMULT = 279,
+    ASSIGN = 280,
+    DECLARE = 281,
+    UMINUS = 282
   };
 #endif
 
@@ -88,7 +91,7 @@ union YYSTYPE
     Interpreter::VariableOperationNode* varOpPtr;
     Interpreter::varType vtype;
 
-#line 92 "interpreter.tab.h" /* yacc.c:1921  */
+#line 95 "interpreter.tab.h" /* yacc.c:1921  */
 };
 
 typedef union YYSTYPE YYSTYPE;

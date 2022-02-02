@@ -23,7 +23,9 @@ true|false              {yylloc.last_line = yylloc.first_line = yylineno; yylval
 
 \=                      {return DECLARE;}
 
-[-+*/()<>!{},]          {return *yytext;}
+\.\*                    {return MATELEMMULT;}
+
+[-+*/()<>!{},\']        {return *yytext;}
 
 and|&&                  {return CONJUNCTION;}
 
@@ -53,7 +55,16 @@ cvbool                  {yylval.vtype = Interpreter::CVBOOL; return CVBOOLEAN;}
 
 cmbool                  {yylval.vtype = Interpreter::CMBOOL; return CMBOOLEAN;}
 
-[a-zA-Z][a-zA-Z0-9_]*   {yylloc.last_line = yylloc.first_line = yylineno; yylval.varName = new std::string(yytext); return VARIABLE;}
+[a-zA-Z][a-zA-Z0-9_]*   {
+                            yylloc.last_line = yylloc.first_line = yylineno; yylval.varName = new std::string(yytext);
+                            auto search = Interpreter::varStorage.find(*yylval.varName);
+                            if (search != Interpreter::varStorage.end()) {
+                                if (search->second->nType == Interpreter::INTMATNODE || search->second->nType == Interpreter::BOOLMATNODE) return MVARIABLE;
+                                else if (search->second->nType == Interpreter::INTVECNODE || search->second->nType == Interpreter::BOOLVECNODE) return VVARIABLE;
+                                else return VARIABLE;
+                            }
+                            return VARIABLE;
+                        }
 
 [\n]                    {return NEWLINE;}
 

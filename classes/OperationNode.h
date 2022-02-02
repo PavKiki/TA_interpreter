@@ -9,14 +9,13 @@ enum operName {
     uminus,
     plus,
     minus,
-    multiply,
     divide,
     less,
     greater,
     denial,
     conjunction,
     newline,
-    pprint,
+    pprint
 };
 
 enum varOperName {
@@ -52,19 +51,13 @@ private:
     varType vType;
     varOperName vopType;
     Node* scalarData;
-    std::vector<Node*> vectorData;
-    size_t vector_x;
-    std::vector<std::vector<Node*>> matrixData;
-    size_t matrix_x, matrix_y;
+    ContainerVectorNode* vectorData;
+    ContainerMatrixNode* matrixData;
 public:
     varType getVarType() {return vType;}
 
     varOperName getVarOpName() {return vopType;}
 
-    // int getVectorSize() {return vector_x;}
-
-    // void getMatrixSize(size_t& x, size_t& y) {x = matrix_x; y = matrix_y;}
-    
     int execute() override;   
 
     void print(std::ostringstream& strm) override;
@@ -74,15 +67,16 @@ public:
     //constructor for scalar
     VariableOperationNode(varType vType, varOperName vopName, std::string name, Node* data);
     //constructor for vector 
-    VariableOperationNode(varType vType, varOperName vopName, std::string name, std::vector<Node*> data, size_t size);
+    VariableOperationNode(varType vType, varOperName vopName, std::string name, ContainerVectorNode* data): vType(vType), vopType(vopName), varName(name), vectorData(data) {};
     //constructor for matrix
-    VariableOperationNode(varType vType, varOperName vopName, std::string name, std::vector<std::vector<Node*>> data, size_t x, size_t y);
+    VariableOperationNode(varType vType, varOperName vopName, std::string name, ContainerMatrixNode* data): vType(vType), vopType(vopName), varName(name), matrixData(data) {};
     //destructor
     ~VariableOperationNode() {};
 };
 
 Node* getScalarExprResult(varType, Node*);
-std::vector<Node*> getVectorExprResult(varType, std::vector<Node*>&);
+std::vector<Node*> getVectorExprResult(varType, ContainerVectorNode*&);
+std::vector<AbstractVectorNode*> getMatrixExprResult(varType, ContainerMatrixNode*&);
 
 
 }

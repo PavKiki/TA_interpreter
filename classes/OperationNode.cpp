@@ -12,7 +12,7 @@ bool Interpreter::suitForArithm(Interpreter::Node* node) {
         case Interpreter::OPNODE: {
             operName tmp = dynamic_cast<Interpreter::OperationNode*>(node)->getOperation();
             switch (tmp) {
-                case plus: case minus: case divide: case multiply: case uminus:
+                case plus: case minus: case divide: /*case multiply:*/ case uminus:
                     return true;
 
                 default:
@@ -49,7 +49,7 @@ bool Interpreter::suitForLogic(Interpreter::Node* node) {
 void Interpreter::OperationNode::print(std::ostringstream& strm) {
     switch (operation)
     {
-    case plus: case minus: case multiply: case divide:
+    case plus: case minus: /*case multiply:*/ case divide:
         strm << execute() << '\n';
         break;
     case less: case greater: case denial: case conjunction:
@@ -88,13 +88,13 @@ int Interpreter::OperationNode::execute() {
             return kids[0]->execute() - kids[1]->execute();
         }
 
-    case multiply:
-        if (!Interpreter::suitForArithm(kids[0]) || !Interpreter::suitForArithm(kids[1])) {
-            throw "Semantic error! Wrong types of operands.";
-        }
-        else {
-            return kids[0]->execute() * kids[1]->execute();
-        }
+    // case multiply:
+    //     if (!Interpreter::suitForArithm(kids[0]) || !Interpreter::suitForArithm(kids[1])) {
+    //         throw "Semantic error! Wrong types of operands.";
+    //     }
+    //     else {
+    //         return kids[0]->execute() * kids[1]->execute();
+    //     }
 
     case divide:
         if (!Interpreter::suitForArithm(kids[0]) || !Interpreter::suitForArithm(kids[1])) {
@@ -158,33 +158,35 @@ Interpreter::VariableOperationNode::VariableOperationNode(varType vType, varOper
     scalarData = data;
 }
 
-Interpreter::VariableOperationNode::VariableOperationNode(varType vType, varOperName vopName, std::string name, std::vector<Interpreter::Node*> data, size_t size): vType(vType), vopType(vopName), vector_x(size), varName(name) {
-    vectorData = data;
+std::vector<Interpreter::AbstractVectorNode*> Interpreter::getMatrixExprResult(Interpreter::varType type, Interpreter::ContainerMatrixNode*& src) {
+    src->execute();
+    std::vector<ContainerVectorNode*> srcData;
+    src->getMatrix(srcData);
+
+    std::vector<Interpreter::AbstractVectorNode*> dest;
+    Interpreter::varType pattern = Interpreter::ABSTRACT;
+    Interpreter::nodeType vecPattern = Interpreter::ABSTRACTNODE;
+    if (type == Interpreter::MINT || type == Interpreter::CMINT) pattern = Interpreter::VINT;
+    else if (type == Interpreter::MBOOL || type == Interpreter::CMBOOL) pattern = Interpreter::VBOOL;
+    if (pattern == Interpreter::VINT) vecPattern = Interpreter::INTVECNODE;
+    else if (pattern == Interpreter::VBOOL) vecPattern = Interpreter::BOOLVECNODE;
+    for (auto& row: srcData) {
+        Interpreter::AbstractVectorNode* newNode = new Interpreter::AbstractVectorNode(vecPattern, getVectorExprResult(pattern, row), row->getSize());
+        dest.push_back(newNode);
+    }
+    return dest;
 }
 
-Interpreter::VariableOperationNode::VariableOperationNode(varType vType, varOperName vopName, std::string name, std::vector<std::vector<Interpreter::Node*>> data, size_t x, size_t y) {
-    this->vType = vType;
-    vopType = vopName;
-    varName = name;
-    matrix_x = x;
-    matrix_y = y;
-    matrixData.resize(x);
-    for (size_t i = 0; i < x; i++) {
-        matrixData[i].resize(y);
-    }
-    for (size_t i = 0; i < matrix_x; i++) {
-        for (size_t j = 0; j < matrix_y; j++) {
-            matrixData[i][j] = data[i][j];
-        }
-    }
-}
+std::vector<Interpreter::Node*> Interpreter::getVectorExprResult(Interpreter::varType type, Interpreter::ContainerVectorNode*& src) {
+    src->execute();
+    std::vector<Node*> srcData;
+    src->getVector(srcData);
 
-std::vector<Interpreter::Node*> Interpreter::getVectorExprResult(Interpreter::varType type, std::vector<Interpreter::Node*>& src) {
     std::vector<Interpreter::Node*> dest;
     Interpreter::varType pattern = Interpreter::ABSTRACT;
     if (type == Interpreter::VINT || type == Interpreter::CVINT) pattern = Interpreter::INT;
     else if (type == Interpreter::VBOOL || type == Interpreter::CVBOOL) pattern = Interpreter::BOOL;
-    for (auto& node: src) {
+    for (auto& node: srcData) {
         Interpreter::Node* tmp = getScalarExprResult(pattern, node);
         dest.push_back(tmp);
     }
@@ -198,7 +200,7 @@ Interpreter::Node* Interpreter::getScalarExprResult(Interpreter::varType vType, 
             Interpreter::OperationNode* tmp = dynamic_cast<Interpreter::OperationNode*>(scalarData);
             switch (tmp->getOperation())
             {
-            case plus: case minus: case divide: case multiply: {
+            case plus: case minus: case divide: /*case multiply:*/ {
                 newNode = new Interpreter::IntegerNode(decimal, std::to_string(scalarData->execute()));
                 break;
             }
@@ -261,17 +263,45 @@ int Interpreter::VariableOperationNode::execute() {
             newNode = getScalarExprResult(vType, scalarData);
             isConst.insert_or_assign(varName, true);
             break;
-        case Interpreter::VINT: case Interpreter::VBOOL:
-            newNode = new Interpreter::IntegerVectorNode(getVectorExprResult(vType, vectorData), vector_x);
+        case Interpreter::VINT:
+            newNode = new Interpreter::IntegerVectorNode(getVectorExprResult(vType, vectorData), vectorData->getSize());
             isConst.insert_or_assign(varName, false);
             break;
 
-        case Interpreter::CVBOOL: case Interpreter::CVINT: 
-            newNode = new Interpreter::IntegerVectorNode(getVectorExprResult(vType, vectorData), vector_x);
+        case Interpreter::VBOOL:
+            newNode = new Interpreter::BoolVectorNode(getVectorExprResult(vType, vectorData), vectorData->getSize());
+            isConst.insert_or_assign(varName, false);
+            break;
+
+        case Interpreter::CVBOOL:
+            newNode = new Interpreter::BoolVectorNode(getVectorExprResult(vType, vectorData), vectorData->getSize());
+            isConst.insert_or_assign(varName, true);
+            break;
+
+        case Interpreter::CVINT: 
+            newNode = new Interpreter::IntegerVectorNode(getVectorExprResult(vType, vectorData), vectorData->getSize());
             isConst.insert_or_assign(varName, true);
             break;
         
-        case Interpreter::MINT: case Interpreter::CMINT: case Interpreter::MBOOL: case Interpreter::CMBOOL:
+        case Interpreter::MINT:
+            newNode = new Interpreter::IntegerMatrixNode(getMatrixExprResult(vType, matrixData), matrixData->getSizeX(), matrixData->getSizeY());
+            isConst.insert_or_assign(varName, false);
+            break;
+        
+        case Interpreter::MBOOL: 
+            newNode = new Interpreter::IntegerMatrixNode(getMatrixExprResult(vType, matrixData), matrixData->getSizeX(), matrixData->getSizeY());
+            isConst.insert_or_assign(varName, false);
+            break;
+        
+        case Interpreter::CMINT: 
+            newNode = new Interpreter::IntegerMatrixNode(getMatrixExprResult(vType, matrixData), matrixData->getSizeX(), matrixData->getSizeY());
+            isConst.insert_or_assign(varName, true);
+            break;
+        
+        case Interpreter::CMBOOL:
+            newNode = new Interpreter::IntegerMatrixNode(getMatrixExprResult(vType, matrixData), matrixData->getSizeX(), matrixData->getSizeY());
+            isConst.insert_or_assign(varName, true);
+            break;
 
         default:
             throw "Invalid variable type!";
@@ -289,10 +319,16 @@ int Interpreter::VariableOperationNode::execute() {
             newNode = getScalarExprResult(Interpreter::BOOL, scalarData);
         }
         else if (search->second->nType == Interpreter::INTVECNODE) {
-            newNode = new Interpreter::IntegerVectorNode(getVectorExprResult(Interpreter::VINT, vectorData), vector_x);
+            newNode = new Interpreter::IntegerVectorNode(getVectorExprResult(Interpreter::VINT, vectorData), vectorData->getSize());
         }
         else if (search->second->nType == Interpreter::BOOLVECNODE) {
-            newNode = new Interpreter::IntegerVectorNode(getVectorExprResult(Interpreter::VBOOL, vectorData), vector_x);
+            newNode = new Interpreter::IntegerVectorNode(getVectorExprResult(Interpreter::VBOOL, vectorData), vectorData->getSize());
+        }
+        else if (search->second->nType == Interpreter::INTMATNODE) {
+            newNode = new Interpreter::IntegerMatrixNode(getMatrixExprResult(Interpreter::MINT, matrixData), matrixData->getSizeX(), matrixData->getSizeY());
+        }
+        else if (search->second->nType == Interpreter::BOOLMATNODE) {
+            newNode = new Interpreter::IntegerMatrixNode(getMatrixExprResult(Interpreter::MBOOL, matrixData), matrixData->getSizeX(), matrixData->getSizeY());
         }
         else throw "Invalid variable type!";
         std::free(varStorage[varName]);
