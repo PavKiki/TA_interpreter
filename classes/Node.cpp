@@ -21,6 +21,55 @@ void Interpreter::ContainerVectorNode::getVector(std::vector<Interpreter::Node*>
     }
 }
 
+int Interpreter::ContainerVectorNode::execute() {
+    if (vecOperType == vnothing) return 0;
+    switch (vecOperType) {
+        case velemmultiply: {
+            kids[0]->execute();
+            kids[1]->execute();
+            if (kids[0]->getSize() != kids[1]->getSize()) throw "Mismatch in vector sizes!";
+            for (size_t i = 0; i < kids[0]->getSize(); i++) {
+                if (Interpreter::suitForArithm((*kids[0])[i]) && Interpreter::suitForArithm((*kids[1])[i])) {
+                    auto newNode = new Interpreter::IntegerNode(decimal, std::to_string((*kids[0])[i]->execute() * (*kids[1])[i]->execute()));
+                    data.push_back(newNode);
+                    x++;
+                }
+                else throw "Type mismatch!";
+            }
+            break;
+        }
+        case vcycshiftright: {
+            kids[0]->execute();
+            std::vector<Interpreter::Node*> vec;
+            kids[0]->getVector(vec);
+            auto tmp = vec[vec.size()-1];
+            for (size_t i = vec.size() - 1; i > 0; i--) {
+                vec[i] = vec[i-1];
+            }
+            vec[0] = tmp;
+            x = vec.size();
+            data = vec;
+            break;
+        }
+        case vcycshiftleft: {
+            kids[0]->execute();
+            std::vector<Interpreter::Node*> vec;
+            kids[0]->getVector(vec);
+            auto tmp = vec[0];
+            for (size_t i = 0; i < vec.size() - 1; i++) {
+                vec[i] = vec[i+1];
+            }
+            vec[vec.size()-1] = tmp;
+            x = vec.size();
+            data = vec;
+            break;
+        }
+        default:
+            throw "Incorrect operation type!";
+    }
+    return 0;
+}
+
 void Interpreter::AbstractVectorNode::print(std::ostringstream& strm) {
     size_t count = 0;
     strm << "{";
@@ -150,6 +199,40 @@ int Interpreter::ContainerMatrixNode::execute() {
                 else throw "Invalid node type!";
                 newRow->addData(resNode);
             }
+            this->addData(newRow);
+        }
+        break;
+    }
+    case mcycshiftright: {
+        kids[0]->execute();
+        size_t resX = kids[0]->getSizeX();
+        size_t resY = kids[0]->getSizeY();
+        std::vector<Interpreter::ContainerVectorNode*> mat1;
+        kids[0]->getMatrix(mat1);
+        x = resX;
+        y = resY;
+        for (size_t i = 0; i < x; i++) {
+            std::vector<ContainerVectorNode*> vkids;
+            vkids.push_back(mat1[i]);
+            auto newRow = new Interpreter::ContainerVectorNode(vkids, vcycshiftright);
+            newRow->execute();
+            this->addData(newRow);
+        }
+        break;
+    }
+    case mcycshiftleft: {
+        kids[0]->execute();
+        size_t resX = kids[0]->getSizeX();
+        size_t resY = kids[0]->getSizeY();
+        std::vector<Interpreter::ContainerVectorNode*> mat1;
+        kids[0]->getMatrix(mat1);
+        x = resX;
+        y = resY;
+        for (size_t i = 0; i < x; i++) {
+            std::vector<ContainerVectorNode*> vkids;
+            vkids.push_back(mat1[i]);
+            auto newRow = new Interpreter::ContainerVectorNode(vkids, vcycshiftleft);
+            newRow->execute();
             this->addData(newRow);
         }
         break;

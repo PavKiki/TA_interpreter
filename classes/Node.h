@@ -8,7 +8,16 @@ enum mOpType {
     mnothing,
     mmultiply,
     melemmultiply,
-    mtransposition
+    mtransposition,
+    mcycshiftright,     
+    mcycshiftleft       
+};
+
+enum vecOpType {
+    vnothing,
+    velemmultiply,      
+    vcycshiftright,     
+    vcycshiftleft       
 };
 
 namespace Interpreter {
@@ -27,7 +36,8 @@ enum nodeType {
     ABSTRACTMATNODE,    //10
     INTMATNODE,         //11
     BOOLMATNODE,        //12
-    MATOPNODE
+    MATOPNODE,
+    VECOPNODE
 };
 
 enum varType {
@@ -61,9 +71,12 @@ class ContainerVectorNode: public Node {
 private:
     std::vector<Node*> data;
     size_t x;
+
+    std::vector<ContainerVectorNode*> kids;
+    vecOpType vecOperType;
 public:
 
-    int execute() override {return 0;};
+    int execute() override;
 
     void print(std::ostringstream& strm) override {};
 
@@ -76,8 +89,9 @@ public:
     Node*& operator[] (const size_t index) {return data[index];};
 
     ContainerVectorNode(): Node(CONVECNODE), x(0) {};
-    ContainerVectorNode(Node* d): Node(CONVECNODE), x(1) {data.push_back(d);};
-    ContainerVectorNode(std::vector<Node*> d, size_t x): Node(CONVECNODE), x(x) {data = d;};
+    ContainerVectorNode(Node* d): Node(CONVECNODE), x(1), vecOperType(vnothing) {data.push_back(d);};
+    ContainerVectorNode(std::vector<Node*> d, size_t x): Node(CONVECNODE), x(x), vecOperType(vnothing) {data = d;};
+    ContainerVectorNode(std::vector<ContainerVectorNode*> kids, vecOpType t): x(0), vecOperType(t), kids(kids), Node(VECOPNODE) {}
     ~ContainerVectorNode() {for (auto& tmp: data) std::free(tmp);};
 };
 
@@ -124,7 +138,7 @@ public:
     ContainerMatrixNode(): Node(CONMATNODE), x(0), y(0), matOperType(mnothing) {};
     ContainerMatrixNode(ContainerVectorNode* d): Node(CONMATNODE), x(1), y(d->getSize()), matOperType(mnothing) {data.push_back(d);};
     ContainerMatrixNode(std::vector<AbstractVectorNode*>& d, size_t xx, size_t yy);
-    ContainerMatrixNode(std::vector<ContainerMatrixNode*> kids, mOpType t): x(0), y(0), kids(kids), matOperType(t) {};
+    ContainerMatrixNode(std::vector<ContainerMatrixNode*> kids, mOpType t): x(0), y(0), kids(kids), matOperType(t), Node(MATOPNODE) {};
     ~ContainerMatrixNode() {for (auto& tmp: data) std::free(tmp);};
 };
 

@@ -36,9 +36,9 @@ void yyerror(const char*);
 %token <intPtr> INTEGER
 %token <varName> VARIABLE VVARIABLE MVARIABLE
 %token <vtype> CINT VINT MINT INT CVINT CMINT BOOLEAN CBOOLEAN VBOOLEAN MBOOLEAN CVBOOLEAN CMBOOLEAN
-%token NEWLINE PRINT CONJUNCTION MATELEMMULT '\''
+%token NEWLINE PRINT CONJUNCTION ELEMMULT '\'' LEFTSHIFT RIGHTSHIFT ','
 
-%left ASSIGN DECLARE ','
+%left ASSIGN DECLARE
 %left '<' '>' 
 %left '+' '-'
 %left '*' '/'
@@ -105,7 +105,7 @@ matrix:
                                         kids.push_back(dynamic_cast<Interpreter::ContainerMatrixNode*>($3));
                                         $$ = new Interpreter::ContainerMatrixNode(kids, mmultiply);
                                     }
-    | matrix MATELEMMULT matrix     {
+    | matrix ELEMMULT matrix     {
                                         std::vector<Interpreter::ContainerMatrixNode*> kids;
                                         kids.push_back(dynamic_cast<Interpreter::ContainerMatrixNode*>($1));
                                         kids.push_back(dynamic_cast<Interpreter::ContainerMatrixNode*>($3));
@@ -115,6 +115,16 @@ matrix:
                                         std::vector<Interpreter::ContainerMatrixNode*> kids;
                                         kids.push_back(dynamic_cast<Interpreter::ContainerMatrixNode*>($1));
                                         $$ = new Interpreter::ContainerMatrixNode(kids, mtransposition);
+                                    }
+    | matrix RIGHTSHIFT             {
+                                        std::vector<Interpreter::ContainerMatrixNode*> kids;
+                                        kids.push_back(dynamic_cast<Interpreter::ContainerMatrixNode*>($1));
+                                        $$ = new Interpreter::ContainerMatrixNode(kids, mcycshiftright);
+                                    }
+    | matrix LEFTSHIFT              {
+                                        std::vector<Interpreter::ContainerMatrixNode*> kids;
+                                        kids.push_back(dynamic_cast<Interpreter::ContainerMatrixNode*>($1));
+                                        $$ = new Interpreter::ContainerMatrixNode(kids, mcycshiftleft);
                                     }
 ;
 
@@ -138,6 +148,22 @@ vector:
                                                 std::string tmp = std::string("Variable ") + *$1 + " doesn't exist!";
                                                 yyerror(tmp.c_str());
                                             }
+                                        }
+    | vector ELEMMULT vector            {
+                                            std::vector<Interpreter::ContainerVectorNode*> kids;
+                                            kids.push_back(dynamic_cast<Interpreter::ContainerVectorNode*>($1));
+                                            kids.push_back(dynamic_cast<Interpreter::ContainerVectorNode*>($3));
+                                            $$ = new Interpreter::ContainerVectorNode(kids, velemmultiply);
+                                        }
+    | vector RIGHTSHIFT                 {
+                                            std::vector<Interpreter::ContainerVectorNode*> kids;
+                                            kids.push_back(dynamic_cast<Interpreter::ContainerVectorNode*>($1));
+                                            $$ = new Interpreter::ContainerVectorNode(kids, vcycshiftright);
+                                        }
+    | vector LEFTSHIFT                  {
+                                            std::vector<Interpreter::ContainerVectorNode*> kids;
+                                            kids.push_back(dynamic_cast<Interpreter::ContainerVectorNode*>($1));
+                                            $$ = new Interpreter::ContainerVectorNode(kids, vcycshiftleft);
                                         }
 ;
 

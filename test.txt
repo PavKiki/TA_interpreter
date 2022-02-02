@@ -12,5 +12,17 @@ print(e)
 print(f)
 mint g = e * f
 print(g)
-mint i = g'
+mint h = g'
+print(h)
+vint i = {9,10,11}
 print(i)
+vint j = a .* i
+print(j)
+vint k = a >>
+print(k)
+vint l = a <<
+print(l)
+mint m = h >>
+print(m)
+mint n = h <<
+print(n)

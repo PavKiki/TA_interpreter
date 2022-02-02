@@ -23,9 +23,13 @@ true|false              {yylloc.last_line = yylloc.first_line = yylineno; yylval
 
 \=                      {return DECLARE;}
 
-\.\*                    {return MATELEMMULT;}
+\.\*                    {return ELEMMULT;}
 
-[-+*/()<>!{},\']        {return *yytext;}
+\<\<                    {return LEFTSHIFT;}
+
+\>\>                    {return RIGHTSHIFT;}
+
+[-+*/()\<\>!{},\']      {return *yytext;}
 
 and|&&                  {return CONJUNCTION;}
 

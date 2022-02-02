@@ -70,10 +70,12 @@ extern int yydebug;
     NEWLINE = 276,
     PRINT = 277,
     CONJUNCTION = 278,
-    MATELEMMULT = 279,
-    ASSIGN = 280,
-    DECLARE = 281,
-    UMINUS = 282
+    ELEMMULT = 279,
+    LEFTSHIFT = 280,
+    RIGHTSHIFT = 281,
+    ASSIGN = 282,
+    DECLARE = 283,
+    UMINUS = 284
   };
 #endif
 
@@ -91,7 +93,7 @@ union YYSTYPE
     Interpreter::VariableOperationNode* varOpPtr;
     Interpreter::varType vtype;
 
-#line 95 "interpreter.tab.h" /* yacc.c:1921  */
+#line 97 "interpreter.tab.h" /* yacc.c:1921  */
 };
 
 typedef union YYSTYPE YYSTYPE;
