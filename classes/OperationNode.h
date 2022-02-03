@@ -15,7 +15,11 @@ enum operName {
     denial,
     conjunction,
     newline,
-    pprint
+    pprint,
+    vintgetexp,
+    vboolgetexp,
+    mintgetexp,
+    mboolgetexp
 };
 
 enum varOperName {

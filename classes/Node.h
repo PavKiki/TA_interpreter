@@ -124,7 +124,7 @@ public:
     size_t getSize() {return size;};
     Node*& getByIndex(const size_t index) {return data[index];};
 
-    AbstractVectorNode(): Node(ABSTRACTVECNODE), size(0) {};
+    AbstractVectorNode(): Node(ABSTRACTVECNODE), size(0){};
     AbstractVectorNode(nodeType typ, std::vector<Node*> dat, size_t siz): Node(typ), size(siz) {data = dat;};
     ~AbstractVectorNode() {for (auto& node: data) std::free(node);};
 };

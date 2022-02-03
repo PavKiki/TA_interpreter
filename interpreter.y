@@ -439,6 +439,43 @@ expr:
                                     $$ = new Interpreter::OperationNode(conjunction, kids);
                                 }
     | '(' expr ')'              {$$ = $2;}
+    | VVARIABLE '(' expr ')'    {
+                                    auto search = Interpreter::varStorage.find(*$1);
+                                    if (search != Interpreter::varStorage.end()) {
+                                        std::vector<Interpreter::Node*> kids;
+                                        kids.push_back($3);
+                                        kids.push_back(search->second);
+                                        if (search->second->nType == Interpreter::INTVECNODE) {
+                                            $$ = new Interpreter::OperationNode(vintgetexp, kids);
+                                        }
+                                        else if (search->second->nType == Interpreter::BOOLVECNODE) {
+                                            $$ = new Interpreter::OperationNode(vboolgetexp, kids);
+                                        }
+                                    }
+                                    else {
+                                        std::string tmp = std::string("Variable ") + *$1 + " is not declared!";
+                                        yyerror(tmp.c_str());
+                                    }
+                                }
+    | MVARIABLE '(' expr ',' expr ')'   {
+                                            auto search = Interpreter::varStorage.find(*$1);
+                                            if (search != Interpreter::varStorage.end()) {
+                                                std::vector<Interpreter::Node*> kids;
+                                                kids.push_back($3);
+                                                kids.push_back($5);
+                                                kids.push_back(search->second);
+                                                if (search->second->nType == Interpreter::INTMATNODE) {
+                                                    $$ = new Interpreter::OperationNode(mintgetexp, kids);
+                                                }
+                                                else if (search->second->nType == Interpreter::BOOLMATNODE) {
+                                                    $$ = new Interpreter::OperationNode(mboolgetexp, kids);
+                                                }
+                                            }
+                                            else {
+                                                std::string tmp = std::string("Variable ") + *$1 + " is not declared!";
+                                                yyerror(tmp.c_str());
+                                            }
+                                        }
 ;
 
 type:   

@@ -12,7 +12,7 @@ bool Interpreter::suitForArithm(Interpreter::Node* node) {
         case Interpreter::OPNODE: {
             operName tmp = dynamic_cast<Interpreter::OperationNode*>(node)->getOperation();
             switch (tmp) {
-                case plus: case minus: case divide: /*case multiply:*/ case uminus:
+                case plus: case minus: case divide: case vintgetexp: case mintgetexp: case uminus:
                     return true;
 
                 default:
@@ -33,7 +33,7 @@ bool Interpreter::suitForLogic(Interpreter::Node* node) {
         case Interpreter::OPNODE: {
             operName tmp = dynamic_cast<Interpreter::OperationNode*>(node)->getOperation();
             switch (tmp) {
-                case less: case greater: case denial: case conjunction:
+                case less: case greater: case denial: case conjunction: case vboolgetexp: case mboolgetexp:
                     return true; 
 
                 default:
@@ -49,11 +49,12 @@ bool Interpreter::suitForLogic(Interpreter::Node* node) {
 void Interpreter::OperationNode::print(std::ostringstream& strm) {
     switch (operation)
     {
-    case plus: case minus: /*case multiply:*/ case divide:
+    case plus: case minus: case divide: case vintgetexp: case mintgetexp:
         strm << execute() << '\n';
         break;
-    case less: case greater: case denial: case conjunction:
+    case less: case greater: case denial: case conjunction: case vboolgetexp: case mboolgetexp:
         strm << (execute() ? "true" : "false") << '\n';
+        break;
     
     default:
         break; 
@@ -87,14 +88,6 @@ int Interpreter::OperationNode::execute() {
         else {
             return kids[0]->execute() - kids[1]->execute();
         }
-
-    // case multiply:
-    //     if (!Interpreter::suitForArithm(kids[0]) || !Interpreter::suitForArithm(kids[1])) {
-    //         throw "Semantic error! Wrong types of operands.";
-    //     }
-    //     else {
-    //         return kids[0]->execute() * kids[1]->execute();
-    //     }
 
     case divide:
         if (!Interpreter::suitForArithm(kids[0]) || !Interpreter::suitForArithm(kids[1])) {
@@ -141,6 +134,50 @@ int Interpreter::OperationNode::execute() {
     case pprint: {
         kids[0]->print(Interpreter::out);
         return 0;
+    }
+    
+    case vintgetexp: {
+        if (!Interpreter::suitForArithm(kids[0])) {
+            throw "Incorrect index!";
+        }
+        auto tmp = static_cast<Interpreter::IntegerVectorNode*>(kids[1]);
+        auto index = kids[0]->execute();
+        if (index >= tmp->getSize() || index < 0) throw "Incorrect index!";
+        return (*tmp)[index].execute();
+    }
+
+    case vboolgetexp: {
+        if (!Interpreter::suitForArithm(kids[0])) {
+            throw "Incorrect index!";
+        }
+        auto tmp = static_cast<Interpreter::BoolVectorNode*>(kids[1]);
+        auto index = kids[0]->execute();
+        if (index >= tmp->getSize() || index < 0) throw "Incorrect index!";
+        return (*tmp)[index].execute();
+    }
+    
+    case mintgetexp: {
+        if (!Interpreter::suitForArithm(kids[0]) || !Interpreter::suitForArithm(kids[1])) {
+            throw "Incorrect index!";
+        }
+        auto tmp = static_cast<Interpreter::IntegerMatrixNode*>(kids[2]);
+        auto index1 = kids[0]->execute();
+        auto index2 = kids[1]->execute();
+        if (index1 >= tmp->getSizeX() || index1 < 0) throw "Incorrect index!";
+        if (index2 >= tmp->getSizeY() || index2 < 0) throw "Incorrect index!";
+        return (tmp->getByIndex(index1))->getByIndex(index2)->execute();
+    }
+
+    case mboolgetexp: {
+        if (!Interpreter::suitForArithm(kids[0]) || !Interpreter::suitForArithm(kids[1])) {
+            throw "Incorrect index!";
+        }
+        auto tmp = static_cast<Interpreter::BoolMatrixNode*>(kids[2]);
+        auto index1 = kids[0]->execute();
+        auto index2 = kids[1]->execute();
+        if (index1 >= tmp->getSizeX() || index1 < 0) throw "Incorrect index!";
+        if (index2 >= tmp->getSizeY() || index2 < 0) throw "Incorrect index!";
+        return (tmp->getByIndex(index1))->getByIndex(index2)->execute();
     }
 
     default:
@@ -219,7 +256,7 @@ Interpreter::Node* Interpreter::getScalarExprResult(Interpreter::varType vType, 
             Interpreter::OperationNode* tmp = dynamic_cast<Interpreter::OperationNode*>(scalarData);
             switch (tmp->getOperation())
             {
-            case plus: case minus: case divide: /*case multiply:*/ {
+            case plus: case minus: case divide: case vintgetexp: case mintgetexp: {
                 newNode = new Interpreter::IntegerNode(decimal, std::to_string(scalarData->execute()));
                 break;
             }
@@ -243,7 +280,7 @@ Interpreter::Node* Interpreter::getScalarExprResult(Interpreter::varType vType, 
             Interpreter::OperationNode* tmp = dynamic_cast<Interpreter::OperationNode*>(scalarData);
             switch (tmp->getOperation())
             {
-            case less: case greater: case denial: case conjunction: { //and more and more and more
+            case less: case greater: case denial: case conjunction: case vboolgetexp: case mboolgetexp: { //and more and more and more
                 newNode = new Interpreter::BoolNode(scalarData->execute() ? std::string("true") : std::string("false"));
                 break;
             } 
