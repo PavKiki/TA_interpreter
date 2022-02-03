@@ -40,6 +40,8 @@ class IntegerVectorNode: public AbstractVectorNode {
 private:
 
 public:
+    IntegerNode& operator[] (const size_t index) {return *(dynamic_cast<IntegerNode*>(getByIndex(index)));}
+
     IntegerVectorNode(): AbstractVectorNode() {};
     IntegerVectorNode(std::vector<Node*> dat, size_t siz): AbstractVectorNode(Interpreter::INTVECNODE, dat, siz) {};
     ~IntegerVectorNode() {};
@@ -49,6 +51,8 @@ class IntegerMatrixNode: public AbstractMatrixNode {
 private:
 
 public:
+    IntegerVectorNode& operator[] (const size_t index) {return *(dynamic_cast<IntegerVectorNode*>(getByIndex(index)));}
+
     IntegerMatrixNode(): AbstractMatrixNode() {};
     IntegerMatrixNode(std::vector<AbstractVectorNode*> dat, size_t xx, size_t yy): AbstractMatrixNode(Interpreter::INTMATNODE, dat, xx, yy) {};
     ~IntegerMatrixNode() {};

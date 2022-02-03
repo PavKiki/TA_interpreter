@@ -1,8 +1,6 @@
-mint b = {{1,2},{3,4}}
-print(b)
-mint c = b.*5
-print(c)
-vint a = {3,4}
+mint a = {{1,2,3}, {4,5,6}, {7,8,9}}
 print(a)
-mint d = b.*a
-print(d)
+mbool b = {{false, true, true}, {true, false, true}, {true, true, false}}
+print(b)
+a(b) <- {{10, 20} ,{30, 40}, {50, 60}}
+print(a)

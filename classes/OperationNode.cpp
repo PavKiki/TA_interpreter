@@ -177,6 +177,25 @@ std::vector<Interpreter::AbstractVectorNode*> Interpreter::getMatrixExprResult(I
     return dest;
 }
 
+Interpreter::AbstractVectorNode* Interpreter::VECgetNode_checkType(Interpreter::ContainerVectorNode* vector, Interpreter::nodeType& nType) {
+    nType = Interpreter::INTVECNODE;
+    try {
+        auto newNode = new Interpreter::IntegerVectorNode(getVectorExprResult(Interpreter::VINT, vector), vector->getSize());
+        return newNode;
+    }
+    catch (const char* error) {
+        nType = Interpreter::BOOLVECNODE;
+        try {
+            auto newNode = new Interpreter::BoolVectorNode(getVectorExprResult(Interpreter::VBOOL, vector), vector->getSize());
+            return newNode;
+        }
+        catch (const char* error) {
+            nType = Interpreter::ABSTRACTVECNODE;
+            return nullptr;
+        }
+    }
+}
+
 std::vector<Interpreter::Node*> Interpreter::getVectorExprResult(Interpreter::varType type, Interpreter::ContainerVectorNode*& src) {
     src->execute();
     std::vector<Node*> srcData;
@@ -335,5 +354,218 @@ int Interpreter::VariableOperationNode::execute() {
         varStorage.insert_or_assign(varName, newNode);
     }
     else throw "Invalid operation!";
+    return 0;
+}
+
+int Interpreter::VecMatVariableOperationNode::execute() {
+    switch(oper) {
+        case vexpr: {
+            if (src->nType == INTVECNODE && suitForArithm(exprs[0]) && suitForArithm(exprs[1])) {
+                auto ssrc = static_cast<Interpreter::IntegerVectorNode*>(src);
+                (*ssrc)[exprs[0]->execute()] = IntegerNode(decimal, std::to_string(exprs[1]->execute()));
+            }
+            else if (src->nType == BOOLVECNODE && suitForArithm(exprs[0]) && suitForLogic(exprs[1])) {
+                auto ssrc = dynamic_cast<Interpreter::BoolVectorNode*>(src);
+                (*ssrc)[exprs[0]->execute()] = BoolNode(exprs[1]->execute() ? "true" : "false");
+            }
+            else throw "Type mismatch!";
+            break;
+        }
+        case vvec: {
+            auto futureCondition = dynamic_cast<Interpreter::ContainerVectorNode*>(exprs[0]); 
+            nodeType typeCondition;
+            AbstractVectorNode* vecCondition = Interpreter::VECgetNode_checkType(futureCondition, typeCondition);
+
+            if (typeCondition == Interpreter::ABSTRACTVECNODE) throw "Error in condition";
+            if (typeCondition == Interpreter::INTVECNODE) {
+                auto vecCond = dynamic_cast<Interpreter::IntegerVectorNode*>(vecCondition);
+
+                nodeType typeExpr;
+                AbstractVectorNode* vecExp;
+                vecExp = Interpreter::VECgetNode_checkType(vecNode, typeExpr);
+                if (typeExpr == src->nType && typeExpr == Interpreter::INTVECNODE) {
+                    auto vecSrc = static_cast<Interpreter::IntegerVectorNode*>(src);
+                    auto vecExpr = static_cast<Interpreter::IntegerVectorNode*>(vecExp);
+
+                    if (vecCond->getSize() != vecExpr->getSize()) throw "Dimension mismatch!";
+
+                    for (size_t i = 0; i < vecCond->getSize(); i++) {
+                        if (!(0 <= (*vecCond)[i].execute() && (*vecCond)[i].execute() < vecSrc->getSize())) throw "Invalid index!";
+                    }
+
+                    for (size_t i = 0; i < vecCond->getSize(); i++) {
+                        (*vecSrc)[(*vecCond)[i].execute()] = Interpreter::IntegerNode(decimal, std::to_string((*vecExpr)[i].execute()));
+                    }
+                } 
+                else if (typeExpr == src->nType && typeExpr == Interpreter::BOOLVECNODE) {
+                    auto vecSrc = dynamic_cast<Interpreter::BoolVectorNode*>(src);
+                    auto vecExpr = dynamic_cast<Interpreter::BoolVectorNode*>(vecExp);
+
+                    if (vecCond->getSize() != vecExpr->getSize()) throw "Dimension mismatch!";
+
+                    for (size_t i = 0; i < vecCond->getSize(); i++) {
+                        if (!(0 <= (*vecCond)[i].execute() && (*vecCond)[i].execute() < vecSrc->getSize())) throw "Invalid index!";
+                    }
+
+                    for (size_t i = 0; i < vecCond->getSize(); i++) {
+                        (*vecSrc)[(*vecCond)[i].execute()] = Interpreter::BoolNode((*vecExpr)[i].execute() ? "true" : "false");
+                    }
+                }
+                else {
+                    throw "Type mismatch!";
+                }
+            }
+            else if (typeCondition == Interpreter::BOOLVECNODE) {
+                auto vecCond = dynamic_cast<Interpreter::BoolVectorNode*>(vecCondition);
+                std::vector<Interpreter::Node*> cont;
+                for (size_t i = 0; i < vecCond->getSize(); i++) {
+                    if ((*vecCond)[i].execute()) {
+                        auto tmp = new Interpreter::IntegerNode(decimal, std::to_string(i));
+                        cont.push_back(tmp);
+                    }
+                }
+                auto contCond = new Interpreter::ContainerVectorNode(cont, cont.size());
+                std::vector<Interpreter::Node*> ttmp;
+                ttmp.push_back(contCond);
+
+                auto tmpvecmat = new Interpreter::VecMatVariableOperationNode(vvec, src, vecNode, ttmp);
+                tmpvecmat->execute();
+            }
+            break;
+        }
+        case mexpr: {
+            if (suitForArithm(exprs[0])) {
+                auto ssrc = dynamic_cast<Interpreter::AbstractMatrixNode*>(src);
+                Interpreter::Node* srcvec = ssrc->getByIndex(exprs[0]->execute());
+                std::vector<Interpreter::Node*> newkids;
+                newkids.push_back(exprs[1]);
+                newkids.push_back(exprs[2]);
+
+                auto tmp = new VecMatVariableOperationNode(vexpr, srcvec, newkids);
+                tmp->execute();
+            }
+            else throw "Type mismatch!";
+            break;
+        }        
+        case mexprcolumn: {
+            auto ssrc = dynamic_cast<Interpreter::AbstractMatrixNode*>(src);
+
+            if (ssrc->getSizeX() != vecNode->getSize()) throw "Dimension mismatch!";
+            for (int i = 0; i < ssrc->getSizeX(); i++) {
+                Interpreter::Node* srcvec = ssrc->getByIndex(i);
+                std::vector<Interpreter::Node*> newkids;
+                newkids.push_back(exprs[0]);
+                newkids.push_back((*vecNode)[i]);
+
+                auto tmp = new VecMatVariableOperationNode(vexpr, srcvec, newkids);
+                tmp->execute();
+            }
+            break;
+        }
+        case mexprrow: {
+            auto ssrc = dynamic_cast<Interpreter::AbstractMatrixNode*>(src);
+
+            if (ssrc->getSizeY() != vecNode->getSize()) throw "Dimension mismatch!";
+            Interpreter::Node* srcvec = ssrc->getByIndex(exprs[0]->execute());
+            for (int i = 0; i < ssrc->getSizeY(); i++) {
+                std::vector<Interpreter::Node*> newkids;
+                auto ttmp = new Interpreter::IntegerNode(decimal, std::to_string(i)); 
+                newkids.push_back(ttmp);
+                newkids.push_back((*vecNode)[i]);
+
+                auto tmp = new VecMatVariableOperationNode(vexpr, srcvec, newkids);
+                tmp->execute();
+            }
+            break;
+        }
+        case mveccolumn: {
+            auto ssrc = dynamic_cast<Interpreter::AbstractMatrixNode*>(src);
+            
+            std::vector<Interpreter::Node*> kids;
+            kids.push_back(exprs[0]);
+
+            if (ssrc->getSizeX() == matNode->getSizeX()) {
+                for (size_t i = 0; i < ssrc->getSizeX(); i++) {                   
+                    Interpreter::AbstractVectorNode* ttmp = ssrc->getByIndex(i); 
+                    auto tmp = new Interpreter::VecMatVariableOperationNode(vvec, ttmp, (*matNode)[i], kids);
+                    tmp->execute();
+                }
+            }
+            else throw "Dimension mismatch!";
+            break;
+        }
+        case mvecrow: {
+            auto ssrc = dynamic_cast<Interpreter::AbstractMatrixNode*>(src);
+            auto condVec = static_cast<Interpreter::ContainerVectorNode*>(exprs[0]);
+            if (ssrc->getSizeY() == matNode->getSizeY()) {
+                nodeType conNodeType;
+                auto conVec = VECgetNode_checkType(condVec, conNodeType);
+
+                if (conNodeType == Interpreter::INTVECNODE) {
+                    for (size_t i = 0; i < conVec->getSize(); i++) if (conVec->getByIndex(i)->execute() >= ssrc->getSizeX() || conVec->getByIndex(i)->execute() < 0) throw "Invalid index!";
+                    if (matNode->getSizeX() != conVec->getSize()) throw "Dimension mismatch!";
+                    for (size_t i = 0; i < conVec->getSize(); i++) {
+                        nodeType exprType;
+                        auto expr = VECgetNode_checkType((*matNode)[i], exprType);
+                        if (exprType != ssrc->getByIndex(0)->nType) throw "Type mismatch!";
+                        ssrc->getByIndex(conVec->getByIndex(i)->execute()) = expr;
+                    }
+                }
+                
+                else if (conNodeType == Interpreter::BOOLVECNODE) {
+                    int trueAmount = 0;
+                    for (size_t i = 0; i < conVec->getSize(); i++) {
+                        if (conVec->getByIndex(i)->execute()) trueAmount++;
+                    }
+                    if (conVec->getSize() == ssrc->getSizeX() && trueAmount == matNode->getSizeX()) {
+                        size_t j = 0;
+                        for (size_t i = 0; i < conVec->getSize(); i++) {
+                            if (conVec->getByIndex(i)->execute()) {
+                                nodeType exprType;
+                                auto expr = VECgetNode_checkType((*matNode)[j], exprType);
+                                if (exprType != ssrc->getByIndex(0)->nType) throw "Type mismatch!";
+                                ssrc->getByIndex(i) = expr;
+                                j++;
+                            }
+                        }
+                    }
+                    else throw "Dimension mismatch!";
+                }
+
+                else throw "Type mismatch!";
+            }
+            else throw "Dimension mismatch!";
+            break;
+        }
+        case mmat: {
+            auto ssrc = dynamic_cast<Interpreter::AbstractMatrixNode*>(src);
+            auto condMat = static_cast<Interpreter::ContainerMatrixNode*>(exprs[0]);
+
+            if (ssrc->getSizeX() == condMat->getSizeX() && ssrc->getSizeY() == condMat->getSizeY()) {
+                for (size_t i = 0; i < ssrc->getSizeX(); i++) {
+                    nodeType condType;
+                    auto cond = VECgetNode_checkType((*condMat)[i], condType);
+                    if (cond->nType != Interpreter::BOOLVECNODE) throw "Type mismatch!";
+                    
+                    bool flag = false;
+                    for (int j = 0; j < cond->getSize(); j++) {
+                        if (cond->getByIndex(j)->execute()) flag = true;
+                    }
+                    if (!flag) continue;
+
+                    std::vector<Interpreter::Node*> kids;
+                    kids.push_back((*condMat)[i]);
+                    auto tmp = new Interpreter::VecMatVariableOperationNode(vvec, ssrc->getByIndex(i), (*matNode)[i], kids);
+                    tmp->execute();
+
+                    if (ssrc->getByIndex(i)->getSize() != ssrc->getSizeY()) throw "Indexes should form rectangle matrix!";
+                }
+            }
+            else throw "Dimension mismatch!";
+            break;
+        }
+        default:
+            throw "Incorrect operation!";
+    }
     return 0;
 }

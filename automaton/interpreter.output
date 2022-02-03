@@ -3,18 +3,18 @@
    END
 
 
-Состояние 42 конфликты: 1 сдвига/вывода
-Состояние 43 конфликты: 1 сдвига/вывода
-Состояние 93 конфликты: 5 сдвига/вывода
-Состояние 94 конфликты: 4 сдвига/вывода
-Состояние 96 конфликты: 4 сдвига/вывода
-Состояние 97 конфликты: 3 сдвига/вывода
-Состояние 99 конфликты: 6 сдвига/вывода
-Состояние 100 конфликты: 1 сдвига/вывода
-Состояние 101 конфликты: 1 сдвига/вывода
-Состояние 102 конфликты: 1 сдвига/вывода
-Состояние 103 конфликты: 1 сдвига/вывода
-Состояние 104 конфликты: 1 сдвига/вывода
+Состояние 45 конфликты: 1 сдвига/вывода
+Состояние 46 конфликты: 1 сдвига/вывода
+Состояние 103 конфликты: 5 сдвига/вывода
+Состояние 104 конфликты: 4 сдвига/вывода
+Состояние 106 конфликты: 4 сдвига/вывода
+Состояние 107 конфликты: 3 сдвига/вывода
+Состояние 109 конфликты: 6 сдвига/вывода
+Состояние 110 конфликты: 1 сдвига/вывода
+Состояние 111 конфликты: 1 сдвига/вывода
+Состояние 112 конфликты: 1 сдвига/вывода
+Состояние 113 конфликты: 1 сдвига/вывода
+Состояние 114 конфликты: 1 сдвига/вывода
 
 
 Грамматика
@@ -34,157 +34,171 @@
     8     | vector NEWLINE
     9     | matrix NEWLINE
    10     | print NEWLINE
-   11     | declaration NEWLINE
-   12     | assignment NEWLINE
-   13     | '(' stmts ')'
+   11     | vmdeclaration NEWLINE
+   12     | declaration NEWLINE
+   13     | assignment NEWLINE
+   14     | '(' stmts ')'
 
-   14 matrix: '{' listexprs '}'
-   15       | MVARIABLE
-   16       | matrix '*' matrix
-   17       | matrix ELEMMULT matrix
-   18       | matrix '\''
-   19       | matrix RIGHTSHIFT
-   20       | matrix LEFTSHIFT
-   21       | vector '\''
-   22       | matrix ELEMMULT vector
-   23       | matrix ELEMMULT expr
+   15 matrix: '{' listexprs '}'
+   16       | MVARIABLE
+   17       | matrix '*' matrix
+   18       | matrix ELEMMULT matrix
+   19       | matrix '\''
+   20       | matrix RIGHTSHIFT
+   21       | matrix LEFTSHIFT
+   22       | vector '\''
+   23       | matrix ELEMMULT vector
+   24       | matrix ELEMMULT expr
 
-   24 listexprs: vector ',' vector
-   25          | listexprs ',' vector
+   25 listexprs: vector ',' vector
+   26          | listexprs ',' vector
 
-   26 vector: '{' exprs '}'
-   27       | VVARIABLE
-   28       | vector ELEMMULT vector
-   29       | vector RIGHTSHIFT
-   30       | vector LEFTSHIFT
-   31       | vector ELEMMULT expr
+   27 vector: '{' exprs '}'
+   28       | VVARIABLE
+   29       | vector ELEMMULT vector
+   30       | vector RIGHTSHIFT
+   31       | vector LEFTSHIFT
+   32       | vector ELEMMULT expr
 
-   32 exprs: expr ',' expr
-   33      | exprs ',' expr
+   33 exprs: expr ',' expr
+   34      | exprs ',' expr
 
-   34 declaration: type VARIABLE DECLARE expr
-   35            | type VARIABLE DECLARE vector
-   36            | type VARIABLE DECLARE matrix
+   35 vmdeclaration: VVARIABLE '(' expr ')' ASSIGN expr
+   36              | VVARIABLE '(' vector ',' '[' ']' ')' ASSIGN vector
+   37              | MVARIABLE '(' expr ',' expr ')' ASSIGN expr
+   38              | MVARIABLE '(' expr ',' '[' ']' ')' ASSIGN vector
+   39              | MVARIABLE '(' '[' ']' ',' expr ')' ASSIGN vector
+   40              | MVARIABLE '(' vector ',' '[' ']' ')' ASSIGN matrix
+   41              | MVARIABLE '(' '[' ']' ',' vector ')' ASSIGN matrix
+   42              | MVARIABLE '(' matrix ')' ASSIGN matrix
 
-   37 assignment: VARIABLE ASSIGN expr
-   38           | VVARIABLE ASSIGN vector
-   39           | MVARIABLE ASSIGN matrix
+   43 declaration: type VARIABLE DECLARE expr
+   44            | type VARIABLE DECLARE vector
+   45            | type VARIABLE DECLARE matrix
 
-   40 print: PRINT '(' expr ')'
-   41      | PRINT '(' VVARIABLE ')'
-   42      | PRINT '(' MVARIABLE ')'
+   46 assignment: VARIABLE ASSIGN expr
+   47           | VVARIABLE ASSIGN vector
+   48           | MVARIABLE ASSIGN matrix
 
-   43 expr: const
-   44     | VARIABLE
-   45     | '-' expr
-   46     | expr '+' expr
-   47     | expr '-' expr
-   48     | expr '/' expr
-   49     | expr '<' expr
-   50     | expr '>' expr
-   51     | '!' expr
-   52     | expr CONJUNCTION expr
-   53     | '(' expr ')'
+   49 print: PRINT '(' expr ')'
+   50      | PRINT '(' VVARIABLE ')'
+   51      | PRINT '(' MVARIABLE ')'
 
-   54 type: INT
-   55     | CINT
-   56     | VINT
-   57     | MINT
-   58     | CVINT
-   59     | CMINT
-   60     | BOOLEAN
-   61     | CBOOLEAN
-   62     | VBOOLEAN
-   63     | MBOOLEAN
-   64     | CVBOOLEAN
-   65     | CMBOOLEAN
+   52 expr: const
+   53     | VARIABLE
+   54     | '-' expr
+   55     | expr '+' expr
+   56     | expr '-' expr
+   57     | expr '/' expr
+   58     | expr '<' expr
+   59     | expr '>' expr
+   60     | '!' expr
+   61     | expr CONJUNCTION expr
+   62     | '(' expr ')'
 
-   66 const: INTEGER
-   67      | BOOL
+   63 type: INT
+   64     | CINT
+   65     | VINT
+   66     | MINT
+   67     | CVINT
+   68     | CMINT
+   69     | BOOLEAN
+   70     | CBOOLEAN
+   71     | VBOOLEAN
+   72     | MBOOLEAN
+   73     | CVBOOLEAN
+   74     | CMBOOLEAN
+
+   75 const: INTEGER
+   76      | BOOL
 
 
 Терминальные символы с правилами, в которых они появляются
 
 $end (0) 0
-'!' (33) 51
-'\'' (39) 18 21
-'(' (40) 13 40 41 42 53
-')' (41) 13 40 41 42 53
-'*' (42) 16
-'+' (43) 46
-',' (44) 24 25 32 33
-'-' (45) 45 47
-'/' (47) 48
-'<' (60) 49
-'>' (62) 50
-'{' (123) 14 26
-'}' (125) 14 26
+'!' (33) 60
+'\'' (39) 19 22
+'(' (40) 14 35 36 37 38 39 40 41 42 49 50 51 62
+')' (41) 14 35 36 37 38 39 40 41 42 49 50 51 62
+'*' (42) 17
+'+' (43) 55
+',' (44) 25 26 33 34 36 37 38 39 40 41
+'-' (45) 54 56
+'/' (47) 57
+'<' (60) 58
+'>' (62) 59
+'[' (91) 36 38 39 40 41
+']' (93) 36 38 39 40 41
+'{' (123) 15 27
+'}' (125) 15 27
 error (256)
 END (258)
-BOOL <boolPtr> (259) 67
-INTEGER <intPtr> (260) 66
-VARIABLE <varName> (261) 34 35 36 37 44
-VVARIABLE <varName> (262) 27 38 41
-MVARIABLE <varName> (263) 15 39 42
-CINT <vtype> (264) 55
-VINT <vtype> (265) 56
-MINT <vtype> (266) 57
-INT <vtype> (267) 54
-CVINT <vtype> (268) 58
-CMINT <vtype> (269) 59
-BOOLEAN <vtype> (270) 60
-CBOOLEAN <vtype> (271) 61
-VBOOLEAN <vtype> (272) 62
-MBOOLEAN <vtype> (273) 63
-CVBOOLEAN <vtype> (274) 64
-CMBOOLEAN <vtype> (275) 65
-NEWLINE (276) 6 7 8 9 10 11 12
-PRINT (277) 40 41 42
-CONJUNCTION (278) 52
-ELEMMULT (279) 17 22 23 28 31
-LEFTSHIFT (280) 20 30
-RIGHTSHIFT (281) 19 29
-ASSIGN (282) 37 38 39
-DECLARE (283) 34 35 36
+BOOL <boolPtr> (259) 76
+INTEGER <intPtr> (260) 75
+VARIABLE <varName> (261) 43 44 45 46 53
+VVARIABLE <varName> (262) 28 35 36 47 50
+MVARIABLE <varName> (263) 16 37 38 39 40 41 42 48 51
+CINT <vtype> (264) 64
+VINT <vtype> (265) 65
+MINT <vtype> (266) 66
+INT <vtype> (267) 63
+CVINT <vtype> (268) 67
+CMINT <vtype> (269) 68
+BOOLEAN <vtype> (270) 69
+CBOOLEAN <vtype> (271) 70
+VBOOLEAN <vtype> (272) 71
+MBOOLEAN <vtype> (273) 72
+CVBOOLEAN <vtype> (274) 73
+CMBOOLEAN <vtype> (275) 74
+NEWLINE (276) 6 7 8 9 10 11 12 13
+PRINT (277) 49 50 51
+CONJUNCTION (278) 61
+ELEMMULT (279) 18 23 24 29 32
+LEFTSHIFT (280) 21 31
+RIGHTSHIFT (281) 20 30
+ASSIGN (282) 35 36 37 38 39 40 41 42 46 47 48
+DECLARE (283) 43 44 45
 UMINUS (284)
 
 
 Нетерминальные символы с правилами, в которых они появляются
 
-$accept (43)
+$accept (45)
     налево: 0
-program (44)
+program (46)
     налево: 1, направо: 0
-function (45)
+function (47)
     налево: 2 3, направо: 1 2
-stmts <ptr> (46)
-    налево: 4 5, направо: 5 13
-stmt <ptr> (47)
-    налево: 6 7 8 9 10 11 12 13, направо: 2 4 5
-matrix <ptr> (48)
-    налево: 14 15 16 17 18 19 20 21 22 23, направо: 9
-    16 17 18 19 20 22 23 36 39
-listexprs <ptr> (49)
-    налево: 24 25, направо: 14 25
-vector <ptr> (50)
-    налево: 26 27 28 29 30 31, направо: 8 21 22 24 25
-    28 29 30 31 35 38
-exprs <ptr> (51)
-    налево: 32 33, направо: 26 33
-declaration <varOpPtr> (52)
-    налево: 34 35 36, направо: 11
-assignment <varOpPtr> (53)
-    налево: 37 38 39, направо: 12
-print <ptr> (54)
-    налево: 40 41 42, направо: 10
-expr <ptr> (55)
-    налево: 43 44 45 46 47 48 49 50 51 52 53, направо:
-    7 23 31 32 33 34 37 40 45 46 47 48 49 50 51 52 53
-type <vtype> (56)
-    налево: 54 55 56 57 58 59 60 61 62 63 64 65, направо:
-    34 35 36
-const <ptr> (57)
-    налево: 66 67, направо: 43
+stmts <ptr> (48)
+    налево: 4 5, направо: 5 14
+stmt <ptr> (49)
+    налево: 6 7 8 9 10 11 12 13 14, направо: 2 4 5
+matrix <ptr> (50)
+    налево: 15 16 17 18 19 20 21 22 23 24, направо: 9
+    17 18 19 20 21 23 24 40 41 42 45 48
+listexprs <ptr> (51)
+    налево: 25 26, направо: 15 26
+vector <ptr> (52)
+    налево: 27 28 29 30 31 32, направо: 8 22 23 25 26
+    29 30 31 32 36 38 39 40 41 44 47
+exprs <ptr> (53)
+    налево: 33 34, направо: 27 34
+vmdeclaration <ptr> (54)
+    налево: 35 36 37 38 39 40 41 42, направо: 11
+declaration <varOpPtr> (55)
+    налево: 43 44 45, направо: 12
+assignment <varOpPtr> (56)
+    налево: 46 47 48, направо: 13
+print <ptr> (57)
+    налево: 49 50 51, направо: 10
+expr <ptr> (58)
+    налево: 52 53 54 55 56 57 58 59 60 61 62, направо:
+    7 24 32 33 34 35 37 38 39 43 46 49 54 55 56 57 58 59 60 61 62
+type <vtype> (59)
+    налево: 63 64 65 66 67 68 69 70 71 72 73 74, направо:
+    43 44 45
+const <ptr> (60)
+    налево: 75 76, направо: 52
 
 
 State 0
@@ -216,59 +230,68 @@ State 2
     8     | . vector NEWLINE
     9     | . matrix NEWLINE
    10     | . print NEWLINE
-   11     | . declaration NEWLINE
-   12     | . assignment NEWLINE
-   13     | . '(' stmts ')'
-   14 matrix: . '{' listexprs '}'
-   15       | . MVARIABLE
-   16       | . matrix '*' matrix
-   17       | . matrix ELEMMULT matrix
-   18       | . matrix '\''
-   19       | . matrix RIGHTSHIFT
-   20       | . matrix LEFTSHIFT
-   21       | . vector '\''
-   22       | . matrix ELEMMULT vector
-   23       | . matrix ELEMMULT expr
-   26 vector: . '{' exprs '}'
-   27       | . VVARIABLE
-   28       | . vector ELEMMULT vector
-   29       | . vector RIGHTSHIFT
-   30       | . vector LEFTSHIFT
-   31       | . vector ELEMMULT expr
-   34 declaration: . type VARIABLE DECLARE expr
-   35            | . type VARIABLE DECLARE vector
-   36            | . type VARIABLE DECLARE matrix
-   37 assignment: . VARIABLE ASSIGN expr
-   38           | . VVARIABLE ASSIGN vector
-   39           | . MVARIABLE ASSIGN matrix
-   40 print: . PRINT '(' expr ')'
-   41      | . PRINT '(' VVARIABLE ')'
-   42      | . PRINT '(' MVARIABLE ')'
-   43 expr: . const
-   44     | . VARIABLE
-   45     | . '-' expr
-   46     | . expr '+' expr
-   47     | . expr '-' expr
-   48     | . expr '/' expr
-   49     | . expr '<' expr
-   50     | . expr '>' expr
-   51     | . '!' expr
-   52     | . expr CONJUNCTION expr
-   53     | . '(' expr ')'
-   54 type: . INT
-   55     | . CINT
-   56     | . VINT
-   57     | . MINT
-   58     | . CVINT
-   59     | . CMINT
-   60     | . BOOLEAN
-   61     | . CBOOLEAN
-   62     | . VBOOLEAN
-   63     | . MBOOLEAN
-   64     | . CVBOOLEAN
-   65     | . CMBOOLEAN
-   66 const: . INTEGER
-   67      | . BOOL
+   11     | . vmdeclaration NEWLINE
+   12     | . declaration NEWLINE
+   13     | . assignment NEWLINE
+   14     | . '(' stmts ')'
+   15 matrix: . '{' listexprs '}'
+   16       | . MVARIABLE
+   17       | . matrix '*' matrix
+   18       | . matrix ELEMMULT matrix
+   19       | . matrix '\''
+   20       | . matrix RIGHTSHIFT
+   21       | . matrix LEFTSHIFT
+   22       | . vector '\''
+   23       | . matrix ELEMMULT vector
+   24       | . matrix ELEMMULT expr
+   27 vector: . '{' exprs '}'
+   28       | . VVARIABLE
+   29       | . vector ELEMMULT vector
+   30       | . vector RIGHTSHIFT
+   31       | . vector LEFTSHIFT
+   32       | . vector ELEMMULT expr
+   35 vmdeclaration: . VVARIABLE '(' expr ')' ASSIGN expr
+   36              | . VVARIABLE '(' vector ',' '[' ']' ')' ASSIGN vector
+   37              | . MVARIABLE '(' expr ',' expr ')' ASSIGN expr
+   38              | . MVARIABLE '(' expr ',' '[' ']' ')' ASSIGN vector
+   39              | . MVARIABLE '(' '[' ']' ',' expr ')' ASSIGN vector
+   40              | . MVARIABLE '(' vector ',' '[' ']' ')' ASSIGN matrix
+   41              | . MVARIABLE '(' '[' ']' ',' vector ')' ASSIGN matrix
+   42              | . MVARIABLE '(' matrix ')' ASSIGN matrix
+   43 declaration: . type VARIABLE DECLARE expr
+   44            | . type VARIABLE DECLARE vector
+   45            | . type VARIABLE DECLARE matrix
+   46 assignment: . VARIABLE ASSIGN expr
+   47           | . VVARIABLE ASSIGN vector
+   48           | . MVARIABLE ASSIGN matrix
+   49 print: . PRINT '(' expr ')'
+   50      | . PRINT '(' VVARIABLE ')'
+   51      | . PRINT '(' MVARIABLE ')'
+   52 expr: . const
+   53     | . VARIABLE
+   54     | . '-' expr
+   55     | . expr '+' expr
+   56     | . expr '-' expr
+   57     | . expr '/' expr
+   58     | . expr '<' expr
+   59     | . expr '>' expr
+   60     | . '!' expr
+   61     | . expr CONJUNCTION expr
+   62     | . '(' expr ')'
+   63 type: . INT
+   64     | . CINT
+   65     | . VINT
+   66     | . MINT
+   67     | . CVINT
+   68     | . CMINT
+   69     | . BOOLEAN
+   70     | . CBOOLEAN
+   71     | . VBOOLEAN
+   72     | . MBOOLEAN
+   73     | . CVBOOLEAN
+   74     | . CMBOOLEAN
+   75 const: . INTEGER
+   76      | . BOOL
 
     BOOL       сдвиг, и переход в состояние 4
     INTEGER    сдвиг, и переход в состояние 5
@@ -296,15 +319,16 @@ State 2
 
     $default  вывод с использованием правила 1 (program)
 
-    stmt         переход в состояние 27
-    matrix       переход в состояние 28
-    vector       переход в состояние 29
-    declaration  переход в состояние 30
-    assignment   переход в состояние 31
-    print        переход в состояние 32
-    expr         переход в состояние 33
-    type         переход в состояние 34
-    const        переход в состояние 35
+    stmt           переход в состояние 27
+    matrix         переход в состояние 28
+    vector         переход в состояние 29
+    vmdeclaration  переход в состояние 30
+    declaration    переход в состояние 31
+    assignment     переход в состояние 32
+    print          переход в состояние 33
+    expr           переход в состояние 34
+    type           переход в состояние 35
+    const          переход в состояние 36
 
 
 State 3
@@ -316,130 +340,140 @@ State 3
 
 State 4
 
-   67 const: BOOL .
+   76 const: BOOL .
 
-    $default  вывод с использованием правила 67 (const)
+    $default  вывод с использованием правила 76 (const)
 
 
 State 5
 
-   66 const: INTEGER .
+   75 const: INTEGER .
 
-    $default  вывод с использованием правила 66 (const)
+    $default  вывод с использованием правила 75 (const)
 
 
 State 6
 
-   37 assignment: VARIABLE . ASSIGN expr
-   44 expr: VARIABLE .  [NEWLINE, CONJUNCTION, '<', '>', '+', '-', '/', ')']
+   46 assignment: VARIABLE . ASSIGN expr
+   53 expr: VARIABLE .  [NEWLINE, CONJUNCTION, '<', '>', '+', '-', '/', ')']
 
-    ASSIGN  сдвиг, и переход в состояние 36
+    ASSIGN  сдвиг, и переход в состояние 37
 
-    $default  вывод с использованием правила 44 (expr)
+    $default  вывод с использованием правила 53 (expr)
 
 
 State 7
 
-   27 vector: VVARIABLE .  [NEWLINE, ELEMMULT, '\'', LEFTSHIFT, RIGHTSHIFT]
-   38 assignment: VVARIABLE . ASSIGN vector
+   28 vector: VVARIABLE .  [NEWLINE, ELEMMULT, '\'', LEFTSHIFT, RIGHTSHIFT]
+   35 vmdeclaration: VVARIABLE . '(' expr ')' ASSIGN expr
+   36              | VVARIABLE . '(' vector ',' '[' ']' ')' ASSIGN vector
+   47 assignment: VVARIABLE . ASSIGN vector
 
-    ASSIGN  сдвиг, и переход в состояние 37
+    ASSIGN  сдвиг, и переход в состояние 38
+    '('     сдвиг, и переход в состояние 39
 
-    $default  вывод с использованием правила 27 (vector)
+    $default  вывод с использованием правила 28 (vector)
 
 
 State 8
 
-   15 matrix: MVARIABLE .  [NEWLINE, ELEMMULT, '\'', LEFTSHIFT, RIGHTSHIFT, '*']
-   39 assignment: MVARIABLE . ASSIGN matrix
+   16 matrix: MVARIABLE .  [NEWLINE, ELEMMULT, '\'', LEFTSHIFT, RIGHTSHIFT, '*']
+   37 vmdeclaration: MVARIABLE . '(' expr ',' expr ')' ASSIGN expr
+   38              | MVARIABLE . '(' expr ',' '[' ']' ')' ASSIGN vector
+   39              | MVARIABLE . '(' '[' ']' ',' expr ')' ASSIGN vector
+   40              | MVARIABLE . '(' vector ',' '[' ']' ')' ASSIGN matrix
+   41              | MVARIABLE . '(' '[' ']' ',' vector ')' ASSIGN matrix
+   42              | MVARIABLE . '(' matrix ')' ASSIGN matrix
+   48 assignment: MVARIABLE . ASSIGN matrix
 
-    ASSIGN  сдвиг, и переход в состояние 38
+    ASSIGN  сдвиг, и переход в состояние 40
+    '('     сдвиг, и переход в состояние 41
 
-    $default  вывод с использованием правила 15 (matrix)
+    $default  вывод с использованием правила 16 (matrix)
 
 
 State 9
 
-   55 type: CINT .
-
-    $default  вывод с использованием правила 55 (type)
-
-
-State 10
-
-   56 type: VINT .
-
-    $default  вывод с использованием правила 56 (type)
-
-
-State 11
-
-   57 type: MINT .
-
-    $default  вывод с использованием правила 57 (type)
-
-
-State 12
-
-   54 type: INT .
-
-    $default  вывод с использованием правила 54 (type)
-
-
-State 13
-
-   58 type: CVINT .
-
-    $default  вывод с использованием правила 58 (type)
-
-
-State 14
-
-   59 type: CMINT .
-
-    $default  вывод с использованием правила 59 (type)
-
-
-State 15
-
-   60 type: BOOLEAN .
-
-    $default  вывод с использованием правила 60 (type)
-
-
-State 16
-
-   61 type: CBOOLEAN .
-
-    $default  вывод с использованием правила 61 (type)
-
-
-State 17
-
-   62 type: VBOOLEAN .
-
-    $default  вывод с использованием правила 62 (type)
-
-
-State 18
-
-   63 type: MBOOLEAN .
-
-    $default  вывод с использованием правила 63 (type)
-
-
-State 19
-
-   64 type: CVBOOLEAN .
+   64 type: CINT .
 
     $default  вывод с использованием правила 64 (type)
 
 
-State 20
+State 10
 
-   65 type: CMBOOLEAN .
+   65 type: VINT .
 
     $default  вывод с использованием правила 65 (type)
+
+
+State 11
+
+   66 type: MINT .
+
+    $default  вывод с использованием правила 66 (type)
+
+
+State 12
+
+   63 type: INT .
+
+    $default  вывод с использованием правила 63 (type)
+
+
+State 13
+
+   67 type: CVINT .
+
+    $default  вывод с использованием правила 67 (type)
+
+
+State 14
+
+   68 type: CMINT .
+
+    $default  вывод с использованием правила 68 (type)
+
+
+State 15
+
+   69 type: BOOLEAN .
+
+    $default  вывод с использованием правила 69 (type)
+
+
+State 16
+
+   70 type: CBOOLEAN .
+
+    $default  вывод с использованием правила 70 (type)
+
+
+State 17
+
+   71 type: VBOOLEAN .
+
+    $default  вывод с использованием правила 71 (type)
+
+
+State 18
+
+   72 type: MBOOLEAN .
+
+    $default  вывод с использованием правила 72 (type)
+
+
+State 19
+
+   73 type: CVBOOLEAN .
+
+    $default  вывод с использованием правила 73 (type)
+
+
+State 20
+
+   74 type: CMBOOLEAN .
+
+    $default  вывод с использованием правила 74 (type)
 
 
 State 21
@@ -451,67 +485,67 @@ State 21
 
 State 22
 
-   40 print: PRINT . '(' expr ')'
-   41      | PRINT . '(' VVARIABLE ')'
-   42      | PRINT . '(' MVARIABLE ')'
+   49 print: PRINT . '(' expr ')'
+   50      | PRINT . '(' VVARIABLE ')'
+   51      | PRINT . '(' MVARIABLE ')'
 
-    '('  сдвиг, и переход в состояние 39
+    '('  сдвиг, и переход в состояние 42
 
 
 State 23
 
-   43 expr: . const
-   44     | . VARIABLE
-   45     | . '-' expr
-   45     | '-' . expr
-   46     | . expr '+' expr
-   47     | . expr '-' expr
-   48     | . expr '/' expr
-   49     | . expr '<' expr
-   50     | . expr '>' expr
-   51     | . '!' expr
-   52     | . expr CONJUNCTION expr
-   53     | . '(' expr ')'
-   66 const: . INTEGER
-   67      | . BOOL
+   52 expr: . const
+   53     | . VARIABLE
+   54     | . '-' expr
+   54     | '-' . expr
+   55     | . expr '+' expr
+   56     | . expr '-' expr
+   57     | . expr '/' expr
+   58     | . expr '<' expr
+   59     | . expr '>' expr
+   60     | . '!' expr
+   61     | . expr CONJUNCTION expr
+   62     | . '(' expr ')'
+   75 const: . INTEGER
+   76      | . BOOL
 
     BOOL      сдвиг, и переход в состояние 4
     INTEGER   сдвиг, и переход в состояние 5
-    VARIABLE  сдвиг, и переход в состояние 40
+    VARIABLE  сдвиг, и переход в состояние 43
     '-'       сдвиг, и переход в состояние 23
     '!'       сдвиг, и переход в состояние 24
-    '('       сдвиг, и переход в состояние 41
+    '('       сдвиг, и переход в состояние 44
 
-    expr   переход в состояние 42
-    const  переход в состояние 35
+    expr   переход в состояние 45
+    const  переход в состояние 36
 
 
 State 24
 
-   43 expr: . const
-   44     | . VARIABLE
-   45     | . '-' expr
-   46     | . expr '+' expr
-   47     | . expr '-' expr
-   48     | . expr '/' expr
-   49     | . expr '<' expr
-   50     | . expr '>' expr
-   51     | . '!' expr
-   51     | '!' . expr
-   52     | . expr CONJUNCTION expr
-   53     | . '(' expr ')'
-   66 const: . INTEGER
-   67      | . BOOL
+   52 expr: . const
+   53     | . VARIABLE
+   54     | . '-' expr
+   55     | . expr '+' expr
+   56     | . expr '-' expr
+   57     | . expr '/' expr
+   58     | . expr '<' expr
+   59     | . expr '>' expr
+   60     | . '!' expr
+   60     | '!' . expr
+   61     | . expr CONJUNCTION expr
+   62     | . '(' expr ')'
+   75 const: . INTEGER
+   76      | . BOOL
 
     BOOL      сдвиг, и переход в состояние 4
     INTEGER   сдвиг, и переход в состояние 5
-    VARIABLE  сдвиг, и переход в состояние 40
+    VARIABLE  сдвиг, и переход в состояние 43
     '-'       сдвиг, и переход в состояние 23
     '!'       сдвиг, и переход в состояние 24
-    '('       сдвиг, и переход в состояние 41
+    '('       сдвиг, и переход в состояние 44
 
-    expr   переход в состояние 43
-    const  переход в состояние 35
+    expr   переход в состояние 46
+    const  переход в состояние 36
 
 
 State 25
@@ -523,61 +557,70 @@ State 25
     8     | . vector NEWLINE
     9     | . matrix NEWLINE
    10     | . print NEWLINE
-   11     | . declaration NEWLINE
-   12     | . assignment NEWLINE
-   13     | . '(' stmts ')'
-   13     | '(' . stmts ')'
-   14 matrix: . '{' listexprs '}'
-   15       | . MVARIABLE
-   16       | . matrix '*' matrix
-   17       | . matrix ELEMMULT matrix
-   18       | . matrix '\''
-   19       | . matrix RIGHTSHIFT
-   20       | . matrix LEFTSHIFT
-   21       | . vector '\''
-   22       | . matrix ELEMMULT vector
-   23       | . matrix ELEMMULT expr
-   26 vector: . '{' exprs '}'
-   27       | . VVARIABLE
-   28       | . vector ELEMMULT vector
-   29       | . vector RIGHTSHIFT
-   30       | . vector LEFTSHIFT
-   31       | . vector ELEMMULT expr
-   34 declaration: . type VARIABLE DECLARE expr
-   35            | . type VARIABLE DECLARE vector
-   36            | . type VARIABLE DECLARE matrix
-   37 assignment: . VARIABLE ASSIGN expr
-   38           | . VVARIABLE ASSIGN vector
-   39           | . MVARIABLE ASSIGN matrix
-   40 print: . PRINT '(' expr ')'
-   41      | . PRINT '(' VVARIABLE ')'
-   42      | . PRINT '(' MVARIABLE ')'
-   43 expr: . const
-   44     | . VARIABLE
-   45     | . '-' expr
-   46     | . expr '+' expr
-   47     | . expr '-' expr
-   48     | . expr '/' expr
-   49     | . expr '<' expr
-   50     | . expr '>' expr
-   51     | . '!' expr
-   52     | . expr CONJUNCTION expr
-   53     | . '(' expr ')'
-   53     | '(' . expr ')'
-   54 type: . INT
-   55     | . CINT
-   56     | . VINT
-   57     | . MINT
-   58     | . CVINT
-   59     | . CMINT
-   60     | . BOOLEAN
-   61     | . CBOOLEAN
-   62     | . VBOOLEAN
-   63     | . MBOOLEAN
-   64     | . CVBOOLEAN
-   65     | . CMBOOLEAN
-   66 const: . INTEGER
-   67      | . BOOL
+   11     | . vmdeclaration NEWLINE
+   12     | . declaration NEWLINE
+   13     | . assignment NEWLINE
+   14     | . '(' stmts ')'
+   14     | '(' . stmts ')'
+   15 matrix: . '{' listexprs '}'
+   16       | . MVARIABLE
+   17       | . matrix '*' matrix
+   18       | . matrix ELEMMULT matrix
+   19       | . matrix '\''
+   20       | . matrix RIGHTSHIFT
+   21       | . matrix LEFTSHIFT
+   22       | . vector '\''
+   23       | . matrix ELEMMULT vector
+   24       | . matrix ELEMMULT expr
+   27 vector: . '{' exprs '}'
+   28       | . VVARIABLE
+   29       | . vector ELEMMULT vector
+   30       | . vector RIGHTSHIFT
+   31       | . vector LEFTSHIFT
+   32       | . vector ELEMMULT expr
+   35 vmdeclaration: . VVARIABLE '(' expr ')' ASSIGN expr
+   36              | . VVARIABLE '(' vector ',' '[' ']' ')' ASSIGN vector
+   37              | . MVARIABLE '(' expr ',' expr ')' ASSIGN expr
+   38              | . MVARIABLE '(' expr ',' '[' ']' ')' ASSIGN vector
+   39              | . MVARIABLE '(' '[' ']' ',' expr ')' ASSIGN vector
+   40              | . MVARIABLE '(' vector ',' '[' ']' ')' ASSIGN matrix
+   41              | . MVARIABLE '(' '[' ']' ',' vector ')' ASSIGN matrix
+   42              | . MVARIABLE '(' matrix ')' ASSIGN matrix
+   43 declaration: . type VARIABLE DECLARE expr
+   44            | . type VARIABLE DECLARE vector
+   45            | . type VARIABLE DECLARE matrix
+   46 assignment: . VARIABLE ASSIGN expr
+   47           | . VVARIABLE ASSIGN vector
+   48           | . MVARIABLE ASSIGN matrix
+   49 print: . PRINT '(' expr ')'
+   50      | . PRINT '(' VVARIABLE ')'
+   51      | . PRINT '(' MVARIABLE ')'
+   52 expr: . const
+   53     | . VARIABLE
+   54     | . '-' expr
+   55     | . expr '+' expr
+   56     | . expr '-' expr
+   57     | . expr '/' expr
+   58     | . expr '<' expr
+   59     | . expr '>' expr
+   60     | . '!' expr
+   61     | . expr CONJUNCTION expr
+   62     | . '(' expr ')'
+   62     | '(' . expr ')'
+   63 type: . INT
+   64     | . CINT
+   65     | . VINT
+   66     | . MINT
+   67     | . CVINT
+   68     | . CMINT
+   69     | . BOOLEAN
+   70     | . CBOOLEAN
+   71     | . VBOOLEAN
+   72     | . MBOOLEAN
+   73     | . CVBOOLEAN
+   74     | . CMBOOLEAN
+   75 const: . INTEGER
+   76      | . BOOL
 
     BOOL       сдвиг, и переход в состояние 4
     INTEGER    сдвиг, и переход в состояние 5
@@ -603,60 +646,61 @@ State 25
     '('        сдвиг, и переход в состояние 25
     '{'        сдвиг, и переход в состояние 26
 
-    stmts        переход в состояние 44
-    stmt         переход в состояние 45
-    matrix       переход в состояние 28
-    vector       переход в состояние 29
-    declaration  переход в состояние 30
-    assignment   переход в состояние 31
-    print        переход в состояние 32
-    expr         переход в состояние 46
-    type         переход в состояние 34
-    const        переход в состояние 35
+    stmts          переход в состояние 47
+    stmt           переход в состояние 48
+    matrix         переход в состояние 28
+    vector         переход в состояние 29
+    vmdeclaration  переход в состояние 30
+    declaration    переход в состояние 31
+    assignment     переход в состояние 32
+    print          переход в состояние 33
+    expr           переход в состояние 49
+    type           переход в состояние 35
+    const          переход в состояние 36
 
 
 State 26
 
-   14 matrix: '{' . listexprs '}'
-   24 listexprs: . vector ',' vector
-   25          | . listexprs ',' vector
-   26 vector: . '{' exprs '}'
-   26       | '{' . exprs '}'
-   27       | . VVARIABLE
-   28       | . vector ELEMMULT vector
-   29       | . vector RIGHTSHIFT
-   30       | . vector LEFTSHIFT
-   31       | . vector ELEMMULT expr
-   32 exprs: . expr ',' expr
-   33      | . exprs ',' expr
-   43 expr: . const
-   44     | . VARIABLE
-   45     | . '-' expr
-   46     | . expr '+' expr
-   47     | . expr '-' expr
-   48     | . expr '/' expr
-   49     | . expr '<' expr
-   50     | . expr '>' expr
-   51     | . '!' expr
-   52     | . expr CONJUNCTION expr
-   53     | . '(' expr ')'
-   66 const: . INTEGER
-   67      | . BOOL
+   15 matrix: '{' . listexprs '}'
+   25 listexprs: . vector ',' vector
+   26          | . listexprs ',' vector
+   27 vector: . '{' exprs '}'
+   27       | '{' . exprs '}'
+   28       | . VVARIABLE
+   29       | . vector ELEMMULT vector
+   30       | . vector RIGHTSHIFT
+   31       | . vector LEFTSHIFT
+   32       | . vector ELEMMULT expr
+   33 exprs: . expr ',' expr
+   34      | . exprs ',' expr
+   52 expr: . const
+   53     | . VARIABLE
+   54     | . '-' expr
+   55     | . expr '+' expr
+   56     | . expr '-' expr
+   57     | . expr '/' expr
+   58     | . expr '<' expr
+   59     | . expr '>' expr
+   60     | . '!' expr
+   61     | . expr CONJUNCTION expr
+   62     | . '(' expr ')'
+   75 const: . INTEGER
+   76      | . BOOL
 
     BOOL       сдвиг, и переход в состояние 4
     INTEGER    сдвиг, и переход в состояние 5
-    VARIABLE   сдвиг, и переход в состояние 40
-    VVARIABLE  сдвиг, и переход в состояние 47
+    VARIABLE   сдвиг, и переход в состояние 43
+    VVARIABLE  сдвиг, и переход в состояние 50
     '-'        сдвиг, и переход в состояние 23
     '!'        сдвиг, и переход в состояние 24
-    '('        сдвиг, и переход в состояние 41
-    '{'        сдвиг, и переход в состояние 48
+    '('        сдвиг, и переход в состояние 44
+    '{'        сдвиг, и переход в состояние 51
 
-    listexprs  переход в состояние 49
-    vector     переход в состояние 50
-    exprs      переход в состояние 51
-    expr       переход в состояние 52
-    const      переход в состояние 35
+    listexprs  переход в состояние 52
+    vector     переход в состояние 53
+    exprs      переход в состояние 54
+    expr       переход в состояние 55
+    const      переход в состояние 36
 
 
 State 27
@@ -669,278 +713,378 @@ State 27
 State 28
 
     9 stmt: matrix . NEWLINE
-   16 matrix: matrix . '*' matrix
-   17       | matrix . ELEMMULT matrix
-   18       | matrix . '\''
-   19       | matrix . RIGHTSHIFT
-   20       | matrix . LEFTSHIFT
-   22       | matrix . ELEMMULT vector
-   23       | matrix . ELEMMULT expr
+   17 matrix: matrix . '*' matrix
+   18       | matrix . ELEMMULT matrix
+   19       | matrix . '\''
+   20       | matrix . RIGHTSHIFT
+   21       | matrix . LEFTSHIFT
+   23       | matrix . ELEMMULT vector
+   24       | matrix . ELEMMULT expr
 
-    NEWLINE     сдвиг, и переход в состояние 53
-    ELEMMULT    сдвиг, и переход в состояние 54
-    '\''        сдвиг, и переход в состояние 55
-    LEFTSHIFT   сдвиг, и переход в состояние 56
-    RIGHTSHIFT  сдвиг, и переход в состояние 57
-    '*'         сдвиг, и переход в состояние 58
+    NEWLINE     сдвиг, и переход в состояние 56
+    ELEMMULT    сдвиг, и переход в состояние 57
+    '\''        сдвиг, и переход в состояние 58
+    LEFTSHIFT   сдвиг, и переход в состояние 59
+    RIGHTSHIFT  сдвиг, и переход в состояние 60
+    '*'         сдвиг, и переход в состояние 61
 
 
 State 29
 
     8 stmt: vector . NEWLINE
-   21 matrix: vector . '\''
-   28 vector: vector . ELEMMULT vector
-   29       | vector . RIGHTSHIFT
-   30       | vector . LEFTSHIFT
-   31       | vector . ELEMMULT expr
+   22 matrix: vector . '\''
+   29 vector: vector . ELEMMULT vector
+   30       | vector . RIGHTSHIFT
+   31       | vector . LEFTSHIFT
+   32       | vector . ELEMMULT expr
 
-    NEWLINE     сдвиг, и переход в состояние 59
-    ELEMMULT    сдвиг, и переход в состояние 60
-    '\''        сдвиг, и переход в состояние 61
-    LEFTSHIFT   сдвиг, и переход в состояние 62
-    RIGHTSHIFT  сдвиг, и переход в состояние 63
+    NEWLINE     сдвиг, и переход в состояние 62
+    ELEMMULT    сдвиг, и переход в состояние 63
+    '\''        сдвиг, и переход в состояние 64
+    LEFTSHIFT   сдвиг, и переход в состояние 65
+    RIGHTSHIFT  сдвиг, и переход в состояние 66
 
 
 State 30
 
-   11 stmt: declaration . NEWLINE
+   11 stmt: vmdeclaration . NEWLINE
 
-    NEWLINE  сдвиг, и переход в состояние 64
+    NEWLINE  сдвиг, и переход в состояние 67
 
 
 State 31
 
-   12 stmt: assignment . NEWLINE
+   12 stmt: declaration . NEWLINE
 
-    NEWLINE  сдвиг, и переход в состояние 65
+    NEWLINE  сдвиг, и переход в состояние 68
 
 
 State 32
 
-   10 stmt: print . NEWLINE
+   13 stmt: assignment . NEWLINE
 
-    NEWLINE  сдвиг, и переход в состояние 66
+    NEWLINE  сдвиг, и переход в состояние 69
 
 
 State 33
 
-    7 stmt: expr . NEWLINE
-   46 expr: expr . '+' expr
-   47     | expr . '-' expr
-   48     | expr . '/' expr
-   49     | expr . '<' expr
-   50     | expr . '>' expr
-   52     | expr . CONJUNCTION expr
+   10 stmt: print . NEWLINE
 
-    NEWLINE      сдвиг, и переход в состояние 67
-    CONJUNCTION  сдвиг, и переход в состояние 68
-    '<'          сдвиг, и переход в состояние 69
-    '>'          сдвиг, и переход в состояние 70
-    '+'          сдвиг, и переход в состояние 71
-    '-'          сдвиг, и переход в состояние 72
-    '/'          сдвиг, и переход в состояние 73
+    NEWLINE  сдвиг, и переход в состояние 70
 
 
 State 34
 
-   34 declaration: type . VARIABLE DECLARE expr
-   35            | type . VARIABLE DECLARE vector
-   36            | type . VARIABLE DECLARE matrix
+    7 stmt: expr . NEWLINE
+   55 expr: expr . '+' expr
+   56     | expr . '-' expr
+   57     | expr . '/' expr
+   58     | expr . '<' expr
+   59     | expr . '>' expr
+   61     | expr . CONJUNCTION expr
 
-    VARIABLE  сдвиг, и переход в состояние 74
+    NEWLINE      сдвиг, и переход в состояние 71
+    CONJUNCTION  сдвиг, и переход в состояние 72
+    '<'          сдвиг, и переход в состояние 73
+    '>'          сдвиг, и переход в состояние 74
+    '+'          сдвиг, и переход в состояние 75
+    '-'          сдвиг, и переход в состояние 76
+    '/'          сдвиг, и переход в состояние 77
 
 
 State 35
 
-   43 expr: const .
+   43 declaration: type . VARIABLE DECLARE expr
+   44            | type . VARIABLE DECLARE vector
+   45            | type . VARIABLE DECLARE matrix
 
-    $default  вывод с использованием правила 43 (expr)
+    VARIABLE  сдвиг, и переход в состояние 78
 
 
 State 36
 
-   37 assignment: VARIABLE ASSIGN . expr
-   43 expr: . const
-   44     | . VARIABLE
-   45     | . '-' expr
-   46     | . expr '+' expr
-   47     | . expr '-' expr
-   48     | . expr '/' expr
-   49     | . expr '<' expr
-   50     | . expr '>' expr
-   51     | . '!' expr
-   52     | . expr CONJUNCTION expr
-   53     | . '(' expr ')'
-   66 const: . INTEGER
-   67      | . BOOL
+   52 expr: const .
 
-    BOOL      сдвиг, и переход в состояние 4
-    INTEGER   сдвиг, и переход в состояние 5
-    VARIABLE  сдвиг, и переход в состояние 40
-    '-'       сдвиг, и переход в состояние 23
-    '!'       сдвиг, и переход в состояние 24
-    '('       сдвиг, и переход в состояние 41
-
-    expr   переход в состояние 75
-    const  переход в состояние 35
+    $default  вывод с использованием правила 52 (expr)
 
 
 State 37
 
-   26 vector: . '{' exprs '}'
-   27       | . VVARIABLE
-   28       | . vector ELEMMULT vector
-   29       | . vector RIGHTSHIFT
-   30       | . vector LEFTSHIFT
-   31       | . vector ELEMMULT expr
-   38 assignment: VVARIABLE ASSIGN . vector
+   46 assignment: VARIABLE ASSIGN . expr
+   52 expr: . const
+   53     | . VARIABLE
+   54     | . '-' expr
+   55     | . expr '+' expr
+   56     | . expr '-' expr
+   57     | . expr '/' expr
+   58     | . expr '<' expr
+   59     | . expr '>' expr
+   60     | . '!' expr
+   61     | . expr CONJUNCTION expr
+   62     | . '(' expr ')'
+   75 const: . INTEGER
+   76      | . BOOL
 
-    VVARIABLE  сдвиг, и переход в состояние 47
-    '{'        сдвиг, и переход в состояние 48
+    BOOL      сдвиг, и переход в состояние 4
+    INTEGER   сдвиг, и переход в состояние 5
+    VARIABLE  сдвиг, и переход в состояние 43
+    '-'       сдвиг, и переход в состояние 23
+    '!'       сдвиг, и переход в состояние 24
+    '('       сдвиг, и переход в состояние 44
 
-    vector  переход в состояние 76
+    expr   переход в состояние 79
+    const  переход в состояние 36
 
 
 State 38
 
-   14 matrix: . '{' listexprs '}'
-   15       | . MVARIABLE
-   16       | . matrix '*' matrix
-   17       | . matrix ELEMMULT matrix
-   18       | . matrix '\''
-   19       | . matrix RIGHTSHIFT
-   20       | . matrix LEFTSHIFT
-   21       | . vector '\''
-   22       | . matrix ELEMMULT vector
-   23       | . matrix ELEMMULT expr
-   26 vector: . '{' exprs '}'
-   27       | . VVARIABLE
-   28       | . vector ELEMMULT vector
-   29       | . vector RIGHTSHIFT
-   30       | . vector LEFTSHIFT
-   31       | . vector ELEMMULT expr
-   39 assignment: MVARIABLE ASSIGN . matrix
+   27 vector: . '{' exprs '}'
+   28       | . VVARIABLE
+   29       | . vector ELEMMULT vector
+   30       | . vector RIGHTSHIFT
+   31       | . vector LEFTSHIFT
+   32       | . vector ELEMMULT expr
+   47 assignment: VVARIABLE ASSIGN . vector
 
-    VVARIABLE  сдвиг, и переход в состояние 47
-    MVARIABLE  сдвиг, и переход в состояние 77
-    '{'        сдвиг, и переход в состояние 26
+    VVARIABLE  сдвиг, и переход в состояние 50
+    '{'        сдвиг, и переход в состояние 51
 
-    matrix  переход в состояние 78
-    vector  переход в состояние 79
+    vector  переход в состояние 80
 
 
 State 39
 
-   40 print: PRINT '(' . expr ')'
-   41      | PRINT '(' . VVARIABLE ')'
-   42      | PRINT '(' . MVARIABLE ')'
-   43 expr: . const
-   44     | . VARIABLE
-   45     | . '-' expr
-   46     | . expr '+' expr
-   47     | . expr '-' expr
-   48     | . expr '/' expr
-   49     | . expr '<' expr
-   50     | . expr '>' expr
-   51     | . '!' expr
-   52     | . expr CONJUNCTION expr
-   53     | . '(' expr ')'
-   66 const: . INTEGER
-   67      | . BOOL
+   27 vector: . '{' exprs '}'
+   28       | . VVARIABLE
+   29       | . vector ELEMMULT vector
+   30       | . vector RIGHTSHIFT
+   31       | . vector LEFTSHIFT
+   32       | . vector ELEMMULT expr
+   35 vmdeclaration: VVARIABLE '(' . expr ')' ASSIGN expr
+   36              | VVARIABLE '(' . vector ',' '[' ']' ')' ASSIGN vector
+   52 expr: . const
+   53     | . VARIABLE
+   54     | . '-' expr
+   55     | . expr '+' expr
+   56     | . expr '-' expr
+   57     | . expr '/' expr
+   58     | . expr '<' expr
+   59     | . expr '>' expr
+   60     | . '!' expr
+   61     | . expr CONJUNCTION expr
+   62     | . '(' expr ')'
+   75 const: . INTEGER
+   76      | . BOOL
 
     BOOL       сдвиг, и переход в состояние 4
     INTEGER    сдвиг, и переход в состояние 5
-    VARIABLE   сдвиг, и переход в состояние 40
-    VVARIABLE  сдвиг, и переход в состояние 80
-    MVARIABLE  сдвиг, и переход в состояние 81
+    VARIABLE   сдвиг, и переход в состояние 43
+    VVARIABLE  сдвиг, и переход в состояние 50
     '-'        сдвиг, и переход в состояние 23
     '!'        сдвиг, и переход в состояние 24
-    '('        сдвиг, и переход в состояние 41
+    '('        сдвиг, и переход в состояние 44
+    '{'        сдвиг, и переход в состояние 51
 
-    expr   переход в состояние 82
-    const  переход в состояние 35
+    vector  переход в состояние 81
+    expr    переход в состояние 82
+    const   переход в состояние 36
 
 
 State 40
 
-   44 expr: VARIABLE .
+   15 matrix: . '{' listexprs '}'
+   16       | . MVARIABLE
+   17       | . matrix '*' matrix
+   18       | . matrix ELEMMULT matrix
+   19       | . matrix '\''
+   20       | . matrix RIGHTSHIFT
+   21       | . matrix LEFTSHIFT
+   22       | . vector '\''
+   23       | . matrix ELEMMULT vector
+   24       | . matrix ELEMMULT expr
+   27 vector: . '{' exprs '}'
+   28       | . VVARIABLE
+   29       | . vector ELEMMULT vector
+   30       | . vector RIGHTSHIFT
+   31       | . vector LEFTSHIFT
+   32       | . vector ELEMMULT expr
+   48 assignment: MVARIABLE ASSIGN . matrix
 
-    $default  вывод с использованием правила 44 (expr)
+    VVARIABLE  сдвиг, и переход в состояние 50
+    MVARIABLE  сдвиг, и переход в состояние 83
+    '{'        сдвиг, и переход в состояние 26
+
+    matrix  переход в состояние 84
+    vector  переход в состояние 85
 
 
 State 41
 
-   43 expr: . const
-   44     | . VARIABLE
-   45     | . '-' expr
-   46     | . expr '+' expr
-   47     | . expr '-' expr
-   48     | . expr '/' expr
-   49     | . expr '<' expr
-   50     | . expr '>' expr
-   51     | . '!' expr
-   52     | . expr CONJUNCTION expr
-   53     | . '(' expr ')'
-   53     | '(' . expr ')'
-   66 const: . INTEGER
-   67      | . BOOL
+   15 matrix: . '{' listexprs '}'
+   16       | . MVARIABLE
+   17       | . matrix '*' matrix
+   18       | . matrix ELEMMULT matrix
+   19       | . matrix '\''
+   20       | . matrix RIGHTSHIFT
+   21       | . matrix LEFTSHIFT
+   22       | . vector '\''
+   23       | . matrix ELEMMULT vector
+   24       | . matrix ELEMMULT expr
+   27 vector: . '{' exprs '}'
+   28       | . VVARIABLE
+   29       | . vector ELEMMULT vector
+   30       | . vector RIGHTSHIFT
+   31       | . vector LEFTSHIFT
+   32       | . vector ELEMMULT expr
+   37 vmdeclaration: MVARIABLE '(' . expr ',' expr ')' ASSIGN expr
+   38              | MVARIABLE '(' . expr ',' '[' ']' ')' ASSIGN vector
+   39              | MVARIABLE '(' . '[' ']' ',' expr ')' ASSIGN vector
+   40              | MVARIABLE '(' . vector ',' '[' ']' ')' ASSIGN matrix
+   41              | MVARIABLE '(' . '[' ']' ',' vector ')' ASSIGN matrix
+   42              | MVARIABLE '(' . matrix ')' ASSIGN matrix
+   52 expr: . const
+   53     | . VARIABLE
+   54     | . '-' expr
+   55     | . expr '+' expr
+   56     | . expr '-' expr
+   57     | . expr '/' expr
+   58     | . expr '<' expr
+   59     | . expr '>' expr
+   60     | . '!' expr
+   61     | . expr CONJUNCTION expr
+   62     | . '(' expr ')'
+   75 const: . INTEGER
+   76      | . BOOL
 
-    BOOL      сдвиг, и переход в состояние 4
-    INTEGER   сдвиг, и переход в состояние 5
-    VARIABLE  сдвиг, и переход в состояние 40
-    '-'       сдвиг, и переход в состояние 23
-    '!'       сдвиг, и переход в состояние 24
-    '('       сдвиг, и переход в состояние 41
+    BOOL       сдвиг, и переход в состояние 4
+    INTEGER    сдвиг, и переход в состояние 5
+    VARIABLE   сдвиг, и переход в состояние 43
+    VVARIABLE  сдвиг, и переход в состояние 50
+    MVARIABLE  сдвиг, и переход в состояние 83
+    '-'        сдвиг, и переход в состояние 23
+    '!'        сдвиг, и переход в состояние 24
+    '('        сдвиг, и переход в состояние 44
+    '{'        сдвиг, и переход в состояние 26
+    '['        сдвиг, и переход в состояние 86
 
-    expr   переход в состояние 83
-    const  переход в состояние 35
+    matrix  переход в состояние 87
+    vector  переход в состояние 88
+    expr    переход в состояние 89
+    const   переход в состояние 36
 
 
 State 42
 
-   45 expr: '-' expr .  [NEWLINE, CONJUNCTION, ELEMMULT, '\'', LEFTSHIFT, RIGHTSHIFT, ',', '<', '>', '+', '-', '*', '/', ')', '}']
-   46     | expr . '+' expr
-   47     | expr . '-' expr
-   48     | expr . '/' expr
-   49     | expr . '<' expr
-   50     | expr . '>' expr
-   52     | expr . CONJUNCTION expr
+   49 print: PRINT '(' . expr ')'
+   50      | PRINT '(' . VVARIABLE ')'
+   51      | PRINT '(' . MVARIABLE ')'
+   52 expr: . const
+   53     | . VARIABLE
+   54     | . '-' expr
+   55     | . expr '+' expr
+   56     | . expr '-' expr
+   57     | . expr '/' expr
+   58     | . expr '<' expr
+   59     | . expr '>' expr
+   60     | . '!' expr
+   61     | . expr CONJUNCTION expr
+   62     | . '(' expr ')'
+   75 const: . INTEGER
+   76      | . BOOL
 
-    CONJUNCTION  сдвиг, и переход в состояние 68
+    BOOL       сдвиг, и переход в состояние 4
+    INTEGER    сдвиг, и переход в состояние 5
+    VARIABLE   сдвиг, и переход в состояние 43
+    VVARIABLE  сдвиг, и переход в состояние 90
+    MVARIABLE  сдвиг, и переход в состояние 91
+    '-'        сдвиг, и переход в состояние 23
+    '!'        сдвиг, и переход в состояние 24
+    '('        сдвиг, и переход в состояние 44
 
-    CONJUNCTION  [вывод с использованием правила 45 (expr)]
-    $default     вывод с использованием правила 45 (expr)
-
-    Конфликт между правилом 45 и лексемой '<' разрешен выводом ('<' < UMINUS).
-    Конфликт между правилом 45 и лексемой '>' разрешен выводом ('>' < UMINUS).
-    Конфликт между правилом 45 и лексемой '+' разрешен выводом ('+' < UMINUS).
-    Конфликт между правилом 45 и лексемой '-' разрешен выводом ('-' < UMINUS).
-    Конфликт между правилом 45 и лексемой '/' разрешен выводом ('/' < UMINUS).
+    expr   переход в состояние 92
+    const  переход в состояние 36
 
 
 State 43
 
-   46 expr: expr . '+' expr
-   47     | expr . '-' expr
-   48     | expr . '/' expr
-   49     | expr . '<' expr
-   50     | expr . '>' expr
-   51     | '!' expr .  [NEWLINE, CONJUNCTION, ELEMMULT, '\'', LEFTSHIFT, RIGHTSHIFT, ',', '<', '>', '+', '-', '*', '/', ')', '}']
-   52     | expr . CONJUNCTION expr
+   53 expr: VARIABLE .
 
-    CONJUNCTION  сдвиг, и переход в состояние 68
-
-    CONJUNCTION  [вывод с использованием правила 51 (expr)]
-    $default     вывод с использованием правила 51 (expr)
-
-    Конфликт между правилом 51 и лексемой '<' разрешен выводом ('<' < '!').
-    Конфликт между правилом 51 и лексемой '>' разрешен выводом ('>' < '!').
-    Конфликт между правилом 51 и лексемой '+' разрешен выводом ('+' < '!').
-    Конфликт между правилом 51 и лексемой '-' разрешен выводом ('-' < '!').
-    Конфликт между правилом 51 и лексемой '/' разрешен выводом ('/' < '!').
+    $default  вывод с использованием правила 53 (expr)
 
 
 State 44
+
+   52 expr: . const
+   53     | . VARIABLE
+   54     | . '-' expr
+   55     | . expr '+' expr
+   56     | . expr '-' expr
+   57     | . expr '/' expr
+   58     | . expr '<' expr
+   59     | . expr '>' expr
+   60     | . '!' expr
+   61     | . expr CONJUNCTION expr
+   62     | . '(' expr ')'
+   62     | '(' . expr ')'
+   75 const: . INTEGER
+   76      | . BOOL
+
+    BOOL      сдвиг, и переход в состояние 4
+    INTEGER   сдвиг, и переход в состояние 5
+    VARIABLE  сдвиг, и переход в состояние 43
+    '-'       сдвиг, и переход в состояние 23
+    '!'       сдвиг, и переход в состояние 24
+    '('       сдвиг, и переход в состояние 44
+
+    expr   переход в состояние 93
+    const  переход в состояние 36
+
+
+State 45
+
+   54 expr: '-' expr .  [NEWLINE, CONJUNCTION, ELEMMULT, '\'', LEFTSHIFT, RIGHTSHIFT, ',', '<', '>', '+', '-', '*', '/', ')', '}']
+   55     | expr . '+' expr
+   56     | expr . '-' expr
+   57     | expr . '/' expr
+   58     | expr . '<' expr
+   59     | expr . '>' expr
+   61     | expr . CONJUNCTION expr
+
+    CONJUNCTION  сдвиг, и переход в состояние 72
+
+    CONJUNCTION  [вывод с использованием правила 54 (expr)]
+    $default     вывод с использованием правила 54 (expr)
+
+    Конфликт между правилом 54 и лексемой '<' разрешен выводом ('<' < UMINUS).
+    Конфликт между правилом 54 и лексемой '>' разрешен выводом ('>' < UMINUS).
+    Конфликт между правилом 54 и лексемой '+' разрешен выводом ('+' < UMINUS).
+    Конфликт между правилом 54 и лексемой '-' разрешен выводом ('-' < UMINUS).
+    Конфликт между правилом 54 и лексемой '/' разрешен выводом ('/' < UMINUS).
+
+
+State 46
+
+   55 expr: expr . '+' expr
+   56     | expr . '-' expr
+   57     | expr . '/' expr
+   58     | expr . '<' expr
+   59     | expr . '>' expr
+   60     | '!' expr .  [NEWLINE, CONJUNCTION, ELEMMULT, '\'', LEFTSHIFT, RIGHTSHIFT, ',', '<', '>', '+', '-', '*', '/', ')', '}']
+   61     | expr . CONJUNCTION expr
+
+    CONJUNCTION  сдвиг, и переход в состояние 72
+
+    CONJUNCTION  [вывод с использованием правила 60 (expr)]
+    $default     вывод с использованием правила 60 (expr)
+
+    Конфликт между правилом 60 и лексемой '<' разрешен выводом ('<' < '!').
+    Конфликт между правилом 60 и лексемой '>' разрешен выводом ('>' < '!').
+    Конфликт между правилом 60 и лексемой '+' разрешен выводом ('+' < '!').
+    Конфликт между правилом 60 и лексемой '-' разрешен выводом ('-' < '!').
+    Конфликт между правилом 60 и лексемой '/' разрешен выводом ('/' < '!').
+
+
+State 47
 
     5 stmts: stmts . stmt
     6 stmt: . NEWLINE
@@ -948,60 +1092,69 @@ State 44
     8     | . vector NEWLINE
     9     | . matrix NEWLINE
    10     | . print NEWLINE
-   11     | . declaration NEWLINE
-   12     | . assignment NEWLINE
-   13     | . '(' stmts ')'
-   13     | '(' stmts . ')'
-   14 matrix: . '{' listexprs '}'
-   15       | . MVARIABLE
-   16       | . matrix '*' matrix
-   17       | . matrix ELEMMULT matrix
-   18       | . matrix '\''
-   19       | . matrix RIGHTSHIFT
-   20       | . matrix LEFTSHIFT
-   21       | . vector '\''
-   22       | . matrix ELEMMULT vector
-   23       | . matrix ELEMMULT expr
-   26 vector: . '{' exprs '}'
-   27       | . VVARIABLE
-   28       | . vector ELEMMULT vector
-   29       | . vector RIGHTSHIFT
-   30       | . vector LEFTSHIFT
-   31       | . vector ELEMMULT expr
-   34 declaration: . type VARIABLE DECLARE expr
-   35            | . type VARIABLE DECLARE vector
-   36            | . type VARIABLE DECLARE matrix
-   37 assignment: . VARIABLE ASSIGN expr
-   38           | . VVARIABLE ASSIGN vector
-   39           | . MVARIABLE ASSIGN matrix
-   40 print: . PRINT '(' expr ')'
-   41      | . PRINT '(' VVARIABLE ')'
-   42      | . PRINT '(' MVARIABLE ')'
-   43 expr: . const
-   44     | . VARIABLE
-   45     | . '-' expr
-   46     | . expr '+' expr
-   47     | . expr '-' expr
-   48     | . expr '/' expr
-   49     | . expr '<' expr
-   50     | . expr '>' expr
-   51     | . '!' expr
-   52     | . expr CONJUNCTION expr
-   53     | . '(' expr ')'
-   54 type: . INT
-   55     | . CINT
-   56     | . VINT
-   57     | . MINT
-   58     | . CVINT
-   59     | . CMINT
-   60     | . BOOLEAN
-   61     | . CBOOLEAN
-   62     | . VBOOLEAN
-   63     | . MBOOLEAN
-   64     | . CVBOOLEAN
-   65     | . CMBOOLEAN
-   66 const: . INTEGER
-   67      | . BOOL
+   11     | . vmdeclaration NEWLINE
+   12     | . declaration NEWLINE
+   13     | . assignment NEWLINE
+   14     | . '(' stmts ')'
+   14     | '(' stmts . ')'
+   15 matrix: . '{' listexprs '}'
+   16       | . MVARIABLE
+   17       | . matrix '*' matrix
+   18       | . matrix ELEMMULT matrix
+   19       | . matrix '\''
+   20       | . matrix RIGHTSHIFT
+   21       | . matrix LEFTSHIFT
+   22       | . vector '\''
+   23       | . matrix ELEMMULT vector
+   24       | . matrix ELEMMULT expr
+   27 vector: . '{' exprs '}'
+   28       | . VVARIABLE
+   29       | . vector ELEMMULT vector
+   30       | . vector RIGHTSHIFT
+   31       | . vector LEFTSHIFT
+   32       | . vector ELEMMULT expr
+   35 vmdeclaration: . VVARIABLE '(' expr ')' ASSIGN expr
+   36              | . VVARIABLE '(' vector ',' '[' ']' ')' ASSIGN vector
+   37              | . MVARIABLE '(' expr ',' expr ')' ASSIGN expr
+   38              | . MVARIABLE '(' expr ',' '[' ']' ')' ASSIGN vector
+   39              | . MVARIABLE '(' '[' ']' ',' expr ')' ASSIGN vector
+   40              | . MVARIABLE '(' vector ',' '[' ']' ')' ASSIGN matrix
+   41              | . MVARIABLE '(' '[' ']' ',' vector ')' ASSIGN matrix
+   42              | . MVARIABLE '(' matrix ')' ASSIGN matrix
+   43 declaration: . type VARIABLE DECLARE expr
+   44            | . type VARIABLE DECLARE vector
+   45            | . type VARIABLE DECLARE matrix
+   46 assignment: . VARIABLE ASSIGN expr
+   47           | . VVARIABLE ASSIGN vector
+   48           | . MVARIABLE ASSIGN matrix
+   49 print: . PRINT '(' expr ')'
+   50      | . PRINT '(' VVARIABLE ')'
+   51      | . PRINT '(' MVARIABLE ')'
+   52 expr: . const
+   53     | . VARIABLE
+   54     | . '-' expr
+   55     | . expr '+' expr
+   56     | . expr '-' expr
+   57     | . expr '/' expr
+   58     | . expr '<' expr
+   59     | . expr '>' expr
+   60     | . '!' expr
+   61     | . expr CONJUNCTION expr
+   62     | . '(' expr ')'
+   63 type: . INT
+   64     | . CINT
+   65     | . VINT
+   66     | . MINT
+   67     | . CVINT
+   68     | . CMINT
+   69     | . BOOLEAN
+   70     | . CBOOLEAN
+   71     | . VBOOLEAN
+   72     | . MBOOLEAN
+   73     | . CVBOOLEAN
+   74     | . CMBOOLEAN
+   75 const: . INTEGER
+   76      | . BOOL
 
     BOOL       сдвиг, и переход в состояние 4
     INTEGER    сдвиг, и переход в состояние 5
@@ -1025,1233 +1178,1910 @@ State 44
     '-'        сдвиг, и переход в состояние 23
     '!'        сдвиг, и переход в состояние 24
     '('        сдвиг, и переход в состояние 25
-    ')'        сдвиг, и переход в состояние 84
+    ')'        сдвиг, и переход в состояние 94
     '{'        сдвиг, и переход в состояние 26
 
-    stmt         переход в состояние 85
-    matrix       переход в состояние 28
-    vector       переход в состояние 29
-    declaration  переход в состояние 30
-    assignment   переход в состояние 31
-    print        переход в состояние 32
-    expr         переход в состояние 33
-    type         переход в состояние 34
-    const        переход в состояние 35
+    stmt           переход в состояние 95
+    matrix         переход в состояние 28
+    vector         переход в состояние 29
+    vmdeclaration  переход в состояние 30
+    declaration    переход в состояние 31
+    assignment     переход в состояние 32
+    print          переход в состояние 33
+    expr           переход в состояние 34
+    type           переход в состояние 35
+    const          переход в состояние 36
 
 
-State 45
+State 48
 
     4 stmts: stmt .
 
     $default  вывод с использованием правила 4 (stmts)
 
 
-State 46
-
-    7 stmt: expr . NEWLINE
-   46 expr: expr . '+' expr
-   47     | expr . '-' expr
-   48     | expr . '/' expr
-   49     | expr . '<' expr
-   50     | expr . '>' expr
-   52     | expr . CONJUNCTION expr
-   53     | '(' expr . ')'
-
-    NEWLINE      сдвиг, и переход в состояние 67
-    CONJUNCTION  сдвиг, и переход в состояние 68
-    '<'          сдвиг, и переход в состояние 69
-    '>'          сдвиг, и переход в состояние 70
-    '+'          сдвиг, и переход в состояние 71
-    '-'          сдвиг, и переход в состояние 72
-    '/'          сдвиг, и переход в состояние 73
-    ')'          сдвиг, и переход в состояние 86
-
-
-State 47
-
-   27 vector: VVARIABLE .
-
-    $default  вывод с использованием правила 27 (vector)
-
-
-State 48
-
-   26 vector: '{' . exprs '}'
-   32 exprs: . expr ',' expr
-   33      | . exprs ',' expr
-   43 expr: . const
-   44     | . VARIABLE
-   45     | . '-' expr
-   46     | . expr '+' expr
-   47     | . expr '-' expr
-   48     | . expr '/' expr
-   49     | . expr '<' expr
-   50     | . expr '>' expr
-   51     | . '!' expr
-   52     | . expr CONJUNCTION expr
-   53     | . '(' expr ')'
-   66 const: . INTEGER
-   67      | . BOOL
-
-    BOOL      сдвиг, и переход в состояние 4
-    INTEGER   сдвиг, и переход в состояние 5
-    VARIABLE  сдвиг, и переход в состояние 40
-    '-'       сдвиг, и переход в состояние 23
-    '!'       сдвиг, и переход в состояние 24
-    '('       сдвиг, и переход в состояние 41
-
-    exprs  переход в состояние 51
-    expr   переход в состояние 52
-    const  переход в состояние 35
-
-
 State 49
 
-   14 matrix: '{' listexprs . '}'
-   25 listexprs: listexprs . ',' vector
+    7 stmt: expr . NEWLINE
+   55 expr: expr . '+' expr
+   56     | expr . '-' expr
+   57     | expr . '/' expr
+   58     | expr . '<' expr
+   59     | expr . '>' expr
+   61     | expr . CONJUNCTION expr
+   62     | '(' expr . ')'
 
-    ','  сдвиг, и переход в состояние 87
-    '}'  сдвиг, и переход в состояние 88
+    NEWLINE      сдвиг, и переход в состояние 71
+    CONJUNCTION  сдвиг, и переход в состояние 72
+    '<'          сдвиг, и переход в состояние 73
+    '>'          сдвиг, и переход в состояние 74
+    '+'          сдвиг, и переход в состояние 75
+    '-'          сдвиг, и переход в состояние 76
+    '/'          сдвиг, и переход в состояние 77
+    ')'          сдвиг, и переход в состояние 96
 
 
 State 50
 
-   24 listexprs: vector . ',' vector
-   28 vector: vector . ELEMMULT vector
-   29       | vector . RIGHTSHIFT
-   30       | vector . LEFTSHIFT
-   31       | vector . ELEMMULT expr
+   28 vector: VVARIABLE .
 
-    ELEMMULT    сдвиг, и переход в состояние 60
-    LEFTSHIFT   сдвиг, и переход в состояние 62
-    RIGHTSHIFT  сдвиг, и переход в состояние 63
-    ','         сдвиг, и переход в состояние 89
+    $default  вывод с использованием правила 28 (vector)
 
 
 State 51
 
-   26 vector: '{' exprs . '}'
-   33 exprs: exprs . ',' expr
+   27 vector: '{' . exprs '}'
+   33 exprs: . expr ',' expr
+   34      | . exprs ',' expr
+   52 expr: . const
+   53     | . VARIABLE
+   54     | . '-' expr
+   55     | . expr '+' expr
+   56     | . expr '-' expr
+   57     | . expr '/' expr
+   58     | . expr '<' expr
+   59     | . expr '>' expr
+   60     | . '!' expr
+   61     | . expr CONJUNCTION expr
+   62     | . '(' expr ')'
+   75 const: . INTEGER
+   76      | . BOOL
 
-    ','  сдвиг, и переход в состояние 90
-    '}'  сдвиг, и переход в состояние 91
+    BOOL      сдвиг, и переход в состояние 4
+    INTEGER   сдвиг, и переход в состояние 5
+    VARIABLE  сдвиг, и переход в состояние 43
+    '-'       сдвиг, и переход в состояние 23
+    '!'       сдвиг, и переход в состояние 24
+    '('       сдвиг, и переход в состояние 44
+
+    exprs  переход в состояние 54
+    expr   переход в состояние 55
+    const  переход в состояние 36
 
 
 State 52
 
-   32 exprs: expr . ',' expr
-   46 expr: expr . '+' expr
-   47     | expr . '-' expr
-   48     | expr . '/' expr
-   49     | expr . '<' expr
-   50     | expr . '>' expr
-   52     | expr . CONJUNCTION expr
+   15 matrix: '{' listexprs . '}'
+   26 listexprs: listexprs . ',' vector
 
-    CONJUNCTION  сдвиг, и переход в состояние 68
-    ','          сдвиг, и переход в состояние 92
-    '<'          сдвиг, и переход в состояние 69
-    '>'          сдвиг, и переход в состояние 70
-    '+'          сдвиг, и переход в состояние 71
-    '-'          сдвиг, и переход в состояние 72
-    '/'          сдвиг, и переход в состояние 73
+    ','  сдвиг, и переход в состояние 97
+    '}'  сдвиг, и переход в состояние 98
 
 
 State 53
+
+   25 listexprs: vector . ',' vector
+   29 vector: vector . ELEMMULT vector
+   30       | vector . RIGHTSHIFT
+   31       | vector . LEFTSHIFT
+   32       | vector . ELEMMULT expr
+
+    ELEMMULT    сдвиг, и переход в состояние 63
+    LEFTSHIFT   сдвиг, и переход в состояние 65
+    RIGHTSHIFT  сдвиг, и переход в состояние 66
+    ','         сдвиг, и переход в состояние 99
+
+
+State 54
+
+   27 vector: '{' exprs . '}'
+   34 exprs: exprs . ',' expr
+
+    ','  сдвиг, и переход в состояние 100
+    '}'  сдвиг, и переход в состояние 101
+
+
+State 55
+
+   33 exprs: expr . ',' expr
+   55 expr: expr . '+' expr
+   56     | expr . '-' expr
+   57     | expr . '/' expr
+   58     | expr . '<' expr
+   59     | expr . '>' expr
+   61     | expr . CONJUNCTION expr
+
+    CONJUNCTION  сдвиг, и переход в состояние 72
+    ','          сдвиг, и переход в состояние 102
+    '<'          сдвиг, и переход в состояние 73
+    '>'          сдвиг, и переход в состояние 74
+    '+'          сдвиг, и переход в состояние 75
+    '-'          сдвиг, и переход в состояние 76
+    '/'          сдвиг, и переход в состояние 77
+
+
+State 56
 
     9 stmt: matrix NEWLINE .
 
     $default  вывод с использованием правила 9 (stmt)
 
 
-State 54
+State 57
 
-   14 matrix: . '{' listexprs '}'
-   15       | . MVARIABLE
-   16       | . matrix '*' matrix
-   17       | . matrix ELEMMULT matrix
-   17       | matrix ELEMMULT . matrix
-   18       | . matrix '\''
-   19       | . matrix RIGHTSHIFT
-   20       | . matrix LEFTSHIFT
-   21       | . vector '\''
-   22       | . matrix ELEMMULT vector
-   22       | matrix ELEMMULT . vector
-   23       | . matrix ELEMMULT expr
-   23       | matrix ELEMMULT . expr
-   26 vector: . '{' exprs '}'
-   27       | . VVARIABLE
-   28       | . vector ELEMMULT vector
-   29       | . vector RIGHTSHIFT
-   30       | . vector LEFTSHIFT
-   31       | . vector ELEMMULT expr
-   43 expr: . const
-   44     | . VARIABLE
-   45     | . '-' expr
-   46     | . expr '+' expr
-   47     | . expr '-' expr
-   48     | . expr '/' expr
-   49     | . expr '<' expr
-   50     | . expr '>' expr
-   51     | . '!' expr
-   52     | . expr CONJUNCTION expr
-   53     | . '(' expr ')'
-   66 const: . INTEGER
-   67      | . BOOL
+   15 matrix: . '{' listexprs '}'
+   16       | . MVARIABLE
+   17       | . matrix '*' matrix
+   18       | . matrix ELEMMULT matrix
+   18       | matrix ELEMMULT . matrix
+   19       | . matrix '\''
+   20       | . matrix RIGHTSHIFT
+   21       | . matrix LEFTSHIFT
+   22       | . vector '\''
+   23       | . matrix ELEMMULT vector
+   23       | matrix ELEMMULT . vector
+   24       | . matrix ELEMMULT expr
+   24       | matrix ELEMMULT . expr
+   27 vector: . '{' exprs '}'
+   28       | . VVARIABLE
+   29       | . vector ELEMMULT vector
+   30       | . vector RIGHTSHIFT
+   31       | . vector LEFTSHIFT
+   32       | . vector ELEMMULT expr
+   52 expr: . const
+   53     | . VARIABLE
+   54     | . '-' expr
+   55     | . expr '+' expr
+   56     | . expr '-' expr
+   57     | . expr '/' expr
+   58     | . expr '<' expr
+   59     | . expr '>' expr
+   60     | . '!' expr
+   61     | . expr CONJUNCTION expr
+   62     | . '(' expr ')'
+   75 const: . INTEGER
+   76      | . BOOL
 
     BOOL       сдвиг, и переход в состояние 4
     INTEGER    сдвиг, и переход в состояние 5
-    VARIABLE   сдвиг, и переход в состояние 40
-    VVARIABLE  сдвиг, и переход в состояние 47
-    MVARIABLE  сдвиг, и переход в состояние 77
+    VARIABLE   сдвиг, и переход в состояние 43
+    VVARIABLE  сдвиг, и переход в состояние 50
+    MVARIABLE  сдвиг, и переход в состояние 83
     '-'        сдвиг, и переход в состояние 23
     '!'        сдвиг, и переход в состояние 24
-    '('        сдвиг, и переход в состояние 41
+    '('        сдвиг, и переход в состояние 44
     '{'        сдвиг, и переход в состояние 26
 
-    matrix  переход в состояние 93
-    vector  переход в состояние 94
-    expr    переход в состояние 95
-    const   переход в состояние 35
-
-
-State 55
-
-   18 matrix: matrix '\'' .
-
-    $default  вывод с использованием правила 18 (matrix)
-
-
-State 56
-
-   20 matrix: matrix LEFTSHIFT .
-
-    $default  вывод с использованием правила 20 (matrix)
-
-
-State 57
-
-   19 matrix: matrix RIGHTSHIFT .
-
-    $default  вывод с использованием правила 19 (matrix)
+    matrix  переход в состояние 103
+    vector  переход в состояние 104
+    expr    переход в состояние 105
+    const   переход в состояние 36
 
 
 State 58
 
-   14 matrix: . '{' listexprs '}'
-   15       | . MVARIABLE
-   16       | . matrix '*' matrix
-   16       | matrix '*' . matrix
-   17       | . matrix ELEMMULT matrix
-   18       | . matrix '\''
-   19       | . matrix RIGHTSHIFT
-   20       | . matrix LEFTSHIFT
-   21       | . vector '\''
-   22       | . matrix ELEMMULT vector
-   23       | . matrix ELEMMULT expr
-   26 vector: . '{' exprs '}'
-   27       | . VVARIABLE
-   28       | . vector ELEMMULT vector
-   29       | . vector RIGHTSHIFT
-   30       | . vector LEFTSHIFT
-   31       | . vector ELEMMULT expr
+   19 matrix: matrix '\'' .
 
-    VVARIABLE  сдвиг, и переход в состояние 47
-    MVARIABLE  сдвиг, и переход в состояние 77
-    '{'        сдвиг, и переход в состояние 26
-
-    matrix  переход в состояние 96
-    vector  переход в состояние 79
+    $default  вывод с использованием правила 19 (matrix)
 
 
 State 59
+
+   21 matrix: matrix LEFTSHIFT .
+
+    $default  вывод с использованием правила 21 (matrix)
+
+
+State 60
+
+   20 matrix: matrix RIGHTSHIFT .
+
+    $default  вывод с использованием правила 20 (matrix)
+
+
+State 61
+
+   15 matrix: . '{' listexprs '}'
+   16       | . MVARIABLE
+   17       | . matrix '*' matrix
+   17       | matrix '*' . matrix
+   18       | . matrix ELEMMULT matrix
+   19       | . matrix '\''
+   20       | . matrix RIGHTSHIFT
+   21       | . matrix LEFTSHIFT
+   22       | . vector '\''
+   23       | . matrix ELEMMULT vector
+   24       | . matrix ELEMMULT expr
+   27 vector: . '{' exprs '}'
+   28       | . VVARIABLE
+   29       | . vector ELEMMULT vector
+   30       | . vector RIGHTSHIFT
+   31       | . vector LEFTSHIFT
+   32       | . vector ELEMMULT expr
+
+    VVARIABLE  сдвиг, и переход в состояние 50
+    MVARIABLE  сдвиг, и переход в состояние 83
+    '{'        сдвиг, и переход в состояние 26
+
+    matrix  переход в состояние 106
+    vector  переход в состояние 85
+
+
+State 62
 
     8 stmt: vector NEWLINE .
 
     $default  вывод с использованием правила 8 (stmt)
 
 
-State 60
+State 63
 
-   26 vector: . '{' exprs '}'
-   27       | . VVARIABLE
-   28       | . vector ELEMMULT vector
-   28       | vector ELEMMULT . vector
-   29       | . vector RIGHTSHIFT
-   30       | . vector LEFTSHIFT
-   31       | . vector ELEMMULT expr
-   31       | vector ELEMMULT . expr
-   43 expr: . const
-   44     | . VARIABLE
-   45     | . '-' expr
-   46     | . expr '+' expr
-   47     | . expr '-' expr
-   48     | . expr '/' expr
-   49     | . expr '<' expr
-   50     | . expr '>' expr
-   51     | . '!' expr
-   52     | . expr CONJUNCTION expr
-   53     | . '(' expr ')'
-   66 const: . INTEGER
-   67      | . BOOL
+   27 vector: . '{' exprs '}'
+   28       | . VVARIABLE
+   29       | . vector ELEMMULT vector
+   29       | vector ELEMMULT . vector
+   30       | . vector RIGHTSHIFT
+   31       | . vector LEFTSHIFT
+   32       | . vector ELEMMULT expr
+   32       | vector ELEMMULT . expr
+   52 expr: . const
+   53     | . VARIABLE
+   54     | . '-' expr
+   55     | . expr '+' expr
+   56     | . expr '-' expr
+   57     | . expr '/' expr
+   58     | . expr '<' expr
+   59     | . expr '>' expr
+   60     | . '!' expr
+   61     | . expr CONJUNCTION expr
+   62     | . '(' expr ')'
+   75 const: . INTEGER
+   76      | . BOOL
 
     BOOL       сдвиг, и переход в состояние 4
     INTEGER    сдвиг, и переход в состояние 5
-    VARIABLE   сдвиг, и переход в состояние 40
-    VVARIABLE  сдвиг, и переход в состояние 47
+    VARIABLE   сдвиг, и переход в состояние 43
+    VVARIABLE  сдвиг, и переход в состояние 50
     '-'        сдвиг, и переход в состояние 23
     '!'        сдвиг, и переход в состояние 24
-    '('        сдвиг, и переход в состояние 41
-    '{'        сдвиг, и переход в состояние 48
+    '('        сдвиг, и переход в состояние 44
+    '{'        сдвиг, и переход в состояние 51
 
-    vector  переход в состояние 97
-    expr    переход в состояние 98
-    const   переход в состояние 35
-
-
-State 61
-
-   21 matrix: vector '\'' .
-
-    $default  вывод с использованием правила 21 (matrix)
-
-
-State 62
-
-   30 vector: vector LEFTSHIFT .
-
-    $default  вывод с использованием правила 30 (vector)
-
-
-State 63
-
-   29 vector: vector RIGHTSHIFT .
-
-    $default  вывод с использованием правила 29 (vector)
+    vector  переход в состояние 107
+    expr    переход в состояние 108
+    const   переход в состояние 36
 
 
 State 64
 
-   11 stmt: declaration NEWLINE .
+   22 matrix: vector '\'' .
 
-    $default  вывод с использованием правила 11 (stmt)
+    $default  вывод с использованием правила 22 (matrix)
 
 
 State 65
 
-   12 stmt: assignment NEWLINE .
+   31 vector: vector LEFTSHIFT .
+
+    $default  вывод с использованием правила 31 (vector)
+
+
+State 66
+
+   30 vector: vector RIGHTSHIFT .
+
+    $default  вывод с использованием правила 30 (vector)
+
+
+State 67
+
+   11 stmt: vmdeclaration NEWLINE .
+
+    $default  вывод с использованием правила 11 (stmt)
+
+
+State 68
+
+   12 stmt: declaration NEWLINE .
 
     $default  вывод с использованием правила 12 (stmt)
 
 
-State 66
+State 69
+
+   13 stmt: assignment NEWLINE .
+
+    $default  вывод с использованием правила 13 (stmt)
+
+
+State 70
 
    10 stmt: print NEWLINE .
 
     $default  вывод с использованием правила 10 (stmt)
 
 
-State 67
+State 71
 
     7 stmt: expr NEWLINE .
 
     $default  вывод с использованием правила 7 (stmt)
 
 
-State 68
-
-   43 expr: . const
-   44     | . VARIABLE
-   45     | . '-' expr
-   46     | . expr '+' expr
-   47     | . expr '-' expr
-   48     | . expr '/' expr
-   49     | . expr '<' expr
-   50     | . expr '>' expr
-   51     | . '!' expr
-   52     | . expr CONJUNCTION expr
-   52     | expr CONJUNCTION . expr
-   53     | . '(' expr ')'
-   66 const: . INTEGER
-   67      | . BOOL
-
-    BOOL      сдвиг, и переход в состояние 4
-    INTEGER   сдвиг, и переход в состояние 5
-    VARIABLE  сдвиг, и переход в состояние 40
-    '-'       сдвиг, и переход в состояние 23
-    '!'       сдвиг, и переход в состояние 24
-    '('       сдвиг, и переход в состояние 41
-
-    expr   переход в состояние 99
-    const  переход в состояние 35
-
-
-State 69
-
-   43 expr: . const
-   44     | . VARIABLE
-   45     | . '-' expr
-   46     | . expr '+' expr
-   47     | . expr '-' expr
-   48     | . expr '/' expr
-   49     | . expr '<' expr
-   49     | expr '<' . expr
-   50     | . expr '>' expr
-   51     | . '!' expr
-   52     | . expr CONJUNCTION expr
-   53     | . '(' expr ')'
-   66 const: . INTEGER
-   67      | . BOOL
-
-    BOOL      сдвиг, и переход в состояние 4
-    INTEGER   сдвиг, и переход в состояние 5
-    VARIABLE  сдвиг, и переход в состояние 40
-    '-'       сдвиг, и переход в состояние 23
-    '!'       сдвиг, и переход в состояние 24
-    '('       сдвиг, и переход в состояние 41
-
-    expr   переход в состояние 100
-    const  переход в состояние 35
-
-
-State 70
-
-   43 expr: . const
-   44     | . VARIABLE
-   45     | . '-' expr
-   46     | . expr '+' expr
-   47     | . expr '-' expr
-   48     | . expr '/' expr
-   49     | . expr '<' expr
-   50     | . expr '>' expr
-   50     | expr '>' . expr
-   51     | . '!' expr
-   52     | . expr CONJUNCTION expr
-   53     | . '(' expr ')'
-   66 const: . INTEGER
-   67      | . BOOL
-
-    BOOL      сдвиг, и переход в состояние 4
-    INTEGER   сдвиг, и переход в состояние 5
-    VARIABLE  сдвиг, и переход в состояние 40
-    '-'       сдвиг, и переход в состояние 23
-    '!'       сдвиг, и переход в состояние 24
-    '('       сдвиг, и переход в состояние 41
-
-    expr   переход в состояние 101
-    const  переход в состояние 35
-
-
-State 71
-
-   43 expr: . const
-   44     | . VARIABLE
-   45     | . '-' expr
-   46     | . expr '+' expr
-   46     | expr '+' . expr
-   47     | . expr '-' expr
-   48     | . expr '/' expr
-   49     | . expr '<' expr
-   50     | . expr '>' expr
-   51     | . '!' expr
-   52     | . expr CONJUNCTION expr
-   53     | . '(' expr ')'
-   66 const: . INTEGER
-   67      | . BOOL
-
-    BOOL      сдвиг, и переход в состояние 4
-    INTEGER   сдвиг, и переход в состояние 5
-    VARIABLE  сдвиг, и переход в состояние 40
-    '-'       сдвиг, и переход в состояние 23
-    '!'       сдвиг, и переход в состояние 24
-    '('       сдвиг, и переход в состояние 41
-
-    expr   переход в состояние 102
-    const  переход в состояние 35
-
-
 State 72
 
-   43 expr: . const
-   44     | . VARIABLE
-   45     | . '-' expr
-   46     | . expr '+' expr
-   47     | . expr '-' expr
-   47     | expr '-' . expr
-   48     | . expr '/' expr
-   49     | . expr '<' expr
-   50     | . expr '>' expr
-   51     | . '!' expr
-   52     | . expr CONJUNCTION expr
-   53     | . '(' expr ')'
-   66 const: . INTEGER
-   67      | . BOOL
+   52 expr: . const
+   53     | . VARIABLE
+   54     | . '-' expr
+   55     | . expr '+' expr
+   56     | . expr '-' expr
+   57     | . expr '/' expr
+   58     | . expr '<' expr
+   59     | . expr '>' expr
+   60     | . '!' expr
+   61     | . expr CONJUNCTION expr
+   61     | expr CONJUNCTION . expr
+   62     | . '(' expr ')'
+   75 const: . INTEGER
+   76      | . BOOL
 
     BOOL      сдвиг, и переход в состояние 4
     INTEGER   сдвиг, и переход в состояние 5
-    VARIABLE  сдвиг, и переход в состояние 40
+    VARIABLE  сдвиг, и переход в состояние 43
     '-'       сдвиг, и переход в состояние 23
     '!'       сдвиг, и переход в состояние 24
-    '('       сдвиг, и переход в состояние 41
+    '('       сдвиг, и переход в состояние 44
 
-    expr   переход в состояние 103
-    const  переход в состояние 35
+    expr   переход в состояние 109
+    const  переход в состояние 36
 
 
 State 73
 
-   43 expr: . const
-   44     | . VARIABLE
-   45     | . '-' expr
-   46     | . expr '+' expr
-   47     | . expr '-' expr
-   48     | . expr '/' expr
-   48     | expr '/' . expr
-   49     | . expr '<' expr
-   50     | . expr '>' expr
-   51     | . '!' expr
-   52     | . expr CONJUNCTION expr
-   53     | . '(' expr ')'
-   66 const: . INTEGER
-   67      | . BOOL
+   52 expr: . const
+   53     | . VARIABLE
+   54     | . '-' expr
+   55     | . expr '+' expr
+   56     | . expr '-' expr
+   57     | . expr '/' expr
+   58     | . expr '<' expr
+   58     | expr '<' . expr
+   59     | . expr '>' expr
+   60     | . '!' expr
+   61     | . expr CONJUNCTION expr
+   62     | . '(' expr ')'
+   75 const: . INTEGER
+   76      | . BOOL
 
     BOOL      сдвиг, и переход в состояние 4
     INTEGER   сдвиг, и переход в состояние 5
-    VARIABLE  сдвиг, и переход в состояние 40
+    VARIABLE  сдвиг, и переход в состояние 43
     '-'       сдвиг, и переход в состояние 23
     '!'       сдвиг, и переход в состояние 24
-    '('       сдвиг, и переход в состояние 41
+    '('       сдвиг, и переход в состояние 44
 
-    expr   переход в состояние 104
-    const  переход в состояние 35
+    expr   переход в состояние 110
+    const  переход в состояние 36
 
 
 State 74
 
-   34 declaration: type VARIABLE . DECLARE expr
-   35            | type VARIABLE . DECLARE vector
-   36            | type VARIABLE . DECLARE matrix
+   52 expr: . const
+   53     | . VARIABLE
+   54     | . '-' expr
+   55     | . expr '+' expr
+   56     | . expr '-' expr
+   57     | . expr '/' expr
+   58     | . expr '<' expr
+   59     | . expr '>' expr
+   59     | expr '>' . expr
+   60     | . '!' expr
+   61     | . expr CONJUNCTION expr
+   62     | . '(' expr ')'
+   75 const: . INTEGER
+   76      | . BOOL
 
-    DECLARE  сдвиг, и переход в состояние 105
+    BOOL      сдвиг, и переход в состояние 4
+    INTEGER   сдвиг, и переход в состояние 5
+    VARIABLE  сдвиг, и переход в состояние 43
+    '-'       сдвиг, и переход в состояние 23
+    '!'       сдвиг, и переход в состояние 24
+    '('       сдвиг, и переход в состояние 44
+
+    expr   переход в состояние 111
+    const  переход в состояние 36
 
 
 State 75
 
-   37 assignment: VARIABLE ASSIGN expr .  [NEWLINE]
-   46 expr: expr . '+' expr
-   47     | expr . '-' expr
-   48     | expr . '/' expr
-   49     | expr . '<' expr
-   50     | expr . '>' expr
-   52     | expr . CONJUNCTION expr
+   52 expr: . const
+   53     | . VARIABLE
+   54     | . '-' expr
+   55     | . expr '+' expr
+   55     | expr '+' . expr
+   56     | . expr '-' expr
+   57     | . expr '/' expr
+   58     | . expr '<' expr
+   59     | . expr '>' expr
+   60     | . '!' expr
+   61     | . expr CONJUNCTION expr
+   62     | . '(' expr ')'
+   75 const: . INTEGER
+   76      | . BOOL
 
-    CONJUNCTION  сдвиг, и переход в состояние 68
-    '<'          сдвиг, и переход в состояние 69
-    '>'          сдвиг, и переход в состояние 70
-    '+'          сдвиг, и переход в состояние 71
-    '-'          сдвиг, и переход в состояние 72
-    '/'          сдвиг, и переход в состояние 73
+    BOOL      сдвиг, и переход в состояние 4
+    INTEGER   сдвиг, и переход в состояние 5
+    VARIABLE  сдвиг, и переход в состояние 43
+    '-'       сдвиг, и переход в состояние 23
+    '!'       сдвиг, и переход в состояние 24
+    '('       сдвиг, и переход в состояние 44
 
-    $default  вывод с использованием правила 37 (assignment)
+    expr   переход в состояние 112
+    const  переход в состояние 36
 
 
 State 76
 
-   28 vector: vector . ELEMMULT vector
-   29       | vector . RIGHTSHIFT
-   30       | vector . LEFTSHIFT
-   31       | vector . ELEMMULT expr
-   38 assignment: VVARIABLE ASSIGN vector .  [NEWLINE]
+   52 expr: . const
+   53     | . VARIABLE
+   54     | . '-' expr
+   55     | . expr '+' expr
+   56     | . expr '-' expr
+   56     | expr '-' . expr
+   57     | . expr '/' expr
+   58     | . expr '<' expr
+   59     | . expr '>' expr
+   60     | . '!' expr
+   61     | . expr CONJUNCTION expr
+   62     | . '(' expr ')'
+   75 const: . INTEGER
+   76      | . BOOL
 
-    ELEMMULT    сдвиг, и переход в состояние 60
-    LEFTSHIFT   сдвиг, и переход в состояние 62
-    RIGHTSHIFT  сдвиг, и переход в состояние 63
+    BOOL      сдвиг, и переход в состояние 4
+    INTEGER   сдвиг, и переход в состояние 5
+    VARIABLE  сдвиг, и переход в состояние 43
+    '-'       сдвиг, и переход в состояние 23
+    '!'       сдвиг, и переход в состояние 24
+    '('       сдвиг, и переход в состояние 44
 
-    $default  вывод с использованием правила 38 (assignment)
+    expr   переход в состояние 113
+    const  переход в состояние 36
 
 
 State 77
 
-   15 matrix: MVARIABLE .
+   52 expr: . const
+   53     | . VARIABLE
+   54     | . '-' expr
+   55     | . expr '+' expr
+   56     | . expr '-' expr
+   57     | . expr '/' expr
+   57     | expr '/' . expr
+   58     | . expr '<' expr
+   59     | . expr '>' expr
+   60     | . '!' expr
+   61     | . expr CONJUNCTION expr
+   62     | . '(' expr ')'
+   75 const: . INTEGER
+   76      | . BOOL
 
-    $default  вывод с использованием правила 15 (matrix)
+    BOOL      сдвиг, и переход в состояние 4
+    INTEGER   сдвиг, и переход в состояние 5
+    VARIABLE  сдвиг, и переход в состояние 43
+    '-'       сдвиг, и переход в состояние 23
+    '!'       сдвиг, и переход в состояние 24
+    '('       сдвиг, и переход в состояние 44
+
+    expr   переход в состояние 114
+    const  переход в состояние 36
 
 
 State 78
 
-   16 matrix: matrix . '*' matrix
-   17       | matrix . ELEMMULT matrix
-   18       | matrix . '\''
-   19       | matrix . RIGHTSHIFT
-   20       | matrix . LEFTSHIFT
-   22       | matrix . ELEMMULT vector
-   23       | matrix . ELEMMULT expr
-   39 assignment: MVARIABLE ASSIGN matrix .  [NEWLINE]
+   43 declaration: type VARIABLE . DECLARE expr
+   44            | type VARIABLE . DECLARE vector
+   45            | type VARIABLE . DECLARE matrix
 
-    ELEMMULT    сдвиг, и переход в состояние 54
-    '\''        сдвиг, и переход в состояние 55
-    LEFTSHIFT   сдвиг, и переход в состояние 56
-    RIGHTSHIFT  сдвиг, и переход в состояние 57
-    '*'         сдвиг, и переход в состояние 58
-
-    $default  вывод с использованием правила 39 (assignment)
+    DECLARE  сдвиг, и переход в состояние 115
 
 
 State 79
 
-   21 matrix: vector . '\''
-   28 vector: vector . ELEMMULT vector
-   29       | vector . RIGHTSHIFT
-   30       | vector . LEFTSHIFT
-   31       | vector . ELEMMULT expr
+   46 assignment: VARIABLE ASSIGN expr .  [NEWLINE]
+   55 expr: expr . '+' expr
+   56     | expr . '-' expr
+   57     | expr . '/' expr
+   58     | expr . '<' expr
+   59     | expr . '>' expr
+   61     | expr . CONJUNCTION expr
 
-    ELEMMULT    сдвиг, и переход в состояние 60
-    '\''        сдвиг, и переход в состояние 61
-    LEFTSHIFT   сдвиг, и переход в состояние 62
-    RIGHTSHIFT  сдвиг, и переход в состояние 63
+    CONJUNCTION  сдвиг, и переход в состояние 72
+    '<'          сдвиг, и переход в состояние 73
+    '>'          сдвиг, и переход в состояние 74
+    '+'          сдвиг, и переход в состояние 75
+    '-'          сдвиг, и переход в состояние 76
+    '/'          сдвиг, и переход в состояние 77
+
+    $default  вывод с использованием правила 46 (assignment)
 
 
 State 80
 
-   41 print: PRINT '(' VVARIABLE . ')'
+   29 vector: vector . ELEMMULT vector
+   30       | vector . RIGHTSHIFT
+   31       | vector . LEFTSHIFT
+   32       | vector . ELEMMULT expr
+   47 assignment: VVARIABLE ASSIGN vector .  [NEWLINE]
 
-    ')'  сдвиг, и переход в состояние 106
+    ELEMMULT    сдвиг, и переход в состояние 63
+    LEFTSHIFT   сдвиг, и переход в состояние 65
+    RIGHTSHIFT  сдвиг, и переход в состояние 66
+
+    $default  вывод с использованием правила 47 (assignment)
 
 
 State 81
 
-   42 print: PRINT '(' MVARIABLE . ')'
+   29 vector: vector . ELEMMULT vector
+   30       | vector . RIGHTSHIFT
+   31       | vector . LEFTSHIFT
+   32       | vector . ELEMMULT expr
+   36 vmdeclaration: VVARIABLE '(' vector . ',' '[' ']' ')' ASSIGN vector
 
-    ')'  сдвиг, и переход в состояние 107
+    ELEMMULT    сдвиг, и переход в состояние 63
+    LEFTSHIFT   сдвиг, и переход в состояние 65
+    RIGHTSHIFT  сдвиг, и переход в состояние 66
+    ','         сдвиг, и переход в состояние 116
 
 
 State 82
 
-   40 print: PRINT '(' expr . ')'
-   46 expr: expr . '+' expr
-   47     | expr . '-' expr
-   48     | expr . '/' expr
-   49     | expr . '<' expr
-   50     | expr . '>' expr
-   52     | expr . CONJUNCTION expr
+   35 vmdeclaration: VVARIABLE '(' expr . ')' ASSIGN expr
+   55 expr: expr . '+' expr
+   56     | expr . '-' expr
+   57     | expr . '/' expr
+   58     | expr . '<' expr
+   59     | expr . '>' expr
+   61     | expr . CONJUNCTION expr
 
-    CONJUNCTION  сдвиг, и переход в состояние 68
-    '<'          сдвиг, и переход в состояние 69
-    '>'          сдвиг, и переход в состояние 70
-    '+'          сдвиг, и переход в состояние 71
-    '-'          сдвиг, и переход в состояние 72
-    '/'          сдвиг, и переход в состояние 73
-    ')'          сдвиг, и переход в состояние 108
+    CONJUNCTION  сдвиг, и переход в состояние 72
+    '<'          сдвиг, и переход в состояние 73
+    '>'          сдвиг, и переход в состояние 74
+    '+'          сдвиг, и переход в состояние 75
+    '-'          сдвиг, и переход в состояние 76
+    '/'          сдвиг, и переход в состояние 77
+    ')'          сдвиг, и переход в состояние 117
 
 
 State 83
 
-   46 expr: expr . '+' expr
-   47     | expr . '-' expr
-   48     | expr . '/' expr
-   49     | expr . '<' expr
-   50     | expr . '>' expr
-   52     | expr . CONJUNCTION expr
-   53     | '(' expr . ')'
+   16 matrix: MVARIABLE .
 
-    CONJUNCTION  сдвиг, и переход в состояние 68
-    '<'          сдвиг, и переход в состояние 69
-    '>'          сдвиг, и переход в состояние 70
-    '+'          сдвиг, и переход в состояние 71
-    '-'          сдвиг, и переход в состояние 72
-    '/'          сдвиг, и переход в состояние 73
-    ')'          сдвиг, и переход в состояние 86
+    $default  вывод с использованием правила 16 (matrix)
 
 
 State 84
 
-   13 stmt: '(' stmts ')' .
+   17 matrix: matrix . '*' matrix
+   18       | matrix . ELEMMULT matrix
+   19       | matrix . '\''
+   20       | matrix . RIGHTSHIFT
+   21       | matrix . LEFTSHIFT
+   23       | matrix . ELEMMULT vector
+   24       | matrix . ELEMMULT expr
+   48 assignment: MVARIABLE ASSIGN matrix .  [NEWLINE]
 
-    $default  вывод с использованием правила 13 (stmt)
+    ELEMMULT    сдвиг, и переход в состояние 57
+    '\''        сдвиг, и переход в состояние 58
+    LEFTSHIFT   сдвиг, и переход в состояние 59
+    RIGHTSHIFT  сдвиг, и переход в состояние 60
+    '*'         сдвиг, и переход в состояние 61
+
+    $default  вывод с использованием правила 48 (assignment)
 
 
 State 85
+
+   22 matrix: vector . '\''
+   29 vector: vector . ELEMMULT vector
+   30       | vector . RIGHTSHIFT
+   31       | vector . LEFTSHIFT
+   32       | vector . ELEMMULT expr
+
+    ELEMMULT    сдвиг, и переход в состояние 63
+    '\''        сдвиг, и переход в состояние 64
+    LEFTSHIFT   сдвиг, и переход в состояние 65
+    RIGHTSHIFT  сдвиг, и переход в состояние 66
+
+
+State 86
+
+   39 vmdeclaration: MVARIABLE '(' '[' . ']' ',' expr ')' ASSIGN vector
+   41              | MVARIABLE '(' '[' . ']' ',' vector ')' ASSIGN matrix
+
+    ']'  сдвиг, и переход в состояние 118
+
+
+State 87
+
+   17 matrix: matrix . '*' matrix
+   18       | matrix . ELEMMULT matrix
+   19       | matrix . '\''
+   20       | matrix . RIGHTSHIFT
+   21       | matrix . LEFTSHIFT
+   23       | matrix . ELEMMULT vector
+   24       | matrix . ELEMMULT expr
+   42 vmdeclaration: MVARIABLE '(' matrix . ')' ASSIGN matrix
+
+    ELEMMULT    сдвиг, и переход в состояние 57
+    '\''        сдвиг, и переход в состояние 58
+    LEFTSHIFT   сдвиг, и переход в состояние 59
+    RIGHTSHIFT  сдвиг, и переход в состояние 60
+    '*'         сдвиг, и переход в состояние 61
+    ')'         сдвиг, и переход в состояние 119
+
+
+State 88
+
+   22 matrix: vector . '\''
+   29 vector: vector . ELEMMULT vector
+   30       | vector . RIGHTSHIFT
+   31       | vector . LEFTSHIFT
+   32       | vector . ELEMMULT expr
+   40 vmdeclaration: MVARIABLE '(' vector . ',' '[' ']' ')' ASSIGN matrix
+
+    ELEMMULT    сдвиг, и переход в состояние 63
+    '\''        сдвиг, и переход в состояние 64
+    LEFTSHIFT   сдвиг, и переход в состояние 65
+    RIGHTSHIFT  сдвиг, и переход в состояние 66
+    ','         сдвиг, и переход в состояние 120
+
+
+State 89
+
+   37 vmdeclaration: MVARIABLE '(' expr . ',' expr ')' ASSIGN expr
+   38              | MVARIABLE '(' expr . ',' '[' ']' ')' ASSIGN vector
+   55 expr: expr . '+' expr
+   56     | expr . '-' expr
+   57     | expr . '/' expr
+   58     | expr . '<' expr
+   59     | expr . '>' expr
+   61     | expr . CONJUNCTION expr
+
+    CONJUNCTION  сдвиг, и переход в состояние 72
+    ','          сдвиг, и переход в состояние 121
+    '<'          сдвиг, и переход в состояние 73
+    '>'          сдвиг, и переход в состояние 74
+    '+'          сдвиг, и переход в состояние 75
+    '-'          сдвиг, и переход в состояние 76
+    '/'          сдвиг, и переход в состояние 77
+
+
+State 90
+
+   50 print: PRINT '(' VVARIABLE . ')'
+
+    ')'  сдвиг, и переход в состояние 122
+
+
+State 91
+
+   51 print: PRINT '(' MVARIABLE . ')'
+
+    ')'  сдвиг, и переход в состояние 123
+
+
+State 92
+
+   49 print: PRINT '(' expr . ')'
+   55 expr: expr . '+' expr
+   56     | expr . '-' expr
+   57     | expr . '/' expr
+   58     | expr . '<' expr
+   59     | expr . '>' expr
+   61     | expr . CONJUNCTION expr
+
+    CONJUNCTION  сдвиг, и переход в состояние 72
+    '<'          сдвиг, и переход в состояние 73
+    '>'          сдвиг, и переход в состояние 74
+    '+'          сдвиг, и переход в состояние 75
+    '-'          сдвиг, и переход в состояние 76
+    '/'          сдвиг, и переход в состояние 77
+    ')'          сдвиг, и переход в состояние 124
+
+
+State 93
+
+   55 expr: expr . '+' expr
+   56     | expr . '-' expr
+   57     | expr . '/' expr
+   58     | expr . '<' expr
+   59     | expr . '>' expr
+   61     | expr . CONJUNCTION expr
+   62     | '(' expr . ')'
+
+    CONJUNCTION  сдвиг, и переход в состояние 72
+    '<'          сдвиг, и переход в состояние 73
+    '>'          сдвиг, и переход в состояние 74
+    '+'          сдвиг, и переход в состояние 75
+    '-'          сдвиг, и переход в состояние 76
+    '/'          сдвиг, и переход в состояние 77
+    ')'          сдвиг, и переход в состояние 96
+
+
+State 94
+
+   14 stmt: '(' stmts ')' .
+
+    $default  вывод с использованием правила 14 (stmt)
+
+
+State 95
 
     5 stmts: stmts stmt .
 
     $default  вывод с использованием правила 5 (stmts)
 
 
-State 86
+State 96
 
-   53 expr: '(' expr ')' .
+   62 expr: '(' expr ')' .
 
-    $default  вывод с использованием правила 53 (expr)
-
-
-State 87
-
-   25 listexprs: listexprs ',' . vector
-   26 vector: . '{' exprs '}'
-   27       | . VVARIABLE
-   28       | . vector ELEMMULT vector
-   29       | . vector RIGHTSHIFT
-   30       | . vector LEFTSHIFT
-   31       | . vector ELEMMULT expr
-
-    VVARIABLE  сдвиг, и переход в состояние 47
-    '{'        сдвиг, и переход в состояние 48
-
-    vector  переход в состояние 109
+    $default  вывод с использованием правила 62 (expr)
 
 
-State 88
+State 97
 
-   14 matrix: '{' listexprs '}' .
+   26 listexprs: listexprs ',' . vector
+   27 vector: . '{' exprs '}'
+   28       | . VVARIABLE
+   29       | . vector ELEMMULT vector
+   30       | . vector RIGHTSHIFT
+   31       | . vector LEFTSHIFT
+   32       | . vector ELEMMULT expr
 
-    $default  вывод с использованием правила 14 (matrix)
+    VVARIABLE  сдвиг, и переход в состояние 50
+    '{'        сдвиг, и переход в состояние 51
 
-
-State 89
-
-   24 listexprs: vector ',' . vector
-   26 vector: . '{' exprs '}'
-   27       | . VVARIABLE
-   28       | . vector ELEMMULT vector
-   29       | . vector RIGHTSHIFT
-   30       | . vector LEFTSHIFT
-   31       | . vector ELEMMULT expr
-
-    VVARIABLE  сдвиг, и переход в состояние 47
-    '{'        сдвиг, и переход в состояние 48
-
-    vector  переход в состояние 110
+    vector  переход в состояние 125
 
 
-State 90
+State 98
 
-   33 exprs: exprs ',' . expr
-   43 expr: . const
-   44     | . VARIABLE
-   45     | . '-' expr
-   46     | . expr '+' expr
-   47     | . expr '-' expr
-   48     | . expr '/' expr
-   49     | . expr '<' expr
-   50     | . expr '>' expr
-   51     | . '!' expr
-   52     | . expr CONJUNCTION expr
-   53     | . '(' expr ')'
-   66 const: . INTEGER
-   67      | . BOOL
+   15 matrix: '{' listexprs '}' .
 
-    BOOL      сдвиг, и переход в состояние 4
-    INTEGER   сдвиг, и переход в состояние 5
-    VARIABLE  сдвиг, и переход в состояние 40
-    '-'       сдвиг, и переход в состояние 23
-    '!'       сдвиг, и переход в состояние 24
-    '('       сдвиг, и переход в состояние 41
-
-    expr   переход в состояние 111
-    const  переход в состояние 35
+    $default  вывод с использованием правила 15 (matrix)
 
 
-State 91
+State 99
 
-   26 vector: '{' exprs '}' .
+   25 listexprs: vector ',' . vector
+   27 vector: . '{' exprs '}'
+   28       | . VVARIABLE
+   29       | . vector ELEMMULT vector
+   30       | . vector RIGHTSHIFT
+   31       | . vector LEFTSHIFT
+   32       | . vector ELEMMULT expr
 
-    $default  вывод с использованием правила 26 (vector)
+    VVARIABLE  сдвиг, и переход в состояние 50
+    '{'        сдвиг, и переход в состояние 51
+
+    vector  переход в состояние 126
 
 
-State 92
+State 100
 
-   32 exprs: expr ',' . expr
-   43 expr: . const
-   44     | . VARIABLE
-   45     | . '-' expr
-   46     | . expr '+' expr
-   47     | . expr '-' expr
-   48     | . expr '/' expr
-   49     | . expr '<' expr
-   50     | . expr '>' expr
-   51     | . '!' expr
-   52     | . expr CONJUNCTION expr
-   53     | . '(' expr ')'
-   66 const: . INTEGER
-   67      | . BOOL
+   34 exprs: exprs ',' . expr
+   52 expr: . const
+   53     | . VARIABLE
+   54     | . '-' expr
+   55     | . expr '+' expr
+   56     | . expr '-' expr
+   57     | . expr '/' expr
+   58     | . expr '<' expr
+   59     | . expr '>' expr
+   60     | . '!' expr
+   61     | . expr CONJUNCTION expr
+   62     | . '(' expr ')'
+   75 const: . INTEGER
+   76      | . BOOL
 
     BOOL      сдвиг, и переход в состояние 4
     INTEGER   сдвиг, и переход в состояние 5
-    VARIABLE  сдвиг, и переход в состояние 40
+    VARIABLE  сдвиг, и переход в состояние 43
     '-'       сдвиг, и переход в состояние 23
     '!'       сдвиг, и переход в состояние 24
-    '('       сдвиг, и переход в состояние 41
+    '('       сдвиг, и переход в состояние 44
 
-    expr   переход в состояние 112
-    const  переход в состояние 35
+    expr   переход в состояние 127
+    const  переход в состояние 36
 
 
-State 93
+State 101
 
-   16 matrix: matrix . '*' matrix
-   17       | matrix . ELEMMULT matrix
-   17       | matrix ELEMMULT matrix .  [NEWLINE, ELEMMULT, '\'', LEFTSHIFT, RIGHTSHIFT, '*']
-   18       | matrix . '\''
-   19       | matrix . RIGHTSHIFT
-   20       | matrix . LEFTSHIFT
-   22       | matrix . ELEMMULT vector
-   23       | matrix . ELEMMULT expr
+   27 vector: '{' exprs '}' .
 
-    ELEMMULT    сдвиг, и переход в состояние 54
-    '\''        сдвиг, и переход в состояние 55
-    LEFTSHIFT   сдвиг, и переход в состояние 56
-    RIGHTSHIFT  сдвиг, и переход в состояние 57
-    '*'         сдвиг, и переход в состояние 58
+    $default  вывод с использованием правила 27 (vector)
+
+
+State 102
+
+   33 exprs: expr ',' . expr
+   52 expr: . const
+   53     | . VARIABLE
+   54     | . '-' expr
+   55     | . expr '+' expr
+   56     | . expr '-' expr
+   57     | . expr '/' expr
+   58     | . expr '<' expr
+   59     | . expr '>' expr
+   60     | . '!' expr
+   61     | . expr CONJUNCTION expr
+   62     | . '(' expr ')'
+   75 const: . INTEGER
+   76      | . BOOL
+
+    BOOL      сдвиг, и переход в состояние 4
+    INTEGER   сдвиг, и переход в состояние 5
+    VARIABLE  сдвиг, и переход в состояние 43
+    '-'       сдвиг, и переход в состояние 23
+    '!'       сдвиг, и переход в состояние 24
+    '('       сдвиг, и переход в состояние 44
+
+    expr   переход в состояние 128
+    const  переход в состояние 36
+
+
+State 103
+
+   17 matrix: matrix . '*' matrix
+   18       | matrix . ELEMMULT matrix
+   18       | matrix ELEMMULT matrix .  [NEWLINE, ELEMMULT, '\'', LEFTSHIFT, RIGHTSHIFT, '*', ')']
+   19       | matrix . '\''
+   20       | matrix . RIGHTSHIFT
+   21       | matrix . LEFTSHIFT
+   23       | matrix . ELEMMULT vector
+   24       | matrix . ELEMMULT expr
+
+    ELEMMULT    сдвиг, и переход в состояние 57
+    '\''        сдвиг, и переход в состояние 58
+    LEFTSHIFT   сдвиг, и переход в состояние 59
+    RIGHTSHIFT  сдвиг, и переход в состояние 60
+    '*'         сдвиг, и переход в состояние 61
+
+    ELEMMULT    [вывод с использованием правила 18 (matrix)]
+    '\''        [вывод с использованием правила 18 (matrix)]
+    LEFTSHIFT   [вывод с использованием правила 18 (matrix)]
+    RIGHTSHIFT  [вывод с использованием правила 18 (matrix)]
+    '*'         [вывод с использованием правила 18 (matrix)]
+    $default    вывод с использованием правила 18 (matrix)
+
+
+State 104
+
+   22 matrix: vector . '\''
+   23       | matrix ELEMMULT vector .  [NEWLINE, ELEMMULT, '\'', LEFTSHIFT, RIGHTSHIFT, '*', ')']
+   29 vector: vector . ELEMMULT vector
+   30       | vector . RIGHTSHIFT
+   31       | vector . LEFTSHIFT
+   32       | vector . ELEMMULT expr
+
+    ELEMMULT    сдвиг, и переход в состояние 63
+    '\''        сдвиг, и переход в состояние 64
+    LEFTSHIFT   сдвиг, и переход в состояние 65
+    RIGHTSHIFT  сдвиг, и переход в состояние 66
+
+    ELEMMULT    [вывод с использованием правила 23 (matrix)]
+    '\''        [вывод с использованием правила 23 (matrix)]
+    LEFTSHIFT   [вывод с использованием правила 23 (matrix)]
+    RIGHTSHIFT  [вывод с использованием правила 23 (matrix)]
+    $default    вывод с использованием правила 23 (matrix)
+
+
+State 105
+
+   24 matrix: matrix ELEMMULT expr .  [NEWLINE, ELEMMULT, '\'', LEFTSHIFT, RIGHTSHIFT, '*', ')']
+   55 expr: expr . '+' expr
+   56     | expr . '-' expr
+   57     | expr . '/' expr
+   58     | expr . '<' expr
+   59     | expr . '>' expr
+   61     | expr . CONJUNCTION expr
+
+    CONJUNCTION  сдвиг, и переход в состояние 72
+    '<'          сдвиг, и переход в состояние 73
+    '>'          сдвиг, и переход в состояние 74
+    '+'          сдвиг, и переход в состояние 75
+    '-'          сдвиг, и переход в состояние 76
+    '/'          сдвиг, и переход в состояние 77
+
+    $default  вывод с использованием правила 24 (matrix)
+
+
+State 106
+
+   17 matrix: matrix . '*' matrix
+   17       | matrix '*' matrix .  [NEWLINE, ELEMMULT, '\'', LEFTSHIFT, RIGHTSHIFT, '*', ')']
+   18       | matrix . ELEMMULT matrix
+   19       | matrix . '\''
+   20       | matrix . RIGHTSHIFT
+   21       | matrix . LEFTSHIFT
+   23       | matrix . ELEMMULT vector
+   24       | matrix . ELEMMULT expr
+
+    ELEMMULT    сдвиг, и переход в состояние 57
+    '\''        сдвиг, и переход в состояние 58
+    LEFTSHIFT   сдвиг, и переход в состояние 59
+    RIGHTSHIFT  сдвиг, и переход в состояние 60
 
     ELEMMULT    [вывод с использованием правила 17 (matrix)]
     '\''        [вывод с использованием правила 17 (matrix)]
     LEFTSHIFT   [вывод с использованием правила 17 (matrix)]
     RIGHTSHIFT  [вывод с использованием правила 17 (matrix)]
-    '*'         [вывод с использованием правила 17 (matrix)]
     $default    вывод с использованием правила 17 (matrix)
 
-
-State 94
-
-   21 matrix: vector . '\''
-   22       | matrix ELEMMULT vector .  [NEWLINE, ELEMMULT, '\'', LEFTSHIFT, RIGHTSHIFT, '*']
-   28 vector: vector . ELEMMULT vector
-   29       | vector . RIGHTSHIFT
-   30       | vector . LEFTSHIFT
-   31       | vector . ELEMMULT expr
-
-    ELEMMULT    сдвиг, и переход в состояние 60
-    '\''        сдвиг, и переход в состояние 61
-    LEFTSHIFT   сдвиг, и переход в состояние 62
-    RIGHTSHIFT  сдвиг, и переход в состояние 63
-
-    ELEMMULT    [вывод с использованием правила 22 (matrix)]
-    '\''        [вывод с использованием правила 22 (matrix)]
-    LEFTSHIFT   [вывод с использованием правила 22 (matrix)]
-    RIGHTSHIFT  [вывод с использованием правила 22 (matrix)]
-    $default    вывод с использованием правила 22 (matrix)
-
-
-State 95
-
-   23 matrix: matrix ELEMMULT expr .  [NEWLINE, ELEMMULT, '\'', LEFTSHIFT, RIGHTSHIFT, '*']
-   46 expr: expr . '+' expr
-   47     | expr . '-' expr
-   48     | expr . '/' expr
-   49     | expr . '<' expr
-   50     | expr . '>' expr
-   52     | expr . CONJUNCTION expr
-
-    CONJUNCTION  сдвиг, и переход в состояние 68
-    '<'          сдвиг, и переход в состояние 69
-    '>'          сдвиг, и переход в состояние 70
-    '+'          сдвиг, и переход в состояние 71
-    '-'          сдвиг, и переход в состояние 72
-    '/'          сдвиг, и переход в состояние 73
-
-    $default  вывод с использованием правила 23 (matrix)
-
-
-State 96
-
-   16 matrix: matrix . '*' matrix
-   16       | matrix '*' matrix .  [NEWLINE, ELEMMULT, '\'', LEFTSHIFT, RIGHTSHIFT, '*']
-   17       | matrix . ELEMMULT matrix
-   18       | matrix . '\''
-   19       | matrix . RIGHTSHIFT
-   20       | matrix . LEFTSHIFT
-   22       | matrix . ELEMMULT vector
-   23       | matrix . ELEMMULT expr
-
-    ELEMMULT    сдвиг, и переход в состояние 54
-    '\''        сдвиг, и переход в состояние 55
-    LEFTSHIFT   сдвиг, и переход в состояние 56
-    RIGHTSHIFT  сдвиг, и переход в состояние 57
-
-    ELEMMULT    [вывод с использованием правила 16 (matrix)]
-    '\''        [вывод с использованием правила 16 (matrix)]
-    LEFTSHIFT   [вывод с использованием правила 16 (matrix)]
-    RIGHTSHIFT  [вывод с использованием правила 16 (matrix)]
-    $default    вывод с использованием правила 16 (matrix)
-
-    Конфликт между правилом 16 и лексемой '*' разрешен выводом (%left '*').
-
-
-State 97
-
-   28 vector: vector . ELEMMULT vector
-   28       | vector ELEMMULT vector .  [NEWLINE, ELEMMULT, '\'', LEFTSHIFT, RIGHTSHIFT, ',', '*', '}']
-   29       | vector . RIGHTSHIFT
-   30       | vector . LEFTSHIFT
-   31       | vector . ELEMMULT expr
-
-    ELEMMULT    сдвиг, и переход в состояние 60
-    LEFTSHIFT   сдвиг, и переход в состояние 62
-    RIGHTSHIFT  сдвиг, и переход в состояние 63
-
-    ELEMMULT    [вывод с использованием правила 28 (vector)]
-    LEFTSHIFT   [вывод с использованием правила 28 (vector)]
-    RIGHTSHIFT  [вывод с использованием правила 28 (vector)]
-    $default    вывод с использованием правила 28 (vector)
-
-
-State 98
-
-   31 vector: vector ELEMMULT expr .  [NEWLINE, ELEMMULT, '\'', LEFTSHIFT, RIGHTSHIFT, ',', '*', '}']
-   46 expr: expr . '+' expr
-   47     | expr . '-' expr
-   48     | expr . '/' expr
-   49     | expr . '<' expr
-   50     | expr . '>' expr
-   52     | expr . CONJUNCTION expr
-
-    CONJUNCTION  сдвиг, и переход в состояние 68
-    '<'          сдвиг, и переход в состояние 69
-    '>'          сдвиг, и переход в состояние 70
-    '+'          сдвиг, и переход в состояние 71
-    '-'          сдвиг, и переход в состояние 72
-    '/'          сдвиг, и переход в состояние 73
-
-    $default  вывод с использованием правила 31 (vector)
-
-
-State 99
-
-   46 expr: expr . '+' expr
-   47     | expr . '-' expr
-   48     | expr . '/' expr
-   49     | expr . '<' expr
-   50     | expr . '>' expr
-   52     | expr . CONJUNCTION expr
-   52     | expr CONJUNCTION expr .  [NEWLINE, CONJUNCTION, ELEMMULT, '\'', LEFTSHIFT, RIGHTSHIFT, ',', '<', '>', '+', '-', '*', '/', ')', '}']
-
-    CONJUNCTION  сдвиг, и переход в состояние 68
-    '<'          сдвиг, и переход в состояние 69
-    '>'          сдвиг, и переход в состояние 70
-    '+'          сдвиг, и переход в состояние 71
-    '-'          сдвиг, и переход в состояние 72
-    '/'          сдвиг, и переход в состояние 73
-
-    CONJUNCTION  [вывод с использованием правила 52 (expr)]
-    '<'          [вывод с использованием правила 52 (expr)]
-    '>'          [вывод с использованием правила 52 (expr)]
-    '+'          [вывод с использованием правила 52 (expr)]
-    '-'          [вывод с использованием правила 52 (expr)]
-    '/'          [вывод с использованием правила 52 (expr)]
-    $default     вывод с использованием правила 52 (expr)
-
-
-State 100
-
-   46 expr: expr . '+' expr
-   47     | expr . '-' expr
-   48     | expr . '/' expr
-   49     | expr . '<' expr
-   49     | expr '<' expr .  [NEWLINE, CONJUNCTION, ELEMMULT, '\'', LEFTSHIFT, RIGHTSHIFT, ',', '<', '>', '*', ')', '}']
-   50     | expr . '>' expr
-   52     | expr . CONJUNCTION expr
-
-    CONJUNCTION  сдвиг, и переход в состояние 68
-    '+'          сдвиг, и переход в состояние 71
-    '-'          сдвиг, и переход в состояние 72
-    '/'          сдвиг, и переход в состояние 73
-
-    CONJUNCTION  [вывод с использованием правила 49 (expr)]
-    $default     вывод с использованием правила 49 (expr)
-
-    Конфликт между правилом 49 и лексемой '<' разрешен выводом (%left '<').
-    Конфликт между правилом 49 и лексемой '>' разрешен выводом (%left '>').
-    Конфликт между правилом 49 и лексемой '+' разрешен сдвигом ('<' < '+').
-    Конфликт между правилом 49 и лексемой '-' разрешен сдвигом ('<' < '-').
-    Конфликт между правилом 49 и лексемой '/' разрешен сдвигом ('<' < '/').
-
-
-State 101
-
-   46 expr: expr . '+' expr
-   47     | expr . '-' expr
-   48     | expr . '/' expr
-   49     | expr . '<' expr
-   50     | expr . '>' expr
-   50     | expr '>' expr .  [NEWLINE, CONJUNCTION, ELEMMULT, '\'', LEFTSHIFT, RIGHTSHIFT, ',', '<', '>', '*', ')', '}']
-   52     | expr . CONJUNCTION expr
-
-    CONJUNCTION  сдвиг, и переход в состояние 68
-    '+'          сдвиг, и переход в состояние 71
-    '-'          сдвиг, и переход в состояние 72
-    '/'          сдвиг, и переход в состояние 73
-
-    CONJUNCTION  [вывод с использованием правила 50 (expr)]
-    $default     вывод с использованием правила 50 (expr)
-
-    Конфликт между правилом 50 и лексемой '<' разрешен выводом (%left '<').
-    Конфликт между правилом 50 и лексемой '>' разрешен выводом (%left '>').
-    Конфликт между правилом 50 и лексемой '+' разрешен сдвигом ('>' < '+').
-    Конфликт между правилом 50 и лексемой '-' разрешен сдвигом ('>' < '-').
-    Конфликт между правилом 50 и лексемой '/' разрешен сдвигом ('>' < '/').
-
-
-State 102
-
-   46 expr: expr . '+' expr
-   46     | expr '+' expr .  [NEWLINE, CONJUNCTION, ELEMMULT, '\'', LEFTSHIFT, RIGHTSHIFT, ',', '<', '>', '+', '-', '*', ')', '}']
-   47     | expr . '-' expr
-   48     | expr . '/' expr
-   49     | expr . '<' expr
-   50     | expr . '>' expr
-   52     | expr . CONJUNCTION expr
-
-    CONJUNCTION  сдвиг, и переход в состояние 68
-    '/'          сдвиг, и переход в состояние 73
-
-    CONJUNCTION  [вывод с использованием правила 46 (expr)]
-    $default     вывод с использованием правила 46 (expr)
-
-    Конфликт между правилом 46 и лексемой '<' разрешен выводом ('<' < '+').
-    Конфликт между правилом 46 и лексемой '>' разрешен выводом ('>' < '+').
-    Конфликт между правилом 46 и лексемой '+' разрешен выводом (%left '+').
-    Конфликт между правилом 46 и лексемой '-' разрешен выводом (%left '-').
-    Конфликт между правилом 46 и лексемой '/' разрешен сдвигом ('+' < '/').
-
-
-State 103
-
-   46 expr: expr . '+' expr
-   47     | expr . '-' expr
-   47     | expr '-' expr .  [NEWLINE, CONJUNCTION, ELEMMULT, '\'', LEFTSHIFT, RIGHTSHIFT, ',', '<', '>', '+', '-', '*', ')', '}']
-   48     | expr . '/' expr
-   49     | expr . '<' expr
-   50     | expr . '>' expr
-   52     | expr . CONJUNCTION expr
-
-    CONJUNCTION  сдвиг, и переход в состояние 68
-    '/'          сдвиг, и переход в состояние 73
-
-    CONJUNCTION  [вывод с использованием правила 47 (expr)]
-    $default     вывод с использованием правила 47 (expr)
-
-    Конфликт между правилом 47 и лексемой '<' разрешен выводом ('<' < '-').
-    Конфликт между правилом 47 и лексемой '>' разрешен выводом ('>' < '-').
-    Конфликт между правилом 47 и лексемой '+' разрешен выводом (%left '+').
-    Конфликт между правилом 47 и лексемой '-' разрешен выводом (%left '-').
-    Конфликт между правилом 47 и лексемой '/' разрешен сдвигом ('-' < '/').
-
-
-State 104
-
-   46 expr: expr . '+' expr
-   47     | expr . '-' expr
-   48     | expr . '/' expr
-   48     | expr '/' expr .  [NEWLINE, CONJUNCTION, ELEMMULT, '\'', LEFTSHIFT, RIGHTSHIFT, ',', '<', '>', '+', '-', '*', '/', ')', '}']
-   49     | expr . '<' expr
-   50     | expr . '>' expr
-   52     | expr . CONJUNCTION expr
-
-    CONJUNCTION  сдвиг, и переход в состояние 68
-
-    CONJUNCTION  [вывод с использованием правила 48 (expr)]
-    $default     вывод с использованием правила 48 (expr)
-
-    Конфликт между правилом 48 и лексемой '<' разрешен выводом ('<' < '/').
-    Конфликт между правилом 48 и лексемой '>' разрешен выводом ('>' < '/').
-    Конфликт между правилом 48 и лексемой '+' разрешен выводом ('+' < '/').
-    Конфликт между правилом 48 и лексемой '-' разрешен выводом ('-' < '/').
-    Конфликт между правилом 48 и лексемой '/' разрешен выводом (%left '/').
-
-
-State 105
-
-   14 matrix: . '{' listexprs '}'
-   15       | . MVARIABLE
-   16       | . matrix '*' matrix
-   17       | . matrix ELEMMULT matrix
-   18       | . matrix '\''
-   19       | . matrix RIGHTSHIFT
-   20       | . matrix LEFTSHIFT
-   21       | . vector '\''
-   22       | . matrix ELEMMULT vector
-   23       | . matrix ELEMMULT expr
-   26 vector: . '{' exprs '}'
-   27       | . VVARIABLE
-   28       | . vector ELEMMULT vector
-   29       | . vector RIGHTSHIFT
-   30       | . vector LEFTSHIFT
-   31       | . vector ELEMMULT expr
-   34 declaration: type VARIABLE DECLARE . expr
-   35            | type VARIABLE DECLARE . vector
-   36            | type VARIABLE DECLARE . matrix
-   43 expr: . const
-   44     | . VARIABLE
-   45     | . '-' expr
-   46     | . expr '+' expr
-   47     | . expr '-' expr
-   48     | . expr '/' expr
-   49     | . expr '<' expr
-   50     | . expr '>' expr
-   51     | . '!' expr
-   52     | . expr CONJUNCTION expr
-   53     | . '(' expr ')'
-   66 const: . INTEGER
-   67      | . BOOL
-
-    BOOL       сдвиг, и переход в состояние 4
-    INTEGER    сдвиг, и переход в состояние 5
-    VARIABLE   сдвиг, и переход в состояние 40
-    VVARIABLE  сдвиг, и переход в состояние 47
-    MVARIABLE  сдвиг, и переход в состояние 77
-    '-'        сдвиг, и переход в состояние 23
-    '!'        сдвиг, и переход в состояние 24
-    '('        сдвиг, и переход в состояние 41
-    '{'        сдвиг, и переход в состояние 26
-
-    matrix  переход в состояние 113
-    vector  переход в состояние 114
-    expr    переход в состояние 115
-    const   переход в состояние 35
-
-
-State 106
-
-   41 print: PRINT '(' VVARIABLE ')' .
-
-    $default  вывод с использованием правила 41 (print)
+    Конфликт между правилом 17 и лексемой '*' разрешен выводом (%left '*').
 
 
 State 107
 
-   42 print: PRINT '(' MVARIABLE ')' .
+   29 vector: vector . ELEMMULT vector
+   29       | vector ELEMMULT vector .  [NEWLINE, ELEMMULT, '\'', LEFTSHIFT, RIGHTSHIFT, ',', '*', ')', '}']
+   30       | vector . RIGHTSHIFT
+   31       | vector . LEFTSHIFT
+   32       | vector . ELEMMULT expr
 
-    $default  вывод с использованием правила 42 (print)
+    ELEMMULT    сдвиг, и переход в состояние 63
+    LEFTSHIFT   сдвиг, и переход в состояние 65
+    RIGHTSHIFT  сдвиг, и переход в состояние 66
+
+    ELEMMULT    [вывод с использованием правила 29 (vector)]
+    LEFTSHIFT   [вывод с использованием правила 29 (vector)]
+    RIGHTSHIFT  [вывод с использованием правила 29 (vector)]
+    $default    вывод с использованием правила 29 (vector)
 
 
 State 108
 
-   40 print: PRINT '(' expr ')' .
+   32 vector: vector ELEMMULT expr .  [NEWLINE, ELEMMULT, '\'', LEFTSHIFT, RIGHTSHIFT, ',', '*', ')', '}']
+   55 expr: expr . '+' expr
+   56     | expr . '-' expr
+   57     | expr . '/' expr
+   58     | expr . '<' expr
+   59     | expr . '>' expr
+   61     | expr . CONJUNCTION expr
 
-    $default  вывод с использованием правила 40 (print)
+    CONJUNCTION  сдвиг, и переход в состояние 72
+    '<'          сдвиг, и переход в состояние 73
+    '>'          сдвиг, и переход в состояние 74
+    '+'          сдвиг, и переход в состояние 75
+    '-'          сдвиг, и переход в состояние 76
+    '/'          сдвиг, и переход в состояние 77
+
+    $default  вывод с использованием правила 32 (vector)
 
 
 State 109
 
-   25 listexprs: listexprs ',' vector .  [',', '}']
-   28 vector: vector . ELEMMULT vector
-   29       | vector . RIGHTSHIFT
-   30       | vector . LEFTSHIFT
-   31       | vector . ELEMMULT expr
+   55 expr: expr . '+' expr
+   56     | expr . '-' expr
+   57     | expr . '/' expr
+   58     | expr . '<' expr
+   59     | expr . '>' expr
+   61     | expr . CONJUNCTION expr
+   61     | expr CONJUNCTION expr .  [NEWLINE, CONJUNCTION, ELEMMULT, '\'', LEFTSHIFT, RIGHTSHIFT, ',', '<', '>', '+', '-', '*', '/', ')', '}']
 
-    ELEMMULT    сдвиг, и переход в состояние 60
-    LEFTSHIFT   сдвиг, и переход в состояние 62
-    RIGHTSHIFT  сдвиг, и переход в состояние 63
+    CONJUNCTION  сдвиг, и переход в состояние 72
+    '<'          сдвиг, и переход в состояние 73
+    '>'          сдвиг, и переход в состояние 74
+    '+'          сдвиг, и переход в состояние 75
+    '-'          сдвиг, и переход в состояние 76
+    '/'          сдвиг, и переход в состояние 77
 
-    $default  вывод с использованием правила 25 (listexprs)
+    CONJUNCTION  [вывод с использованием правила 61 (expr)]
+    '<'          [вывод с использованием правила 61 (expr)]
+    '>'          [вывод с использованием правила 61 (expr)]
+    '+'          [вывод с использованием правила 61 (expr)]
+    '-'          [вывод с использованием правила 61 (expr)]
+    '/'          [вывод с использованием правила 61 (expr)]
+    $default     вывод с использованием правила 61 (expr)
 
 
 State 110
 
-   24 listexprs: vector ',' vector .  [',', '}']
-   28 vector: vector . ELEMMULT vector
-   29       | vector . RIGHTSHIFT
-   30       | vector . LEFTSHIFT
-   31       | vector . ELEMMULT expr
+   55 expr: expr . '+' expr
+   56     | expr . '-' expr
+   57     | expr . '/' expr
+   58     | expr . '<' expr
+   58     | expr '<' expr .  [NEWLINE, CONJUNCTION, ELEMMULT, '\'', LEFTSHIFT, RIGHTSHIFT, ',', '<', '>', '*', ')', '}']
+   59     | expr . '>' expr
+   61     | expr . CONJUNCTION expr
 
-    ELEMMULT    сдвиг, и переход в состояние 60
-    LEFTSHIFT   сдвиг, и переход в состояние 62
-    RIGHTSHIFT  сдвиг, и переход в состояние 63
+    CONJUNCTION  сдвиг, и переход в состояние 72
+    '+'          сдвиг, и переход в состояние 75
+    '-'          сдвиг, и переход в состояние 76
+    '/'          сдвиг, и переход в состояние 77
 
-    $default  вывод с использованием правила 24 (listexprs)
+    CONJUNCTION  [вывод с использованием правила 58 (expr)]
+    $default     вывод с использованием правила 58 (expr)
+
+    Конфликт между правилом 58 и лексемой '<' разрешен выводом (%left '<').
+    Конфликт между правилом 58 и лексемой '>' разрешен выводом (%left '>').
+    Конфликт между правилом 58 и лексемой '+' разрешен сдвигом ('<' < '+').
+    Конфликт между правилом 58 и лексемой '-' разрешен сдвигом ('<' < '-').
+    Конфликт между правилом 58 и лексемой '/' разрешен сдвигом ('<' < '/').
 
 
 State 111
 
-   33 exprs: exprs ',' expr .  [',', '}']
-   46 expr: expr . '+' expr
-   47     | expr . '-' expr
-   48     | expr . '/' expr
-   49     | expr . '<' expr
-   50     | expr . '>' expr
-   52     | expr . CONJUNCTION expr
+   55 expr: expr . '+' expr
+   56     | expr . '-' expr
+   57     | expr . '/' expr
+   58     | expr . '<' expr
+   59     | expr . '>' expr
+   59     | expr '>' expr .  [NEWLINE, CONJUNCTION, ELEMMULT, '\'', LEFTSHIFT, RIGHTSHIFT, ',', '<', '>', '*', ')', '}']
+   61     | expr . CONJUNCTION expr
 
-    CONJUNCTION  сдвиг, и переход в состояние 68
-    '<'          сдвиг, и переход в состояние 69
-    '>'          сдвиг, и переход в состояние 70
-    '+'          сдвиг, и переход в состояние 71
-    '-'          сдвиг, и переход в состояние 72
-    '/'          сдвиг, и переход в состояние 73
+    CONJUNCTION  сдвиг, и переход в состояние 72
+    '+'          сдвиг, и переход в состояние 75
+    '-'          сдвиг, и переход в состояние 76
+    '/'          сдвиг, и переход в состояние 77
 
-    $default  вывод с использованием правила 33 (exprs)
+    CONJUNCTION  [вывод с использованием правила 59 (expr)]
+    $default     вывод с использованием правила 59 (expr)
+
+    Конфликт между правилом 59 и лексемой '<' разрешен выводом (%left '<').
+    Конфликт между правилом 59 и лексемой '>' разрешен выводом (%left '>').
+    Конфликт между правилом 59 и лексемой '+' разрешен сдвигом ('>' < '+').
+    Конфликт между правилом 59 и лексемой '-' разрешен сдвигом ('>' < '-').
+    Конфликт между правилом 59 и лексемой '/' разрешен сдвигом ('>' < '/').
 
 
 State 112
 
-   32 exprs: expr ',' expr .  [',', '}']
-   46 expr: expr . '+' expr
-   47     | expr . '-' expr
-   48     | expr . '/' expr
-   49     | expr . '<' expr
-   50     | expr . '>' expr
-   52     | expr . CONJUNCTION expr
+   55 expr: expr . '+' expr
+   55     | expr '+' expr .  [NEWLINE, CONJUNCTION, ELEMMULT, '\'', LEFTSHIFT, RIGHTSHIFT, ',', '<', '>', '+', '-', '*', ')', '}']
+   56     | expr . '-' expr
+   57     | expr . '/' expr
+   58     | expr . '<' expr
+   59     | expr . '>' expr
+   61     | expr . CONJUNCTION expr
 
-    CONJUNCTION  сдвиг, и переход в состояние 68
-    '<'          сдвиг, и переход в состояние 69
-    '>'          сдвиг, и переход в состояние 70
-    '+'          сдвиг, и переход в состояние 71
-    '-'          сдвиг, и переход в состояние 72
-    '/'          сдвиг, и переход в состояние 73
+    CONJUNCTION  сдвиг, и переход в состояние 72
+    '/'          сдвиг, и переход в состояние 77
 
-    $default  вывод с использованием правила 32 (exprs)
+    CONJUNCTION  [вывод с использованием правила 55 (expr)]
+    $default     вывод с использованием правила 55 (expr)
+
+    Конфликт между правилом 55 и лексемой '<' разрешен выводом ('<' < '+').
+    Конфликт между правилом 55 и лексемой '>' разрешен выводом ('>' < '+').
+    Конфликт между правилом 55 и лексемой '+' разрешен выводом (%left '+').
+    Конфликт между правилом 55 и лексемой '-' разрешен выводом (%left '-').
+    Конфликт между правилом 55 и лексемой '/' разрешен сдвигом ('+' < '/').
 
 
 State 113
 
-   16 matrix: matrix . '*' matrix
-   17       | matrix . ELEMMULT matrix
-   18       | matrix . '\''
-   19       | matrix . RIGHTSHIFT
-   20       | matrix . LEFTSHIFT
-   22       | matrix . ELEMMULT vector
-   23       | matrix . ELEMMULT expr
-   36 declaration: type VARIABLE DECLARE matrix .  [NEWLINE]
+   55 expr: expr . '+' expr
+   56     | expr . '-' expr
+   56     | expr '-' expr .  [NEWLINE, CONJUNCTION, ELEMMULT, '\'', LEFTSHIFT, RIGHTSHIFT, ',', '<', '>', '+', '-', '*', ')', '}']
+   57     | expr . '/' expr
+   58     | expr . '<' expr
+   59     | expr . '>' expr
+   61     | expr . CONJUNCTION expr
 
-    ELEMMULT    сдвиг, и переход в состояние 54
-    '\''        сдвиг, и переход в состояние 55
-    LEFTSHIFT   сдвиг, и переход в состояние 56
-    RIGHTSHIFT  сдвиг, и переход в состояние 57
-    '*'         сдвиг, и переход в состояние 58
+    CONJUNCTION  сдвиг, и переход в состояние 72
+    '/'          сдвиг, и переход в состояние 77
 
-    $default  вывод с использованием правила 36 (declaration)
+    CONJUNCTION  [вывод с использованием правила 56 (expr)]
+    $default     вывод с использованием правила 56 (expr)
+
+    Конфликт между правилом 56 и лексемой '<' разрешен выводом ('<' < '-').
+    Конфликт между правилом 56 и лексемой '>' разрешен выводом ('>' < '-').
+    Конфликт между правилом 56 и лексемой '+' разрешен выводом (%left '+').
+    Конфликт между правилом 56 и лексемой '-' разрешен выводом (%left '-').
+    Конфликт между правилом 56 и лексемой '/' разрешен сдвигом ('-' < '/').
 
 
 State 114
 
-   21 matrix: vector . '\''
-   28 vector: vector . ELEMMULT vector
-   29       | vector . RIGHTSHIFT
-   30       | vector . LEFTSHIFT
-   31       | vector . ELEMMULT expr
-   35 declaration: type VARIABLE DECLARE vector .  [NEWLINE]
+   55 expr: expr . '+' expr
+   56     | expr . '-' expr
+   57     | expr . '/' expr
+   57     | expr '/' expr .  [NEWLINE, CONJUNCTION, ELEMMULT, '\'', LEFTSHIFT, RIGHTSHIFT, ',', '<', '>', '+', '-', '*', '/', ')', '}']
+   58     | expr . '<' expr
+   59     | expr . '>' expr
+   61     | expr . CONJUNCTION expr
 
-    ELEMMULT    сдвиг, и переход в состояние 60
-    '\''        сдвиг, и переход в состояние 61
-    LEFTSHIFT   сдвиг, и переход в состояние 62
-    RIGHTSHIFT  сдвиг, и переход в состояние 63
+    CONJUNCTION  сдвиг, и переход в состояние 72
 
-    $default  вывод с использованием правила 35 (declaration)
+    CONJUNCTION  [вывод с использованием правила 57 (expr)]
+    $default     вывод с использованием правила 57 (expr)
+
+    Конфликт между правилом 57 и лексемой '<' разрешен выводом ('<' < '/').
+    Конфликт между правилом 57 и лексемой '>' разрешен выводом ('>' < '/').
+    Конфликт между правилом 57 и лексемой '+' разрешен выводом ('+' < '/').
+    Конфликт между правилом 57 и лексемой '-' разрешен выводом ('-' < '/').
+    Конфликт между правилом 57 и лексемой '/' разрешен выводом (%left '/').
 
 
 State 115
 
-   34 declaration: type VARIABLE DECLARE expr .  [NEWLINE]
-   46 expr: expr . '+' expr
-   47     | expr . '-' expr
-   48     | expr . '/' expr
-   49     | expr . '<' expr
-   50     | expr . '>' expr
-   52     | expr . CONJUNCTION expr
+   15 matrix: . '{' listexprs '}'
+   16       | . MVARIABLE
+   17       | . matrix '*' matrix
+   18       | . matrix ELEMMULT matrix
+   19       | . matrix '\''
+   20       | . matrix RIGHTSHIFT
+   21       | . matrix LEFTSHIFT
+   22       | . vector '\''
+   23       | . matrix ELEMMULT vector
+   24       | . matrix ELEMMULT expr
+   27 vector: . '{' exprs '}'
+   28       | . VVARIABLE
+   29       | . vector ELEMMULT vector
+   30       | . vector RIGHTSHIFT
+   31       | . vector LEFTSHIFT
+   32       | . vector ELEMMULT expr
+   43 declaration: type VARIABLE DECLARE . expr
+   44            | type VARIABLE DECLARE . vector
+   45            | type VARIABLE DECLARE . matrix
+   52 expr: . const
+   53     | . VARIABLE
+   54     | . '-' expr
+   55     | . expr '+' expr
+   56     | . expr '-' expr
+   57     | . expr '/' expr
+   58     | . expr '<' expr
+   59     | . expr '>' expr
+   60     | . '!' expr
+   61     | . expr CONJUNCTION expr
+   62     | . '(' expr ')'
+   75 const: . INTEGER
+   76      | . BOOL
 
-    CONJUNCTION  сдвиг, и переход в состояние 68
-    '<'          сдвиг, и переход в состояние 69
-    '>'          сдвиг, и переход в состояние 70
-    '+'          сдвиг, и переход в состояние 71
-    '-'          сдвиг, и переход в состояние 72
-    '/'          сдвиг, и переход в состояние 73
+    BOOL       сдвиг, и переход в состояние 4
+    INTEGER    сдвиг, и переход в состояние 5
+    VARIABLE   сдвиг, и переход в состояние 43
+    VVARIABLE  сдвиг, и переход в состояние 50
+    MVARIABLE  сдвиг, и переход в состояние 83
+    '-'        сдвиг, и переход в состояние 23
+    '!'        сдвиг, и переход в состояние 24
+    '('        сдвиг, и переход в состояние 44
+    '{'        сдвиг, и переход в состояние 26
 
-    $default  вывод с использованием правила 34 (declaration)
+    matrix  переход в состояние 129
+    vector  переход в состояние 130
+    expr    переход в состояние 131
+    const   переход в состояние 36
+
+
+State 116
+
+   36 vmdeclaration: VVARIABLE '(' vector ',' . '[' ']' ')' ASSIGN vector
+
+    '['  сдвиг, и переход в состояние 132
+
+
+State 117
+
+   35 vmdeclaration: VVARIABLE '(' expr ')' . ASSIGN expr
+
+    ASSIGN  сдвиг, и переход в состояние 133
+
+
+State 118
+
+   39 vmdeclaration: MVARIABLE '(' '[' ']' . ',' expr ')' ASSIGN vector
+   41              | MVARIABLE '(' '[' ']' . ',' vector ')' ASSIGN matrix
+
+    ','  сдвиг, и переход в состояние 134
+
+
+State 119
+
+   42 vmdeclaration: MVARIABLE '(' matrix ')' . ASSIGN matrix
+
+    ASSIGN  сдвиг, и переход в состояние 135
+
+
+State 120
+
+   40 vmdeclaration: MVARIABLE '(' vector ',' . '[' ']' ')' ASSIGN matrix
+
+    '['  сдвиг, и переход в состояние 136
+
+
+State 121
+
+   37 vmdeclaration: MVARIABLE '(' expr ',' . expr ')' ASSIGN expr
+   38              | MVARIABLE '(' expr ',' . '[' ']' ')' ASSIGN vector
+   52 expr: . const
+   53     | . VARIABLE
+   54     | . '-' expr
+   55     | . expr '+' expr
+   56     | . expr '-' expr
+   57     | . expr '/' expr
+   58     | . expr '<' expr
+   59     | . expr '>' expr
+   60     | . '!' expr
+   61     | . expr CONJUNCTION expr
+   62     | . '(' expr ')'
+   75 const: . INTEGER
+   76      | . BOOL
+
+    BOOL      сдвиг, и переход в состояние 4
+    INTEGER   сдвиг, и переход в состояние 5
+    VARIABLE  сдвиг, и переход в состояние 43
+    '-'       сдвиг, и переход в состояние 23
+    '!'       сдвиг, и переход в состояние 24
+    '('       сдвиг, и переход в состояние 44
+    '['       сдвиг, и переход в состояние 137
+
+    expr   переход в состояние 138
+    const  переход в состояние 36
+
+
+State 122
+
+   50 print: PRINT '(' VVARIABLE ')' .
+
+    $default  вывод с использованием правила 50 (print)
+
+
+State 123
+
+   51 print: PRINT '(' MVARIABLE ')' .
+
+    $default  вывод с использованием правила 51 (print)
+
+
+State 124
+
+   49 print: PRINT '(' expr ')' .
+
+    $default  вывод с использованием правила 49 (print)
+
+
+State 125
+
+   26 listexprs: listexprs ',' vector .  [',', '}']
+   29 vector: vector . ELEMMULT vector
+   30       | vector . RIGHTSHIFT
+   31       | vector . LEFTSHIFT
+   32       | vector . ELEMMULT expr
+
+    ELEMMULT    сдвиг, и переход в состояние 63
+    LEFTSHIFT   сдвиг, и переход в состояние 65
+    RIGHTSHIFT  сдвиг, и переход в состояние 66
+
+    $default  вывод с использованием правила 26 (listexprs)
+
+
+State 126
+
+   25 listexprs: vector ',' vector .  [',', '}']
+   29 vector: vector . ELEMMULT vector
+   30       | vector . RIGHTSHIFT
+   31       | vector . LEFTSHIFT
+   32       | vector . ELEMMULT expr
+
+    ELEMMULT    сдвиг, и переход в состояние 63
+    LEFTSHIFT   сдвиг, и переход в состояние 65
+    RIGHTSHIFT  сдвиг, и переход в состояние 66
+
+    $default  вывод с использованием правила 25 (listexprs)
+
+
+State 127
+
+   34 exprs: exprs ',' expr .  [',', '}']
+   55 expr: expr . '+' expr
+   56     | expr . '-' expr
+   57     | expr . '/' expr
+   58     | expr . '<' expr
+   59     | expr . '>' expr
+   61     | expr . CONJUNCTION expr
+
+    CONJUNCTION  сдвиг, и переход в состояние 72
+    '<'          сдвиг, и переход в состояние 73
+    '>'          сдвиг, и переход в состояние 74
+    '+'          сдвиг, и переход в состояние 75
+    '-'          сдвиг, и переход в состояние 76
+    '/'          сдвиг, и переход в состояние 77
+
+    $default  вывод с использованием правила 34 (exprs)
+
+
+State 128
+
+   33 exprs: expr ',' expr .  [',', '}']
+   55 expr: expr . '+' expr
+   56     | expr . '-' expr
+   57     | expr . '/' expr
+   58     | expr . '<' expr
+   59     | expr . '>' expr
+   61     | expr . CONJUNCTION expr
+
+    CONJUNCTION  сдвиг, и переход в состояние 72
+    '<'          сдвиг, и переход в состояние 73
+    '>'          сдвиг, и переход в состояние 74
+    '+'          сдвиг, и переход в состояние 75
+    '-'          сдвиг, и переход в состояние 76
+    '/'          сдвиг, и переход в состояние 77
+
+    $default  вывод с использованием правила 33 (exprs)
+
+
+State 129
+
+   17 matrix: matrix . '*' matrix
+   18       | matrix . ELEMMULT matrix
+   19       | matrix . '\''
+   20       | matrix . RIGHTSHIFT
+   21       | matrix . LEFTSHIFT
+   23       | matrix . ELEMMULT vector
+   24       | matrix . ELEMMULT expr
+   45 declaration: type VARIABLE DECLARE matrix .  [NEWLINE]
+
+    ELEMMULT    сдвиг, и переход в состояние 57
+    '\''        сдвиг, и переход в состояние 58
+    LEFTSHIFT   сдвиг, и переход в состояние 59
+    RIGHTSHIFT  сдвиг, и переход в состояние 60
+    '*'         сдвиг, и переход в состояние 61
+
+    $default  вывод с использованием правила 45 (declaration)
+
+
+State 130
+
+   22 matrix: vector . '\''
+   29 vector: vector . ELEMMULT vector
+   30       | vector . RIGHTSHIFT
+   31       | vector . LEFTSHIFT
+   32       | vector . ELEMMULT expr
+   44 declaration: type VARIABLE DECLARE vector .  [NEWLINE]
+
+    ELEMMULT    сдвиг, и переход в состояние 63
+    '\''        сдвиг, и переход в состояние 64
+    LEFTSHIFT   сдвиг, и переход в состояние 65
+    RIGHTSHIFT  сдвиг, и переход в состояние 66
+
+    $default  вывод с использованием правила 44 (declaration)
+
+
+State 131
+
+   43 declaration: type VARIABLE DECLARE expr .  [NEWLINE]
+   55 expr: expr . '+' expr
+   56     | expr . '-' expr
+   57     | expr . '/' expr
+   58     | expr . '<' expr
+   59     | expr . '>' expr
+   61     | expr . CONJUNCTION expr
+
+    CONJUNCTION  сдвиг, и переход в состояние 72
+    '<'          сдвиг, и переход в состояние 73
+    '>'          сдвиг, и переход в состояние 74
+    '+'          сдвиг, и переход в состояние 75
+    '-'          сдвиг, и переход в состояние 76
+    '/'          сдвиг, и переход в состояние 77
+
+    $default  вывод с использованием правила 43 (declaration)
+
+
+State 132
+
+   36 vmdeclaration: VVARIABLE '(' vector ',' '[' . ']' ')' ASSIGN vector
+
+    ']'  сдвиг, и переход в состояние 139
+
+
+State 133
+
+   35 vmdeclaration: VVARIABLE '(' expr ')' ASSIGN . expr
+   52 expr: . const
+   53     | . VARIABLE
+   54     | . '-' expr
+   55     | . expr '+' expr
+   56     | . expr '-' expr
+   57     | . expr '/' expr
+   58     | . expr '<' expr
+   59     | . expr '>' expr
+   60     | . '!' expr
+   61     | . expr CONJUNCTION expr
+   62     | . '(' expr ')'
+   75 const: . INTEGER
+   76      | . BOOL
+
+    BOOL      сдвиг, и переход в состояние 4
+    INTEGER   сдвиг, и переход в состояние 5
+    VARIABLE  сдвиг, и переход в состояние 43
+    '-'       сдвиг, и переход в состояние 23
+    '!'       сдвиг, и переход в состояние 24
+    '('       сдвиг, и переход в состояние 44
+
+    expr   переход в состояние 140
+    const  переход в состояние 36
+
+
+State 134
+
+   27 vector: . '{' exprs '}'
+   28       | . VVARIABLE
+   29       | . vector ELEMMULT vector
+   30       | . vector RIGHTSHIFT
+   31       | . vector LEFTSHIFT
+   32       | . vector ELEMMULT expr
+   39 vmdeclaration: MVARIABLE '(' '[' ']' ',' . expr ')' ASSIGN vector
+   41              | MVARIABLE '(' '[' ']' ',' . vector ')' ASSIGN matrix
+   52 expr: . const
+   53     | . VARIABLE
+   54     | . '-' expr
+   55     | . expr '+' expr
+   56     | . expr '-' expr
+   57     | . expr '/' expr
+   58     | . expr '<' expr
+   59     | . expr '>' expr
+   60     | . '!' expr
+   61     | . expr CONJUNCTION expr
+   62     | . '(' expr ')'
+   75 const: . INTEGER
+   76      | . BOOL
+
+    BOOL       сдвиг, и переход в состояние 4
+    INTEGER    сдвиг, и переход в состояние 5
+    VARIABLE   сдвиг, и переход в состояние 43
+    VVARIABLE  сдвиг, и переход в состояние 50
+    '-'        сдвиг, и переход в состояние 23
+    '!'        сдвиг, и переход в состояние 24
+    '('        сдвиг, и переход в состояние 44
+    '{'        сдвиг, и переход в состояние 51
+
+    vector  переход в состояние 141
+    expr    переход в состояние 142
+    const   переход в состояние 36
+
+
+State 135
+
+   15 matrix: . '{' listexprs '}'
+   16       | . MVARIABLE
+   17       | . matrix '*' matrix
+   18       | . matrix ELEMMULT matrix
+   19       | . matrix '\''
+   20       | . matrix RIGHTSHIFT
+   21       | . matrix LEFTSHIFT
+   22       | . vector '\''
+   23       | . matrix ELEMMULT vector
+   24       | . matrix ELEMMULT expr
+   27 vector: . '{' exprs '}'
+   28       | . VVARIABLE
+   29       | . vector ELEMMULT vector
+   30       | . vector RIGHTSHIFT
+   31       | . vector LEFTSHIFT
+   32       | . vector ELEMMULT expr
+   42 vmdeclaration: MVARIABLE '(' matrix ')' ASSIGN . matrix
+
+    VVARIABLE  сдвиг, и переход в состояние 50
+    MVARIABLE  сдвиг, и переход в состояние 83
+    '{'        сдвиг, и переход в состояние 26
+
+    matrix  переход в состояние 143
+    vector  переход в состояние 85
+
+
+State 136
+
+   40 vmdeclaration: MVARIABLE '(' vector ',' '[' . ']' ')' ASSIGN matrix
+
+    ']'  сдвиг, и переход в состояние 144
+
+
+State 137
+
+   38 vmdeclaration: MVARIABLE '(' expr ',' '[' . ']' ')' ASSIGN vector
+
+    ']'  сдвиг, и переход в состояние 145
+
+
+State 138
+
+   37 vmdeclaration: MVARIABLE '(' expr ',' expr . ')' ASSIGN expr
+   55 expr: expr . '+' expr
+   56     | expr . '-' expr
+   57     | expr . '/' expr
+   58     | expr . '<' expr
+   59     | expr . '>' expr
+   61     | expr . CONJUNCTION expr
+
+    CONJUNCTION  сдвиг, и переход в состояние 72
+    '<'          сдвиг, и переход в состояние 73
+    '>'          сдвиг, и переход в состояние 74
+    '+'          сдвиг, и переход в состояние 75
+    '-'          сдвиг, и переход в состояние 76
+    '/'          сдвиг, и переход в состояние 77
+    ')'          сдвиг, и переход в состояние 146
+
+
+State 139
+
+   36 vmdeclaration: VVARIABLE '(' vector ',' '[' ']' . ')' ASSIGN vector
+
+    ')'  сдвиг, и переход в состояние 147
+
+
+State 140
+
+   35 vmdeclaration: VVARIABLE '(' expr ')' ASSIGN expr .  [NEWLINE]
+   55 expr: expr . '+' expr
+   56     | expr . '-' expr
+   57     | expr . '/' expr
+   58     | expr . '<' expr
+   59     | expr . '>' expr
+   61     | expr . CONJUNCTION expr
+
+    CONJUNCTION  сдвиг, и переход в состояние 72
+    '<'          сдвиг, и переход в состояние 73
+    '>'          сдвиг, и переход в состояние 74
+    '+'          сдвиг, и переход в состояние 75
+    '-'          сдвиг, и переход в состояние 76
+    '/'          сдвиг, и переход в состояние 77
+
+    $default  вывод с использованием правила 35 (vmdeclaration)
+
+
+State 141
+
+   29 vector: vector . ELEMMULT vector
+   30       | vector . RIGHTSHIFT
+   31       | vector . LEFTSHIFT
+   32       | vector . ELEMMULT expr
+   41 vmdeclaration: MVARIABLE '(' '[' ']' ',' vector . ')' ASSIGN matrix
+
+    ELEMMULT    сдвиг, и переход в состояние 63
+    LEFTSHIFT   сдвиг, и переход в состояние 65
+    RIGHTSHIFT  сдвиг, и переход в состояние 66
+    ')'         сдвиг, и переход в состояние 148
+
+
+State 142
+
+   39 vmdeclaration: MVARIABLE '(' '[' ']' ',' expr . ')' ASSIGN vector
+   55 expr: expr . '+' expr
+   56     | expr . '-' expr
+   57     | expr . '/' expr
+   58     | expr . '<' expr
+   59     | expr . '>' expr
+   61     | expr . CONJUNCTION expr
+
+    CONJUNCTION  сдвиг, и переход в состояние 72
+    '<'          сдвиг, и переход в состояние 73
+    '>'          сдвиг, и переход в состояние 74
+    '+'          сдвиг, и переход в состояние 75
+    '-'          сдвиг, и переход в состояние 76
+    '/'          сдвиг, и переход в состояние 77
+    ')'          сдвиг, и переход в состояние 149
+
+
+State 143
+
+   17 matrix: matrix . '*' matrix
+   18       | matrix . ELEMMULT matrix
+   19       | matrix . '\''
+   20       | matrix . RIGHTSHIFT
+   21       | matrix . LEFTSHIFT
+   23       | matrix . ELEMMULT vector
+   24       | matrix . ELEMMULT expr
+   42 vmdeclaration: MVARIABLE '(' matrix ')' ASSIGN matrix .  [NEWLINE]
+
+    ELEMMULT    сдвиг, и переход в состояние 57
+    '\''        сдвиг, и переход в состояние 58
+    LEFTSHIFT   сдвиг, и переход в состояние 59
+    RIGHTSHIFT  сдвиг, и переход в состояние 60
+    '*'         сдвиг, и переход в состояние 61
+
+    $default  вывод с использованием правила 42 (vmdeclaration)
+
+
+State 144
+
+   40 vmdeclaration: MVARIABLE '(' vector ',' '[' ']' . ')' ASSIGN matrix
+
+    ')'  сдвиг, и переход в состояние 150
+
+
+State 145
+
+   38 vmdeclaration: MVARIABLE '(' expr ',' '[' ']' . ')' ASSIGN vector
+
+    ')'  сдвиг, и переход в состояние 151
+
+
+State 146
+
+   37 vmdeclaration: MVARIABLE '(' expr ',' expr ')' . ASSIGN expr
+
+    ASSIGN  сдвиг, и переход в состояние 152
+
+
+State 147
+
+   36 vmdeclaration: VVARIABLE '(' vector ',' '[' ']' ')' . ASSIGN vector
+
+    ASSIGN  сдвиг, и переход в состояние 153
+
+
+State 148
+
+   41 vmdeclaration: MVARIABLE '(' '[' ']' ',' vector ')' . ASSIGN matrix
+
+    ASSIGN  сдвиг, и переход в состояние 154
+
+
+State 149
+
+   39 vmdeclaration: MVARIABLE '(' '[' ']' ',' expr ')' . ASSIGN vector
+
+    ASSIGN  сдвиг, и переход в состояние 155
+
+
+State 150
+
+   40 vmdeclaration: MVARIABLE '(' vector ',' '[' ']' ')' . ASSIGN matrix
+
+    ASSIGN  сдвиг, и переход в состояние 156
+
+
+State 151
+
+   38 vmdeclaration: MVARIABLE '(' expr ',' '[' ']' ')' . ASSIGN vector
+
+    ASSIGN  сдвиг, и переход в состояние 157
+
+
+State 152
+
+   37 vmdeclaration: MVARIABLE '(' expr ',' expr ')' ASSIGN . expr
+   52 expr: . const
+   53     | . VARIABLE
+   54     | . '-' expr
+   55     | . expr '+' expr
+   56     | . expr '-' expr
+   57     | . expr '/' expr
+   58     | . expr '<' expr
+   59     | . expr '>' expr
+   60     | . '!' expr
+   61     | . expr CONJUNCTION expr
+   62     | . '(' expr ')'
+   75 const: . INTEGER
+   76      | . BOOL
+
+    BOOL      сдвиг, и переход в состояние 4
+    INTEGER   сдвиг, и переход в состояние 5
+    VARIABLE  сдвиг, и переход в состояние 43
+    '-'       сдвиг, и переход в состояние 23
+    '!'       сдвиг, и переход в состояние 24
+    '('       сдвиг, и переход в состояние 44
+
+    expr   переход в состояние 158
+    const  переход в состояние 36
+
+
+State 153
+
+   27 vector: . '{' exprs '}'
+   28       | . VVARIABLE
+   29       | . vector ELEMMULT vector
+   30       | . vector RIGHTSHIFT
+   31       | . vector LEFTSHIFT
+   32       | . vector ELEMMULT expr
+   36 vmdeclaration: VVARIABLE '(' vector ',' '[' ']' ')' ASSIGN . vector
+
+    VVARIABLE  сдвиг, и переход в состояние 50
+    '{'        сдвиг, и переход в состояние 51
+
+    vector  переход в состояние 159
+
+
+State 154
+
+   15 matrix: . '{' listexprs '}'
+   16       | . MVARIABLE
+   17       | . matrix '*' matrix
+   18       | . matrix ELEMMULT matrix
+   19       | . matrix '\''
+   20       | . matrix RIGHTSHIFT
+   21       | . matrix LEFTSHIFT
+   22       | . vector '\''
+   23       | . matrix ELEMMULT vector
+   24       | . matrix ELEMMULT expr
+   27 vector: . '{' exprs '}'
+   28       | . VVARIABLE
+   29       | . vector ELEMMULT vector
+   30       | . vector RIGHTSHIFT
+   31       | . vector LEFTSHIFT
+   32       | . vector ELEMMULT expr
+   41 vmdeclaration: MVARIABLE '(' '[' ']' ',' vector ')' ASSIGN . matrix
+
+    VVARIABLE  сдвиг, и переход в состояние 50
+    MVARIABLE  сдвиг, и переход в состояние 83
+    '{'        сдвиг, и переход в состояние 26
+
+    matrix  переход в состояние 160
+    vector  переход в состояние 85
+
+
+State 155
+
+   27 vector: . '{' exprs '}'
+   28       | . VVARIABLE
+   29       | . vector ELEMMULT vector
+   30       | . vector RIGHTSHIFT
+   31       | . vector LEFTSHIFT
+   32       | . vector ELEMMULT expr
+   39 vmdeclaration: MVARIABLE '(' '[' ']' ',' expr ')' ASSIGN . vector
+
+    VVARIABLE  сдвиг, и переход в состояние 50
+    '{'        сдвиг, и переход в состояние 51
+
+    vector  переход в состояние 161
+
+
+State 156
+
+   15 matrix: . '{' listexprs '}'
+   16       | . MVARIABLE
+   17       | . matrix '*' matrix
+   18       | . matrix ELEMMULT matrix
+   19       | . matrix '\''
+   20       | . matrix RIGHTSHIFT
+   21       | . matrix LEFTSHIFT
+   22       | . vector '\''
+   23       | . matrix ELEMMULT vector
+   24       | . matrix ELEMMULT expr
+   27 vector: . '{' exprs '}'
+   28       | . VVARIABLE
+   29       | . vector ELEMMULT vector
+   30       | . vector RIGHTSHIFT
+   31       | . vector LEFTSHIFT
+   32       | . vector ELEMMULT expr
+   40 vmdeclaration: MVARIABLE '(' vector ',' '[' ']' ')' ASSIGN . matrix
+
+    VVARIABLE  сдвиг, и переход в состояние 50
+    MVARIABLE  сдвиг, и переход в состояние 83
+    '{'        сдвиг, и переход в состояние 26
+
+    matrix  переход в состояние 162
+    vector  переход в состояние 85
+
+
+State 157
+
+   27 vector: . '{' exprs '}'
+   28       | . VVARIABLE
+   29       | . vector ELEMMULT vector
+   30       | . vector RIGHTSHIFT
+   31       | . vector LEFTSHIFT
+   32       | . vector ELEMMULT expr
+   38 vmdeclaration: MVARIABLE '(' expr ',' '[' ']' ')' ASSIGN . vector
+
+    VVARIABLE  сдвиг, и переход в состояние 50
+    '{'        сдвиг, и переход в состояние 51
+
+    vector  переход в состояние 163
+
+
+State 158
+
+   37 vmdeclaration: MVARIABLE '(' expr ',' expr ')' ASSIGN expr .  [NEWLINE]
+   55 expr: expr . '+' expr
+   56     | expr . '-' expr
+   57     | expr . '/' expr
+   58     | expr . '<' expr
+   59     | expr . '>' expr
+   61     | expr . CONJUNCTION expr
+
+    CONJUNCTION  сдвиг, и переход в состояние 72
+    '<'          сдвиг, и переход в состояние 73
+    '>'          сдвиг, и переход в состояние 74
+    '+'          сдвиг, и переход в состояние 75
+    '-'          сдвиг, и переход в состояние 76
+    '/'          сдвиг, и переход в состояние 77
+
+    $default  вывод с использованием правила 37 (vmdeclaration)
+
+
+State 159
+
+   29 vector: vector . ELEMMULT vector
+   30       | vector . RIGHTSHIFT
+   31       | vector . LEFTSHIFT
+   32       | vector . ELEMMULT expr
+   36 vmdeclaration: VVARIABLE '(' vector ',' '[' ']' ')' ASSIGN vector .  [NEWLINE]
+
+    ELEMMULT    сдвиг, и переход в состояние 63
+    LEFTSHIFT   сдвиг, и переход в состояние 65
+    RIGHTSHIFT  сдвиг, и переход в состояние 66
+
+    $default  вывод с использованием правила 36 (vmdeclaration)
+
+
+State 160
+
+   17 matrix: matrix . '*' matrix
+   18       | matrix . ELEMMULT matrix
+   19       | matrix . '\''
+   20       | matrix . RIGHTSHIFT
+   21       | matrix . LEFTSHIFT
+   23       | matrix . ELEMMULT vector
+   24       | matrix . ELEMMULT expr
+   41 vmdeclaration: MVARIABLE '(' '[' ']' ',' vector ')' ASSIGN matrix .  [NEWLINE]
+
+    ELEMMULT    сдвиг, и переход в состояние 57
+    '\''        сдвиг, и переход в состояние 58
+    LEFTSHIFT   сдвиг, и переход в состояние 59
+    RIGHTSHIFT  сдвиг, и переход в состояние 60
+    '*'         сдвиг, и переход в состояние 61
+
+    $default  вывод с использованием правила 41 (vmdeclaration)
+
+
+State 161
+
+   29 vector: vector . ELEMMULT vector
+   30       | vector . RIGHTSHIFT
+   31       | vector . LEFTSHIFT
+   32       | vector . ELEMMULT expr
+   39 vmdeclaration: MVARIABLE '(' '[' ']' ',' expr ')' ASSIGN vector .  [NEWLINE]
+
+    ELEMMULT    сдвиг, и переход в состояние 63
+    LEFTSHIFT   сдвиг, и переход в состояние 65
+    RIGHTSHIFT  сдвиг, и переход в состояние 66
+
+    $default  вывод с использованием правила 39 (vmdeclaration)
+
+
+State 162
+
+   17 matrix: matrix . '*' matrix
+   18       | matrix . ELEMMULT matrix
+   19       | matrix . '\''
+   20       | matrix . RIGHTSHIFT
+   21       | matrix . LEFTSHIFT
+   23       | matrix . ELEMMULT vector
+   24       | matrix . ELEMMULT expr
+   40 vmdeclaration: MVARIABLE '(' vector ',' '[' ']' ')' ASSIGN matrix .  [NEWLINE]
+
+    ELEMMULT    сдвиг, и переход в состояние 57
+    '\''        сдвиг, и переход в состояние 58
+    LEFTSHIFT   сдвиг, и переход в состояние 59
+    RIGHTSHIFT  сдвиг, и переход в состояние 60
+    '*'         сдвиг, и переход в состояние 61
+
+    $default  вывод с использованием правила 40 (vmdeclaration)
+
+
+State 163
+
+   29 vector: vector . ELEMMULT vector
+   30       | vector . RIGHTSHIFT
+   31       | vector . LEFTSHIFT
+   32       | vector . ELEMMULT expr
+   38 vmdeclaration: MVARIABLE '(' expr ',' '[' ']' ')' ASSIGN vector .  [NEWLINE]
+
+    ELEMMULT    сдвиг, и переход в состояние 63
+    LEFTSHIFT   сдвиг, и переход в состояние 65
+    RIGHTSHIFT  сдвиг, и переход в состояние 66
+
+    $default  вывод с использованием правила 38 (vmdeclaration)

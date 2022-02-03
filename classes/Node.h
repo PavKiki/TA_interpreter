@@ -24,6 +24,18 @@ enum vecOpType {
     VEMexpr
 };
 
+enum VMOpName {
+    vmnothing,
+    vexpr,
+    vvec,
+    mexpr, 
+    mexprcolumn,
+    mexprrow,
+    mvecrow,
+    mveccolumn,
+    mmat
+};
+
 namespace Interpreter {
 
 enum nodeType {
@@ -41,7 +53,8 @@ enum nodeType {
     INTMATNODE,         //11
     BOOLMATNODE,        //12
     MATOPNODE,
-    VECOPNODE
+    VECOPNODE,
+    VMVAROPNODE
 };
 
 enum varType {
@@ -109,6 +122,7 @@ public:
     Node* copy();
     std::vector<Node*>& getData() {return data;};
     size_t getSize() {return size;};
+    Node*& getByIndex(const size_t index) {return data[index];};
 
     AbstractVectorNode(): Node(ABSTRACTVECNODE), size(0) {};
     AbstractVectorNode(nodeType typ, std::vector<Node*> dat, size_t siz): Node(typ), size(siz) {data = dat;};
@@ -158,6 +172,7 @@ public:
     size_t getSizeX() {return x;};
     size_t getSizeY() {return y;};
     std::vector<AbstractVectorNode*>& getData() {return data;};
+    AbstractVectorNode*& getByIndex(const size_t index) {return data[index];};
 
     AbstractMatrixNode(): Node(ABSTRACTMATNODE), x(0), y(0) {};
     AbstractMatrixNode(nodeType typ, std::vector<AbstractVectorNode*> dat, size_t X, size_t Y): Node(typ), x(X), y(Y), data(dat) {};

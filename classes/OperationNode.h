@@ -74,9 +74,27 @@ public:
     ~VariableOperationNode() {};
 };
 
+class VecMatVariableOperationNode: public Node {
+private:
+    std::vector<Node*> exprs;
+    ContainerVectorNode* vecNode;
+    ContainerMatrixNode* matNode;
+    Node* src;
+    VMOpName oper;
+public:
+    int execute() override;
+    void print(std::ostringstream& strm) {};
+
+    VecMatVariableOperationNode(): Node(VMVAROPNODE), oper(vmnothing) {};
+    VecMatVariableOperationNode(VMOpName op, Node* src, std::vector<Node*> exps): oper(op), src(src), exprs(exps) {};
+    VecMatVariableOperationNode(VMOpName op, Node* src, ContainerVectorNode* vec, std::vector<Node*> exps): oper(op), src(src), vecNode(vec), exprs(exps) {};
+    VecMatVariableOperationNode(VMOpName op, Node* src, ContainerMatrixNode* mat, std::vector<Node*> exps): oper(op), src(src), matNode(mat), exprs(exps) {};
+    ~VecMatVariableOperationNode() {for (auto& node: exprs) free(node); free(vecNode); free(matNode);}
+};
+
 Node* getScalarExprResult(varType, Node*);
 std::vector<Node*> getVectorExprResult(varType, ContainerVectorNode*&);
 std::vector<AbstractVectorNode*> getMatrixExprResult(varType, ContainerMatrixNode*&);
 
-
+AbstractVectorNode* VECgetNode_checkType(ContainerVectorNode*, nodeType&);
 }

@@ -25,6 +25,8 @@ class BoolVectorNode: public AbstractVectorNode {
 private:
 
 public:
+    BoolNode& operator[] (const size_t index) {return *(dynamic_cast<BoolNode*>(getByIndex(index)));}
+
     BoolVectorNode(): AbstractVectorNode() {};
     BoolVectorNode(std::vector<Node*> dat, size_t siz): AbstractVectorNode(Interpreter::BOOLVECNODE, dat, siz) {};
     ~BoolVectorNode() {};
@@ -34,6 +36,8 @@ class BoolMatrixNode: public AbstractMatrixNode {
 private:
 
 public:
+    BoolVectorNode& operator[] (const size_t index) {return *(dynamic_cast<BoolVectorNode*>(getByIndex(index)));}
+
     BoolMatrixNode(): AbstractMatrixNode() {};
     BoolMatrixNode(std::vector<AbstractVectorNode*> dat, size_t xx, size_t yy): AbstractMatrixNode(Interpreter::BOOLMATNODE, dat, xx, yy) {};
     ~BoolMatrixNode() {};

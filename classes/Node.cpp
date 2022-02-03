@@ -113,6 +113,7 @@ Interpreter::Node* Interpreter::AbstractVectorNode::copy() {
 
 void Interpreter::ContainerMatrixNode::addData(Interpreter::ContainerVectorNode* dat) {
     if (dat->getSize() != this->getSizeY()) throw "Matrix can be only rectangular!";
+    x++;
     data.push_back(dat);
 } 
 

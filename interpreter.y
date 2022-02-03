@@ -45,7 +45,7 @@ void yyerror(const char*);
 %right '!'
 %nonassoc UMINUS
 
-%type <ptr> expr const stmt stmts print exprs vector listexprs matrix
+%type <ptr> expr const stmt stmts print exprs vector listexprs matrix vmdeclaration
 %type <varOpPtr> declaration assignment
 %type <vtype> type
 
@@ -81,6 +81,7 @@ stmt:
     | vector NEWLINE            {$$ = $1;}
     | matrix NEWLINE            {$$ = $1;}
     | print NEWLINE             {$$ = $1;}
+    | vmdeclaration NEWLINE     {$$ = $1;}
     | declaration NEWLINE       {$$ = $1;}
     | assignment NEWLINE        {$$ = $1;}
     | '(' stmts ')'             {$$ = $2;}
@@ -136,7 +137,7 @@ matrix:
                                         std::vector<Interpreter::ContainerMatrixNode*> kids;
                                         kids.push_back(dynamic_cast<Interpreter::ContainerMatrixNode*>($1));
                                         kids.push_back(static_cast<Interpreter::ContainerMatrixNode*>($3));
-                                        $$ = new Interpreter::ContainerMatrixNode(kids, MEMvec);
+                                        $$ = new Interpreter::ContainerMatrixNode(kids, mcycshiftleft);
                                     }
     | matrix ELEMMULT expr          {
                                         std::vector<Interpreter::ContainerMatrixNode*> kids;
@@ -197,6 +198,109 @@ exprs:
                                     dynamic_cast<Interpreter::ContainerVectorNode*>($$)->addData($3);
                                 }
     | exprs ',' expr            {dynamic_cast<Interpreter::ContainerVectorNode*>($$)->addData($3);}
+;
+
+vmdeclaration:
+    VVARIABLE '(' expr ')' ASSIGN expr          {
+                                                    auto search = Interpreter::varStorage.find(*$1);
+                                                    if (search != Interpreter::varStorage.end() && !Interpreter::isConst[*$1]) {
+                                                        std::vector<Interpreter::Node*> kids;
+                                                        kids.push_back($3);
+                                                        kids.push_back($6);
+                                                        $$ = new Interpreter::VecMatVariableOperationNode(vexpr, search->second, kids);
+                                                    }
+                                                    else {
+                                                        std::string tmp = std::string("Variable ") + *$1 + " doesn't exist or can not be changed!";
+                                                        yyerror(tmp.c_str());
+                                                    }
+                                                    
+                                                }
+    | VVARIABLE '(' vector ',' '[' ']' ')' ASSIGN vector    {
+                                                                auto search = Interpreter::varStorage.find(*$1);
+                                                                if (search != Interpreter::varStorage.end() && !Interpreter::isConst[*$1]) {
+                                                                    std::vector<Interpreter::Node*> kids;
+                                                                    kids.push_back($3);
+                                                                    $$ = new Interpreter::VecMatVariableOperationNode(vvec, search->second, dynamic_cast<Interpreter::ContainerVectorNode*>($9), kids);
+                                                                }
+                                                                else {
+                                                                    std::string tmp = std::string("Variable ") + *$1 + " doesn't exist or can not be changed!";
+                                                                    yyerror(tmp.c_str());
+                                                                }
+                                                            }
+    | MVARIABLE '(' expr ',' expr ')' ASSIGN expr           {
+                                                                auto search = Interpreter::varStorage.find(*$1);
+                                                                if (search != Interpreter::varStorage.end() && !Interpreter::isConst[*$1]) {
+                                                                    std::vector<Interpreter::Node*> kids;
+                                                                    kids.push_back($3);
+                                                                    kids.push_back($5);
+                                                                    kids.push_back($8);
+                                                                    $$ = new Interpreter::VecMatVariableOperationNode(mexpr, search->second, kids);
+                                                                }
+                                                                else {
+                                                                    std::string tmp = std::string("Variable ") + *$1 + " doesn't exist or can not be changed!";
+                                                                    yyerror(tmp.c_str());
+                                                                }
+                                                            }
+    | MVARIABLE '(' expr ',' '[' ']' ')' ASSIGN vector      {
+                                                                auto search = Interpreter::varStorage.find(*$1);
+                                                                if (search != Interpreter::varStorage.end() && !Interpreter::isConst[*$1]) {
+                                                                    std::vector<Interpreter::Node*> kids;
+                                                                    kids.push_back($3);
+                                                                    $$ = new Interpreter::VecMatVariableOperationNode(mexprcolumn, search->second, dynamic_cast<Interpreter::ContainerVectorNode*>($9), kids);
+                                                                }
+                                                                else {
+                                                                    std::string tmp = std::string("Variable ") + *$1 + " doesn't exist or can not be changed!";
+                                                                    yyerror(tmp.c_str());
+                                                                }
+                                                            }
+    | MVARIABLE '(' '[' ']' ',' expr ')' ASSIGN vector      {
+                                                                auto search = Interpreter::varStorage.find(*$1);
+                                                                if (search != Interpreter::varStorage.end() && !Interpreter::isConst[*$1]) {
+                                                                    std::vector<Interpreter::Node*> kids;
+                                                                    kids.push_back($6);
+                                                                    $$ = new Interpreter::VecMatVariableOperationNode(mexprrow, search->second, dynamic_cast<Interpreter::ContainerVectorNode*>($9), kids);
+                                                                }
+                                                                else {
+                                                                    std::string tmp = std::string("Variable ") + *$1 + " doesn't exist or can not be changed!";
+                                                                    yyerror(tmp.c_str());
+                                                                }
+                                                            }
+    | MVARIABLE '(' vector ',' '[' ']' ')' ASSIGN matrix    {
+                                                                auto search = Interpreter::varStorage.find(*$1);
+                                                                if (search != Interpreter::varStorage.end() && !Interpreter::isConst[*$1]) {
+                                                                    std::vector<Interpreter::Node*> kids;
+                                                                    kids.push_back($3);
+                                                                    $$ = new Interpreter::VecMatVariableOperationNode(mveccolumn, search->second, dynamic_cast<Interpreter::ContainerMatrixNode*>($9), kids);
+                                                                }
+                                                                else {
+                                                                    std::string tmp = std::string("Variable ") + *$1 + " doesn't exist or can not be changed!";
+                                                                    yyerror(tmp.c_str());
+                                                                }
+                                                            }
+    | MVARIABLE '(' '[' ']' ',' vector ')' ASSIGN matrix    {
+                                                                auto search = Interpreter::varStorage.find(*$1);
+                                                                if (search != Interpreter::varStorage.end() && !Interpreter::isConst[*$1]) {
+                                                                    std::vector<Interpreter::Node*> kids;
+                                                                    kids.push_back($6);
+                                                                    $$ = new Interpreter::VecMatVariableOperationNode(mvecrow, search->second, dynamic_cast<Interpreter::ContainerMatrixNode*>($9), kids);
+                                                                }
+                                                                else {
+                                                                    std::string tmp = std::string("Variable ") + *$1 + " doesn't exist or can not be changed!";
+                                                                    yyerror(tmp.c_str());
+                                                                }
+                                                            }
+    | MVARIABLE '(' matrix ')' ASSIGN matrix                {
+                                                                auto search = Interpreter::varStorage.find(*$1);
+                                                                if (search != Interpreter::varStorage.end() && !Interpreter::isConst[*$1]) {
+                                                                    std::vector<Interpreter::Node*> kids;
+                                                                    kids.push_back($3);
+                                                                    $$ = new Interpreter::VecMatVariableOperationNode(mmat, search->second, dynamic_cast<Interpreter::ContainerMatrixNode*>($6), kids);
+                                                                }
+                                                                else {
+                                                                    std::string tmp = std::string("Variable ") + *$1 + " doesn't exist or can not be changed!";
+                                                                    yyerror(tmp.c_str());
+                                                                }
+                                                            }    
 ;
 
 declaration:
@@ -275,7 +379,14 @@ expr:
     const                       {$$ = $1;}
     | VARIABLE                  {
                                     auto search = Interpreter::varStorage.find(*$1);
-                                    if (search != Interpreter::varStorage.end()) $$ = search->second;
+                                    if (search != Interpreter::varStorage.end()) {
+                                        if (search->second->nType == Interpreter::INTNODE) {
+                                            $$ = new Interpreter::IntegerNode(decimal, std::to_string(search->second->execute()));
+                                        }
+                                        else if (search->second->nType == Interpreter::BOOLNODE) {
+                                            $$ = new Interpreter::BoolNode(search->second->execute() ? "true" : "false");
+                                        }
+                                    }
                                     else {
                                         std::string tmp = std::string("Variable ") + *$1 + " is not declared!";
                                         yyerror(tmp.c_str());

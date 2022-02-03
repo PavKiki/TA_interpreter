@@ -29,7 +29,7 @@ true|false              {yylloc.last_line = yylloc.first_line = yylineno; yylval
 
 \>\>                    {return RIGHTSHIFT;}
 
-[-+*/()\<\>!{},\']      {return *yytext;}
+[-+*/()\<\>!{},\'\[\]]  {return *yytext;}
 
 and|&&                  {return CONJUNCTION;}
 
