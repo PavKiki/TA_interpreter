@@ -107,6 +107,7 @@ public:
 
     void getVector(std::vector<Node*>&);
 
+
     size_t getSize() {return x;}
 
     Node*& operator[] (const size_t index) {return data[index];};
@@ -129,6 +130,8 @@ public:
     std::vector<Node*>& getData() {return data;};
     size_t getSize() {return size;};
     Node*& getByIndex(const size_t index) {return data[index];};
+
+    void setData(std::vector<Node*> dat) {data = dat; size = dat.size();}
 
     AbstractVectorNode(): Node(ABSTRACTVECNODE), size(0){};
     AbstractVectorNode(nodeType typ, std::vector<Node*> dat, size_t siz): Node(typ), size(siz) {data = dat;};
@@ -179,6 +182,8 @@ public:
     size_t getSizeY() {return y;};
     std::vector<AbstractVectorNode*>& getData() {return data;};
     AbstractVectorNode*& getByIndex(const size_t index) {return data[index];};
+
+    void setData(std::vector<AbstractVectorNode*> dat) {data = dat; x = dat.size(); y = dat[0]->getSize();}
 
     AbstractMatrixNode(): Node(ABSTRACTMATNODE), x(0), y(0) {};
     AbstractMatrixNode(nodeType typ, std::vector<AbstractVectorNode*> dat, size_t X, size_t Y): Node(typ), x(X), y(Y), data(dat) {};

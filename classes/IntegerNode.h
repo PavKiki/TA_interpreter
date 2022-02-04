@@ -31,6 +31,10 @@ public:
 
     NumSys getType() {return type;}
 
+    void setDecData(int dat) {type = decimal; data.dec = dat;}
+
+    int getDecData() {return data.dec;}
+
     IntegerNode(): type(decimal), Node(INTNODE) {data.dec = 0;};
     IntegerNode(NumSys typ, std::string dat);
     ~IntegerNode() {};

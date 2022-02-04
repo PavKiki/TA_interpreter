@@ -36,7 +36,7 @@ void yyerror(const char*);
 %token <intPtr> INTEGER
 %token <varName> VARIABLE VVARIABLE MVARIABLE
 %token <vtype> CINT VINT MINT INT CVINT CMINT BOOLEAN CBOOLEAN VBOOLEAN MBOOLEAN CVBOOLEAN CMBOOLEAN
-%token NEWLINE PRINT CONJUNCTION ELEMMULT '\'' LEFTSHIFT RIGHTSHIFT ','
+%token NEWLINE PRINT CONJUNCTION ELEMMULT '\'' LEFTSHIFT RIGHTSHIFT ',' IF FOR BEGIF ENDIF BEGFOR ENDFOR
 
 %left ASSIGN DECLARE
 %left '<' '>' 
@@ -45,7 +45,7 @@ void yyerror(const char*);
 %right '!'
 %nonassoc UMINUS
 
-%type <ptr> expr const stmt stmts print exprs vector listexprs matrix vmdeclaration
+%type <ptr> expr const stmt stmts print exprs vector listexprs matrix vmdeclaration iff forr
 %type <varOpPtr> declaration assignment
 %type <vtype> type
 
@@ -56,7 +56,7 @@ program:
 ;
 
 function:
-    function stmt               {
+    function stmts              {
                                     $2->execute();
                                 }
     |                           
@@ -84,7 +84,38 @@ stmt:
     | vmdeclaration NEWLINE     {$$ = $1;}
     | declaration NEWLINE       {$$ = $1;}
     | assignment NEWLINE        {$$ = $1;}
+    | iff NEWLINE               {$$ = $1;}
+    | forr NEWLINE              {$$ = $1;}
     | '(' stmts ')'             {$$ = $2;}
+;
+
+iff:
+    IF expr NEWLINE BEGIF stmts ENDIF       {
+                                                std::vector<Interpreter::Node*> kids;
+                                                kids.push_back($2);
+                                                kids.push_back($5);
+                                                $$ = new Interpreter::OperationNode(iff, kids);
+                                            }
+;
+
+forr:
+    FOR type VARIABLE DECLARE expr ':' expr NEWLINE BEGFOR stmts ENDFOR                 {
+                                                                                            if ($2 != Interpreter::INT) yyerror("Variable should be non-const integer scalar");
+                                                                                            auto search = Interpreter::varStorage.find(*$3);
+                                                                                            if (search == Interpreter::varStorage.end()) {
+                                                                                                auto tmp = new Interpreter::VariableOperationNode($2, declare, *$3, $5);
+                                                                                                std::vector<Interpreter::Node*> kids;
+                                                                                                kids.push_back(tmp);
+                                                                                                kids.push_back($5);
+                                                                                                kids.push_back($7);
+                                                                                                kids.push_back($10);
+                                                                                                $$ = new Interpreter::OperationNode(forr, kids);
+                                                                                            }
+                                                                                            else {
+                                                                                                std::string tmp = std::string("Variable ") + *$3 + " already exists!";
+                                                                                                yyerror(tmp.c_str());
+                                                                                            }
+                                                                                        }
 ;
 
 matrix:
@@ -440,6 +471,7 @@ print:
                                     kids.push_back($3);
                                     $$ = new Interpreter::OperationNode(pprint, kids); 
                                 }
+
     | PRINT '(' VVARIABLE ')'   {
                                     auto search = Interpreter::varStorage.find(*$3);
                                     std::vector<Interpreter::Node*> kids; 
@@ -457,19 +489,7 @@ print:
 expr:
     const                       {$$ = $1;}
     | VARIABLE                  {
-                                    auto search = Interpreter::varStorage.find(*$1);
-                                    if (search != Interpreter::varStorage.end()) {
-                                        if (search->second->nType == Interpreter::INTNODE) {
-                                            $$ = new Interpreter::IntegerNode(decimal, std::to_string(search->second->execute()));
-                                        }
-                                        else if (search->second->nType == Interpreter::BOOLNODE) {
-                                            $$ = new Interpreter::BoolNode(search->second->execute() ? "true" : "false");
-                                        }
-                                    }
-                                    else {
-                                        std::string tmp = std::string("Variable ") + *$1 + " is not declared!";
-                                        yyerror(tmp.c_str());
-                                    }
+                                    $$ = new Interpreter::OperationNode(getsvar, *$1);
                                 }
     | '-' expr %prec UMINUS     {
                                     std::vector<Interpreter::Node*> kids; 

@@ -19,7 +19,10 @@ enum operName {
     vintgetexp,
     vboolgetexp,
     mintgetexp,
-    mboolgetexp
+    mboolgetexp,
+    iff,
+    forr,
+    getsvar
 };
 
 enum varOperName {
@@ -34,6 +37,7 @@ class OperationNode: public Node {
 private:
     operName operation;
     std::vector<Node*> kids;
+    std::string varname;
 public:
     operName getOperation() {return operation;};
 
@@ -41,8 +45,11 @@ public:
 
     void print(std::ostringstream& strm) override;
 
+    std::string getVN() {return varname;}
+
     OperationNode(): Node(OPNODE) {operation = nothing;};
     OperationNode(operName name, std::vector<Node*> kids);
+    OperationNode(operName name, std::string vname): operation(name), varname(vname), Node(OPNODE) {};
     ~OperationNode() {};
 };
 
@@ -61,6 +68,8 @@ public:
     varType getVarType() {return vType;}
 
     varOperName getVarOpName() {return vopType;}
+
+    std::string getVarName() {return varName;}
 
     int execute() override;   
 

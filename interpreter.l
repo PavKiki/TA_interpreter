@@ -29,7 +29,7 @@ true|false              {yylloc.last_line = yylloc.first_line = yylineno; yylval
 
 \>\>                    {return RIGHTSHIFT;}
 
-[-+*/()\<\>!{},\'\[\]]  {return *yytext;}
+[-+*/()\<\>!{},\'\[\]\:]  {return *yytext;}
 
 and|&&                  {return CONJUNCTION;}
 
@@ -58,6 +58,18 @@ mbool                   {yylval.vtype = Interpreter::MBOOL; return MBOOLEAN;}
 cvbool                  {yylval.vtype = Interpreter::CVBOOL; return CVBOOLEAN;}
 
 cmbool                  {yylval.vtype = Interpreter::CMBOOL; return CMBOOLEAN;}
+
+if                      {return IF;}
+
+for                     {return FOR;}
+
+"begin[if]"             {return BEGIF;}
+
+"end[if]"               {return ENDIF;}
+
+"begin[for]"            {return BEGFOR;}
+
+"end[for]"              {return ENDFOR;}
 
 [a-zA-Z][a-zA-Z0-9_]*   {
                             yylloc.last_line = yylloc.first_line = yylineno; yylval.varName = new std::string(yytext);

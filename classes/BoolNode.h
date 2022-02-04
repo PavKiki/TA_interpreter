@@ -14,6 +14,8 @@ public:
 
     void print(std::ostringstream& strm) override;
 
+    bool getData() {return data;}
+
     Node* copy() {auto src = new BoolNode(data == true ? "true" : "false"); return src;}
 
     BoolNode(): data(true), Node(BOOLNODE) {};

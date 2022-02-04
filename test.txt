@@ -1,4 +1,4 @@
-mint a = {{1,2,7},{3,4,8},{5,6,9}}
+for int a = 0:5
+begin[for]
 print(a)
-mint b = a({{false, true, true},{true, true, false},{false, true, true}})
-print(b)
+end[for]
