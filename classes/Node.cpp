@@ -79,6 +79,53 @@ int Interpreter::ContainerVectorNode::execute() {
             }
             break;
         }
+        case vvecindex: {
+            kids[1]->execute();
+            auto futureCondition = kids[1]; 
+            nodeType typeCondition;
+            AbstractVectorNode* vecCondition = Interpreter::VECgetNode_checkType(futureCondition, typeCondition);
+            auto vecSrc = dynamic_cast<Interpreter::AbstractVectorNode*>((Node*)(kids[0]));
+
+            if (typeCondition == Interpreter::ABSTRACTVECNODE) throw "Error in index";
+            if (typeCondition == Interpreter::INTVECNODE) {
+                auto vecCond = static_cast<Interpreter::IntegerVectorNode*>(vecCondition);
+
+                for (size_t i = 0; i < vecCond->getSize(); i++) {
+                    if (!(0 <= (*vecCond)[i].execute() && (*vecCond)[i].execute() < vecSrc->getSize())) throw "Invalid index!";
+                }
+
+                for (size_t i = 0; i < vecCond->getSize(); i++) {
+                    this->addData(vecSrc->getByIndex((*vecCond)[i].execute()));
+                }
+            }
+            else if (typeCondition == Interpreter::BOOLVECNODE) {
+                auto vecCond = static_cast<Interpreter::BoolVectorNode*>(vecCondition);
+                if (vecCond->getSize() != vecSrc->getSize()) throw "Dimension mismatch!";
+                
+                for (size_t i = 0; i < vecCond->getSize(); i++) {
+                    if ((*vecCond)[i].execute()) {
+                        this->addData(vecSrc->getByIndex(i));
+                    }
+                }
+            }
+            break;
+        }
+        case mexprcolumnindex: {
+            auto ssrc = dynamic_cast<Interpreter::AbstractMatrixNode*>((Node*)(kids[0]));
+            if (kids[1]->execute() < 0 || kids[1]->execute() >= ssrc->getSizeY()) throw "Out of range!";
+            for (size_t i = 0; i < ssrc->getSizeX(); i++) {                   
+                this->addData(ssrc->getByIndex(i)->getByIndex(kids[1]->execute()));
+            }
+            break;
+        }
+        case mexprrowindex: {
+            auto ssrc = dynamic_cast<Interpreter::AbstractMatrixNode*>((Node*)(kids[0]));
+            if (kids[1]->execute() < 0 || kids[1]->execute() >= ssrc->getSizeX()) throw "Out of range!";
+            for (size_t i = 0; i < ssrc->getSizeY(); i++) {
+                this->addData(ssrc->getByIndex(kids[1]->execute())->getByIndex(i));
+            }
+            break;
+        }
         default:
             throw "Incorrect operation type!";
     }
@@ -291,6 +338,83 @@ int Interpreter::ContainerMatrixNode::execute() {
             newRow->execute();
             this->addData(newRow);
         }
+        break;
+    }
+    case mveccolumnindex: {
+        auto ssrc = dynamic_cast<Interpreter::AbstractMatrixNode*>((Node*)(kids[0]));
+        auto vecCond = dynamic_cast<Interpreter::ContainerVectorNode*>((Node*)(kids[1]));
+
+        for (size_t i = 0; i < ssrc->getSizeX(); i++) {
+            std::vector<Interpreter::ContainerVectorNode*> kkids;
+            kkids.push_back((Interpreter::ContainerVectorNode*)((Interpreter::Node*)(ssrc->getByIndex(i))));
+            kkids.push_back((Interpreter::ContainerVectorNode*)(kids[1]));
+
+            auto tmp = new Interpreter::ContainerVectorNode(kkids, vvecindex);
+            tmp->execute();
+            this->y = tmp->getSize();
+            this->addData(tmp);
+        }
+        break;
+    }
+    case mvecrowindex: {
+        auto ssrc = dynamic_cast<Interpreter::AbstractMatrixNode*>((Node*)(kids[0]));
+        auto vecCond = dynamic_cast<Interpreter::ContainerVectorNode*>((Node*)(kids[1]));
+
+        nodeType vecType;
+        Interpreter::AbstractVectorNode* vec;
+        vec = VECgetNode_checkType(vecCond, vecType);
+
+        if (vecType == Interpreter::INTVECNODE) {
+            for (size_t i = 0; i < vec->getSize(); i++) {
+                if (i < 0 || i > ssrc->getSizeX()) throw "Out of range!";
+                Interpreter::ContainerVectorNode* tmp = new Interpreter::ContainerVectorNode();
+                for (size_t j = 0; j < ssrc->getSizeY(); j++) {
+                    tmp->addData(ssrc->getByIndex(vec->getByIndex(i)->execute())->getByIndex(j));
+                }
+                this->y = tmp->getSize();
+                this->addData(tmp);
+            }
+        }
+        else if (vecType == Interpreter::BOOLVECNODE) {
+            for (size_t i = 0; i < ssrc->getSizeX(); i++) {
+                if (i < 0 || i > ssrc->getSizeX()) throw "Out of range!";
+                if (vec->getByIndex(i)->execute()) {
+                    Interpreter::ContainerVectorNode* tmp = new Interpreter::ContainerVectorNode();
+                    for (size_t j = 0; j < ssrc->getSizeY(); j++) {
+                        tmp->addData(ssrc->getByIndex(i)->getByIndex(j));
+                    }
+                    this->y = tmp->getSize();
+                    this->addData(tmp);
+                }
+            }
+        }
+        else throw "Incorrect index";
+
+        break;
+    }
+    case mmatindex: {
+        auto ssrc = dynamic_cast<Interpreter::AbstractMatrixNode*>((Node*)(kids[0]));
+        auto matCond = kids[1];
+
+        if (ssrc->getSizeX() != matCond->getSizeX() || ssrc->getSizeY() != matCond->getSizeY()) throw "Dimension mismatch!";
+        
+        nodeType vecType;
+        auto tmpVec = VECgetNode_checkType((*matCond)[0], vecType);
+        if (vecType != Interpreter::BOOLVECNODE) throw "Invalid index!";
+        int trueAmount = 0;
+        for (size_t i = 0; i < matCond->getSizeY(); i++) {
+            if (tmpVec->getByIndex(i)->execute()) trueAmount++;
+        }
+        this->y = trueAmount;
+        for (size_t i = 0; i < ssrc->getSizeX(); i++) {
+            std::vector<Interpreter::ContainerVectorNode*> kkids;
+            kkids.push_back(((Interpreter::ContainerVectorNode*)(ssrc->getByIndex(i))));
+            kkids.push_back((*matCond)[i]);
+            auto tmp = new Interpreter::ContainerVectorNode(kkids, vvecindex);
+            tmp->execute();
+            this->addData(tmp);
+        }
+
         break;
     }
     default:

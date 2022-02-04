@@ -13,7 +13,10 @@ enum mOpType {
     mcycshiftleft,
     vtransposition,
     MEMexpr,
-    MEMvec
+    MEMvec,
+    mveccolumnindex,
+    mvecrowindex,
+    mmatindex
 };
 
 enum vecOpType {
@@ -21,7 +24,10 @@ enum vecOpType {
     velemmultiply,      
     vcycshiftright,     
     vcycshiftleft,
-    VEMexpr
+    VEMexpr,
+    vvecindex,
+    mexprcolumnindex,
+    mexprrowindex
 };
 
 enum VMOpName {

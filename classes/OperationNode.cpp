@@ -239,7 +239,8 @@ std::vector<Interpreter::Node*> Interpreter::getVectorExprResult(Interpreter::va
     src->getVector(srcData);
 
     std::vector<Interpreter::Node*> dest;
-    Interpreter::varType pattern = Interpreter::ABSTRACT;
+    Interpreter::varType pattern;
+    pattern = Interpreter::ABSTRACT;
     if (type == Interpreter::VINT || type == Interpreter::CVINT) pattern = Interpreter::INT;
     else if (type == Interpreter::VBOOL || type == Interpreter::CVBOOL) pattern = Interpreter::BOOL;
     for (auto& node: srcData) {
@@ -399,10 +400,12 @@ int Interpreter::VecMatVariableOperationNode::execute() {
         case vexpr: {
             if (src->nType == INTVECNODE && suitForArithm(exprs[0]) && suitForArithm(exprs[1])) {
                 auto ssrc = static_cast<Interpreter::IntegerVectorNode*>(src);
+                if (exprs[0]->execute() < 0 || exprs[0]->execute() >= ssrc->getSize()) throw "Out of range!";
                 (*ssrc)[exprs[0]->execute()] = IntegerNode(decimal, std::to_string(exprs[1]->execute()));
             }
             else if (src->nType == BOOLVECNODE && suitForArithm(exprs[0]) && suitForLogic(exprs[1])) {
                 auto ssrc = dynamic_cast<Interpreter::BoolVectorNode*>(src);
+                if (exprs[0]->execute() < 0 || exprs[0]->execute() >= ssrc->getSize()) throw "Out of range!";
                 (*ssrc)[exprs[0]->execute()] = BoolNode(exprs[1]->execute() ? "true" : "false");
             }
             else throw "Type mismatch!";
@@ -413,7 +416,7 @@ int Interpreter::VecMatVariableOperationNode::execute() {
             nodeType typeCondition;
             AbstractVectorNode* vecCondition = Interpreter::VECgetNode_checkType(futureCondition, typeCondition);
 
-            if (typeCondition == Interpreter::ABSTRACTVECNODE) throw "Error in condition";
+            if (typeCondition == Interpreter::ABSTRACTVECNODE) throw "Error in index";
             if (typeCondition == Interpreter::INTVECNODE) {
                 auto vecCond = dynamic_cast<Interpreter::IntegerVectorNode*>(vecCondition);
 

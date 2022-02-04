@@ -89,6 +89,45 @@ stmt:
 
 matrix:
     '{' listexprs '}'           {$$ = $2;}
+    | MVARIABLE '(' vector ',' '[' ']' ')'      {
+                                                    auto search = Interpreter::varStorage.find(*$1);
+                                                    if (search != Interpreter::varStorage.end()) {
+                                                        std::vector<Interpreter::ContainerMatrixNode*> kids;
+                                                        kids.push_back((Interpreter::ContainerMatrixNode*)(search->second));
+                                                        kids.push_back((Interpreter::ContainerMatrixNode*)($3));
+                                                        $$ = new Interpreter::ContainerMatrixNode(kids, mveccolumnindex);
+                                                    }
+                                                    else {
+                                                        std::string tmp = std::string("Variable ") + *$1 + " doesn't exist!";
+                                                        yyerror(tmp.c_str());
+                                                    }
+                                                } 
+    | MVARIABLE '(' '[' ']' ',' vector ')'      {
+                                                    auto search = Interpreter::varStorage.find(*$1);
+                                                    if (search != Interpreter::varStorage.end()) {
+                                                        std::vector<Interpreter::ContainerMatrixNode*> kids;
+                                                        kids.push_back((Interpreter::ContainerMatrixNode*)(search->second));
+                                                        kids.push_back((Interpreter::ContainerMatrixNode*)($6));
+                                                        $$ = new Interpreter::ContainerMatrixNode(kids, mvecrowindex);
+                                                    }
+                                                    else {
+                                                        std::string tmp = std::string("Variable ") + *$1 + " doesn't exist!";
+                                                        yyerror(tmp.c_str());
+                                                    }
+                                                }
+    | MVARIABLE '(' matrix ')'                  {
+                                                    auto search = Interpreter::varStorage.find(*$1);
+                                                    if (search != Interpreter::varStorage.end()) {
+                                                        std::vector<Interpreter::ContainerMatrixNode*> kids;
+                                                        kids.push_back((Interpreter::ContainerMatrixNode*)(search->second));
+                                                        kids.push_back((Interpreter::ContainerMatrixNode*)($3));
+                                                        $$ = new Interpreter::ContainerMatrixNode(kids, mmatindex);
+                                                    }
+                                                    else {
+                                                        std::string tmp = std::string("Variable ") + *$1 + " doesn't exist!";
+                                                        yyerror(tmp.c_str());
+                                                    }
+                                                }
     | MVARIABLE                 {
                                     auto search = Interpreter::varStorage.find(*$1);
                                     if (search != Interpreter::varStorage.end()) {
@@ -157,6 +196,45 @@ listexprs:
 
 vector:
     '{' exprs '}'                       {$$ = $2;}
+    | VVARIABLE '(' vector ',' '[' ']' ')'      {
+                                                    auto search = Interpreter::varStorage.find(*$1);
+                                                    if (search != Interpreter::varStorage.end()) {
+                                                        std::vector<Interpreter::ContainerVectorNode*> kids;
+                                                        kids.push_back((Interpreter::ContainerVectorNode*)(search->second));
+                                                        kids.push_back(static_cast<Interpreter::ContainerVectorNode*>($3));
+                                                        $$ = new Interpreter::ContainerVectorNode(kids, vvecindex);
+                                                    }
+                                                    else {
+                                                        std::string tmp = std::string("Variable ") + *$1 + " doesn't exist!";
+                                                        yyerror(tmp.c_str());
+                                                    }
+                                                }
+    | MVARIABLE '(' expr ',' '['']' ')'         {
+                                                    auto search = Interpreter::varStorage.find(*$1);
+                                                    if (search != Interpreter::varStorage.end()) {
+                                                        std::vector<Interpreter::ContainerVectorNode*> kids;
+                                                        kids.push_back((Interpreter::ContainerVectorNode*)(search->second));
+                                                        kids.push_back(static_cast<Interpreter::ContainerVectorNode*>($3));
+                                                        $$ = new Interpreter::ContainerVectorNode(kids, mexprcolumnindex);
+                                                    }
+                                                    else {
+                                                        std::string tmp = std::string("Variable ") + *$1 + " doesn't exist!";
+                                                        yyerror(tmp.c_str());
+                                                    }
+                                                }
+    | MVARIABLE '(' '['']' ',' expr ')'         {
+                                                    auto search = Interpreter::varStorage.find(*$1);
+                                                    if (search != Interpreter::varStorage.end()) {
+                                                        std::vector<Interpreter::ContainerVectorNode*> kids;
+                                                        kids.push_back((Interpreter::ContainerVectorNode*)(search->second));
+                                                        kids.push_back((Interpreter::ContainerVectorNode*)($6));
+                                                        $$ = new Interpreter::ContainerVectorNode(kids, mexprrowindex);
+                                                    }
+                                                    else {
+                                                        std::string tmp = std::string("Variable ") + *$1 + " doesn't exist!";
+                                                        yyerror(tmp.c_str());
+                                                    }
+                                                }
     | VVARIABLE                         {
                                             auto search = Interpreter::varStorage.find(*$1);
                                             if (search != Interpreter::varStorage.end()) {
@@ -190,6 +268,7 @@ vector:
                                             kids.push_back(static_cast<Interpreter::ContainerVectorNode*>($3));
                                             $$ = new Interpreter::ContainerVectorNode(kids, VEMexpr);
                                         }
+
 ;
 
 exprs:
