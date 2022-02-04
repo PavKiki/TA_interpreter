@@ -614,7 +614,7 @@ static const flex_int16_t yy_rule_linenum[34] =
        14,   16,   18,   20,   22,   24,   26,   28,   30,   32,
        34,   36,   38,   40,   42,   44,   46,   48,   50,   52,
        54,   56,   58,   60,   62,   64,   66,   68,   70,   72,
-       74,   85,   87
+       74,   86,   88
     } ;
 
 /* The intent behind this definition is that it'll catch
@@ -1162,32 +1162,33 @@ YY_RULE_SETUP
 #line 74 "interpreter.l"
 {
                             yylloc.last_line = yylloc.first_line = yylineno; yylval.varName = new std::string(yytext);
-                            auto search = Interpreter::varStorage.find(*yylval.varName);
+                            auto search = Interpreter::varStorage.find(*(yylval.varName));
                             if (search != Interpreter::varStorage.end()) {
-                                if (search->second->nType == Interpreter::INTMATNODE || search->second->nType == Interpreter::BOOLMATNODE) return MVARIABLE;
-                                else if (search->second->nType == Interpreter::INTVECNODE || search->second->nType == Interpreter::BOOLVECNODE) return VVARIABLE;
-                                else return VARIABLE;
+                                if (search->second->nType == Interpreter::INTMATNODE || search->second->nType == Interpreter::BOOLMATNODE || search->second->nType == Interpreter::ABSTRACTMATNODE) return MVARIABLE;
+                                else if (search->second->nType == Interpreter::INTVECNODE || search->second->nType == Interpreter::BOOLVECNODE || search->second->nType == Interpreter::ABSTRACTVECNODE) return VVARIABLE;
+                                else if (search->second->nType == Interpreter::INTNODE || search->second->nType == Interpreter::BOOLNODE) return VARIABLE;
+                                else return ER;
                             }
-                            return VARIABLE;
+                            return VAR;
                         }
 	YY_BREAK
 case 32:
 /* rule 32 can match eol */
 YY_RULE_SETUP
-#line 85 "interpreter.l"
+#line 86 "interpreter.l"
 {return NEWLINE;}
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 87 "interpreter.l"
+#line 88 "interpreter.l"
 {yyerror("Unknown character!");}
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 89 "interpreter.l"
+#line 90 "interpreter.l"
 ECHO;
 	YY_BREAK
-#line 1191 "lex.yy.c"
+#line 1192 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2347,7 +2348,7 @@ void yyfree (void * ptr )
 
 /* %ok-for-header */
 
-#line 89 "interpreter.l"
+#line 90 "interpreter.l"
 
 
 int yywrap(void) {

@@ -55,33 +55,35 @@ extern int yydebug;
     VARIABLE = 261,
     VVARIABLE = 262,
     MVARIABLE = 263,
-    CINT = 264,
-    VINT = 265,
-    MINT = 266,
-    INT = 267,
-    CVINT = 268,
-    CMINT = 269,
-    BOOLEAN = 270,
-    CBOOLEAN = 271,
-    VBOOLEAN = 272,
-    MBOOLEAN = 273,
-    CVBOOLEAN = 274,
-    CMBOOLEAN = 275,
-    NEWLINE = 276,
-    PRINT = 277,
-    CONJUNCTION = 278,
-    ELEMMULT = 279,
-    LEFTSHIFT = 280,
-    RIGHTSHIFT = 281,
-    IF = 282,
-    FOR = 283,
-    BEGIF = 284,
-    ENDIF = 285,
-    BEGFOR = 286,
-    ENDFOR = 287,
-    ASSIGN = 288,
-    DECLARE = 289,
-    UMINUS = 290
+    VAR = 264,
+    CINT = 265,
+    VINT = 266,
+    MINT = 267,
+    INT = 268,
+    CVINT = 269,
+    CMINT = 270,
+    BOOLEAN = 271,
+    CBOOLEAN = 272,
+    VBOOLEAN = 273,
+    MBOOLEAN = 274,
+    CVBOOLEAN = 275,
+    CMBOOLEAN = 276,
+    NEWLINE = 277,
+    PRINT = 278,
+    CONJUNCTION = 279,
+    ELEMMULT = 280,
+    LEFTSHIFT = 281,
+    RIGHTSHIFT = 282,
+    IF = 283,
+    FOR = 284,
+    BEGIF = 285,
+    ENDIF = 286,
+    BEGFOR = 287,
+    ENDFOR = 288,
+    ER = 289,
+    ASSIGN = 290,
+    DECLARE = 291,
+    UMINUS = 292
   };
 #endif
 
@@ -99,7 +101,7 @@ union YYSTYPE
     Interpreter::VariableOperationNode* varOpPtr;
     Interpreter::varType vtype;
 
-#line 103 "interpreter.tab.h" /* yacc.c:1921  */
+#line 105 "interpreter.tab.h" /* yacc.c:1921  */
 };
 
 typedef union YYSTYPE YYSTYPE;

@@ -22,7 +22,7 @@ enum operName {
     mboolgetexp,
     iff,
     forr,
-    getsvar
+    gscalar
 };
 
 enum varOperName {

@@ -73,13 +73,14 @@ for                     {return FOR;}
 
 [a-zA-Z][a-zA-Z0-9_]*   {
                             yylloc.last_line = yylloc.first_line = yylineno; yylval.varName = new std::string(yytext);
-                            auto search = Interpreter::varStorage.find(*yylval.varName);
+                            auto search = Interpreter::varStorage.find(*(yylval.varName));
                             if (search != Interpreter::varStorage.end()) {
-                                if (search->second->nType == Interpreter::INTMATNODE || search->second->nType == Interpreter::BOOLMATNODE) return MVARIABLE;
-                                else if (search->second->nType == Interpreter::INTVECNODE || search->second->nType == Interpreter::BOOLVECNODE) return VVARIABLE;
-                                else return VARIABLE;
+                                if (search->second->nType == Interpreter::INTMATNODE || search->second->nType == Interpreter::BOOLMATNODE || search->second->nType == Interpreter::ABSTRACTMATNODE) return MVARIABLE;
+                                else if (search->second->nType == Interpreter::INTVECNODE || search->second->nType == Interpreter::BOOLVECNODE || search->second->nType == Interpreter::ABSTRACTVECNODE) return VVARIABLE;
+                                else if (search->second->nType == Interpreter::INTNODE || search->second->nType == Interpreter::BOOLNODE) return VARIABLE;
+                                else return ER;
                             }
-                            return VARIABLE;
+                            return VAR;
                         }
 
 [\n]                    {return NEWLINE;}
