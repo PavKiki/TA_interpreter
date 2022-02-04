@@ -45,7 +45,7 @@
 
    17 iff: IF expr NEWLINE BEGIF stmts ENDIF
 
-   18 forr: FOR type VAR DECLARE expr ':' expr NEWLINE BEGFOR NEWLINE stmts ENDFOR
+   18 forr: FORR declaration DOUBLEDOT expr NEWLINE BEGFOR stmts ENDFOR
 
    19 matrix: '{' listexprs '}'
    20       | MVARIABLE '(' vector ',' '[' ']' ')'
@@ -143,7 +143,6 @@ $end (0) 0
 ',' (44) 20 21 32 33 35 36 37 43 44 46 47 48 49 50 51 74
 '-' (45) 64 66
 '/' (47) 67
-':' (58) 18
 '<' (60) 68
 '>' (62) 69
 '[' (91) 20 21 35 36 37 46 48 49 50 51
@@ -158,7 +157,7 @@ VARIABLE <varName> (261) 56 63
 VVARIABLE <varName> (262) 35 38 45 46 57 60 73
 MVARIABLE <varName> (263) 20 21 22 23 36 37 47 48 49 50 51 52 58 61
     74
-VAR <varName> (264) 18 53 54 55
+VAR <varName> (264) 53 54 55
 CINT <vtype> (265) 76
 VINT <vtype> (266) 77
 MINT <vtype> (267) 78
@@ -178,15 +177,16 @@ ELEMMULT (280) 25 30 31 39 42
 LEFTSHIFT (281) 28 41
 RIGHTSHIFT (282) 27 40
 IF (283) 17
-FOR (284) 18
+FORR (284) 18
 BEGIF (285) 17
 ENDIF (286) 17
 BEGFOR (287) 18
 ENDFOR (288) 18
 ER (289)
-ASSIGN (290) 45 46 47 48 49 50 51 52 56 57 58
-DECLARE (291) 18 53 54 55
-UMINUS (292)
+DOUBLEDOT (290) 18
+ASSIGN (291) 45 46 47 48 49 50 51 52 56 57 58
+DECLARE (292) 53 54 55
+UMINUS (293)
 
 
 Нетерминальные символы с правилами, в которых они появляются
@@ -218,7 +218,7 @@ exprs <ptr> (64)
 vmdeclaration <ptr> (65)
     налево: 45 46 47 48 49 50 51 52, направо: 11
 declaration <varOpPtr> (66)
-    налево: 53 54 55, направо: 12
+    налево: 53 54 55, направо: 12 18
 assignment <varOpPtr> (67)
     налево: 56 57 58, направо: 13
 print <ptr> (68)
@@ -229,7 +229,7 @@ expr <ptr> (69)
     70 71 72 73 74
 type <vtype> (70)
     налево: 75 76 77 78 79 80 81 82 83 84 85 86, направо:
-    18 53 54 55
+    53 54 55
 const <ptr> (71)
     налево: 87 88, направо: 62
 
@@ -272,7 +272,7 @@ State 2
    15     | . forr NEWLINE
    16     | . '(' stmts ')'
    17 iff: . IF expr NEWLINE BEGIF stmts ENDIF
-   18 forr: . FOR type VAR DECLARE expr ':' expr NEWLINE BEGFOR NEWLINE stmts ENDFOR
+   18 forr: . FORR declaration DOUBLEDOT expr NEWLINE BEGFOR stmts ENDFOR
    19 matrix: . '{' listexprs '}'
    20       | . MVARIABLE '(' vector ',' '[' ']' ')'
    21       | . MVARIABLE '(' '[' ']' ',' vector ')'
@@ -360,7 +360,7 @@ State 2
     NEWLINE    сдвиг, и переход в состояние 21
     PRINT      сдвиг, и переход в состояние 22
     IF         сдвиг, и переход в состояние 23
-    FOR        сдвиг, и переход в состояние 24
+    FORR       сдвиг, и переход в состояние 24
     '-'        сдвиг, и переход в состояние 25
     '!'        сдвиг, и переход в состояние 26
     '('        сдвиг, и переход в состояние 27
@@ -586,7 +586,10 @@ State 23
 
 State 24
 
-   18 forr: FOR . type VAR DECLARE expr ':' expr NEWLINE BEGFOR NEWLINE stmts ENDFOR
+   18 forr: FORR . declaration DOUBLEDOT expr NEWLINE BEGFOR stmts ENDFOR
+   53 declaration: . type VAR DECLARE expr
+   54            | . type VAR DECLARE vector
+   55            | . type VAR DECLARE matrix
    75 type: . INT
    76     | . CINT
    77     | . VINT
@@ -613,7 +616,8 @@ State 24
     CVBOOLEAN  сдвиг, и переход в состояние 19
     CMBOOLEAN  сдвиг, и переход в состояние 20
 
-    type  переход в состояние 53
+    declaration  переход в состояние 53
+    type         переход в состояние 40
 
 
 State 25
@@ -697,7 +701,7 @@ State 27
    16     | . '(' stmts ')'
    16     | '(' . stmts ')'
    17 iff: . IF expr NEWLINE BEGIF stmts ENDIF
-   18 forr: . FOR type VAR DECLARE expr ':' expr NEWLINE BEGFOR NEWLINE stmts ENDFOR
+   18 forr: . FORR declaration DOUBLEDOT expr NEWLINE BEGFOR stmts ENDFOR
    19 matrix: . '{' listexprs '}'
    20       | . MVARIABLE '(' vector ',' '[' ']' ')'
    21       | . MVARIABLE '(' '[' ']' ',' vector ')'
@@ -786,7 +790,7 @@ State 27
     NEWLINE    сдвиг, и переход в состояние 21
     PRINT      сдвиг, и переход в состояние 22
     IF         сдвиг, и переход в состояние 23
-    FOR        сдвиг, и переход в состояние 24
+    FORR       сдвиг, и переход в состояние 24
     '-'        сдвиг, и переход в состояние 25
     '!'        сдвиг, и переход в состояние 26
     '('        сдвиг, и переход в состояние 27
@@ -859,7 +863,7 @@ State 28
 
 State 29
 
-    2 function: function stmts .  [$end, BOOL, INTEGER, VARIABLE, VVARIABLE, MVARIABLE, CINT, VINT, MINT, INT, CVINT, CMINT, BOOLEAN, CBOOLEAN, VBOOLEAN, MBOOLEAN, CVBOOLEAN, CMBOOLEAN, NEWLINE, PRINT, IF, FOR, '-', '!', '(', '{']
+    2 function: function stmts .  [$end, BOOL, INTEGER, VARIABLE, VVARIABLE, MVARIABLE, CINT, VINT, MINT, INT, CVINT, CMINT, BOOLEAN, CBOOLEAN, VBOOLEAN, MBOOLEAN, CVBOOLEAN, CMBOOLEAN, NEWLINE, PRINT, IF, FORR, '-', '!', '(', '{']
     5 stmts: stmts . stmt
     6 stmt: . NEWLINE
     7     | . expr NEWLINE
@@ -873,7 +877,7 @@ State 29
    15     | . forr NEWLINE
    16     | . '(' stmts ')'
    17 iff: . IF expr NEWLINE BEGIF stmts ENDIF
-   18 forr: . FOR type VAR DECLARE expr ':' expr NEWLINE BEGFOR NEWLINE stmts ENDFOR
+   18 forr: . FORR declaration DOUBLEDOT expr NEWLINE BEGFOR stmts ENDFOR
    19 matrix: . '{' listexprs '}'
    20       | . MVARIABLE '(' vector ',' '[' ']' ')'
    21       | . MVARIABLE '(' '[' ']' ',' vector ')'
@@ -961,7 +965,7 @@ State 29
     NEWLINE    сдвиг, и переход в состояние 21
     PRINT      сдвиг, и переход в состояние 22
     IF         сдвиг, и переход в состояние 23
-    FOR        сдвиг, и переход в состояние 24
+    FORR       сдвиг, и переход в состояние 24
     '-'        сдвиг, и переход в состояние 25
     '!'        сдвиг, и переход в состояние 26
     '('        сдвиг, и переход в состояние 27
@@ -987,7 +991,7 @@ State 29
     NEWLINE    [вывод с использованием правила 2 (function)]
     PRINT      [вывод с использованием правила 2 (function)]
     IF         [вывод с использованием правила 2 (function)]
-    FOR        [вывод с использованием правила 2 (function)]
+    FORR       [вывод с использованием правила 2 (function)]
     '-'        [вывод с использованием правила 2 (function)]
     '!'        [вывод с использованием правила 2 (function)]
     '('        [вывод с использованием правила 2 (function)]
@@ -1436,14 +1440,14 @@ State 52
 
 State 53
 
-   18 forr: FOR type . VAR DECLARE expr ':' expr NEWLINE BEGFOR NEWLINE stmts ENDFOR
+   18 forr: FORR declaration . DOUBLEDOT expr NEWLINE BEGFOR stmts ENDFOR
 
-    VAR  сдвиг, и переход в состояние 112
+    DOUBLEDOT  сдвиг, и переход в состояние 112
 
 
 State 54
 
-   64 expr: '-' expr .  [NEWLINE, CONJUNCTION, ELEMMULT, '\'', LEFTSHIFT, RIGHTSHIFT, ',', '<', '>', '+', '-', '*', '/', ')', ':', '}']
+   64 expr: '-' expr .  [NEWLINE, CONJUNCTION, ELEMMULT, '\'', LEFTSHIFT, RIGHTSHIFT, ',', DOUBLEDOT, '<', '>', '+', '-', '*', '/', ')', '}']
    65     | expr . '+' expr
    66     | expr . '-' expr
    67     | expr . '/' expr
@@ -1470,7 +1474,7 @@ State 55
    67     | expr . '/' expr
    68     | expr . '<' expr
    69     | expr . '>' expr
-   70     | '!' expr .  [NEWLINE, CONJUNCTION, ELEMMULT, '\'', LEFTSHIFT, RIGHTSHIFT, ',', '<', '>', '+', '-', '*', '/', ')', ':', '}']
+   70     | '!' expr .  [NEWLINE, CONJUNCTION, ELEMMULT, '\'', LEFTSHIFT, RIGHTSHIFT, ',', DOUBLEDOT, '<', '>', '+', '-', '*', '/', ')', '}']
    71     | expr . CONJUNCTION expr
 
     CONJUNCTION  сдвиг, и переход в состояние 84
@@ -1501,7 +1505,7 @@ State 56
    16     | . '(' stmts ')'
    16     | '(' stmts . ')'
    17 iff: . IF expr NEWLINE BEGIF stmts ENDIF
-   18 forr: . FOR type VAR DECLARE expr ':' expr NEWLINE BEGFOR NEWLINE stmts ENDFOR
+   18 forr: . FORR declaration DOUBLEDOT expr NEWLINE BEGFOR stmts ENDFOR
    19 matrix: . '{' listexprs '}'
    20       | . MVARIABLE '(' vector ',' '[' ']' ')'
    21       | . MVARIABLE '(' '[' ']' ',' vector ')'
@@ -1589,7 +1593,7 @@ State 56
     NEWLINE    сдвиг, и переход в состояние 21
     PRINT      сдвиг, и переход в состояние 22
     IF         сдвиг, и переход в состояние 23
-    FOR        сдвиг, и переход в состояние 24
+    FORR       сдвиг, и переход в состояние 24
     '-'        сдвиг, и переход в состояние 25
     '!'        сдвиг, и переход в состояние 26
     '('        сдвиг, и переход в состояние 27
@@ -1634,7 +1638,7 @@ State 57
 State 58
 
    35 vector: VVARIABLE . '(' vector ',' '[' ']' ')'
-   38       | VVARIABLE .  [NEWLINE, ELEMMULT, '\'', LEFTSHIFT, RIGHTSHIFT, ',', '*', ')', '}']
+   38       | VVARIABLE .  [NEWLINE, ELEMMULT, '\'', LEFTSHIFT, RIGHTSHIFT, ',', DOUBLEDOT, '*', ')', '}']
    73 expr: VVARIABLE . '(' expr ')'
 
     '('  сдвиг, и переход в состояние 115
@@ -2280,7 +2284,7 @@ State 97
    20 matrix: MVARIABLE . '(' vector ',' '[' ']' ')'
    21       | MVARIABLE . '(' '[' ']' ',' vector ')'
    22       | MVARIABLE . '(' matrix ')'
-   23       | MVARIABLE .  [NEWLINE, ELEMMULT, '\'', LEFTSHIFT, RIGHTSHIFT, '*', ')']
+   23       | MVARIABLE .  [NEWLINE, ELEMMULT, '\'', LEFTSHIFT, RIGHTSHIFT, DOUBLEDOT, '*', ')']
    36 vector: MVARIABLE . '(' expr ',' '[' ']' ')'
    37       | MVARIABLE . '(' '[' ']' ',' expr ')'
 
@@ -2328,7 +2332,7 @@ State 100
    20 matrix: MVARIABLE . '(' vector ',' '[' ']' ')'
    21       | MVARIABLE . '(' '[' ']' ',' vector ')'
    22       | MVARIABLE . '(' matrix ')'
-   23       | MVARIABLE .  [NEWLINE, ELEMMULT, '\'', LEFTSHIFT, RIGHTSHIFT, '*', ')']
+   23       | MVARIABLE .  [NEWLINE, ELEMMULT, '\'', LEFTSHIFT, RIGHTSHIFT, DOUBLEDOT, '*', ')']
    36 vector: MVARIABLE . '(' expr ',' '[' ']' ')'
    37       | MVARIABLE . '(' '[' ']' ',' expr ')'
    74 expr: MVARIABLE . '(' expr ',' expr ')'
@@ -2536,9 +2540,34 @@ State 111
 
 State 112
 
-   18 forr: FOR type VAR . DECLARE expr ':' expr NEWLINE BEGFOR NEWLINE stmts ENDFOR
+   18 forr: FORR declaration DOUBLEDOT . expr NEWLINE BEGFOR stmts ENDFOR
+   62 expr: . const
+   63     | . VARIABLE
+   64     | . '-' expr
+   65     | . expr '+' expr
+   66     | . expr '-' expr
+   67     | . expr '/' expr
+   68     | . expr '<' expr
+   69     | . expr '>' expr
+   70     | . '!' expr
+   71     | . expr CONJUNCTION expr
+   72     | . '(' expr ')'
+   73     | . VVARIABLE '(' expr ')'
+   74     | . MVARIABLE '(' expr ',' expr ')'
+   87 const: . INTEGER
+   88      | . BOOL
 
-    DECLARE  сдвиг, и переход в состояние 152
+    BOOL       сдвиг, и переход в состояние 4
+    INTEGER    сдвиг, и переход в состояние 5
+    VARIABLE   сдвиг, и переход в состояние 48
+    VVARIABLE  сдвиг, и переход в состояние 49
+    MVARIABLE  сдвиг, и переход в состояние 50
+    '-'        сдвиг, и переход в состояние 25
+    '!'        сдвиг, и переход в состояние 26
+    '('        сдвиг, и переход в состояние 51
+
+    expr   переход в состояние 152
+    const  переход в состояние 41
 
 
 State 113
@@ -2756,7 +2785,7 @@ State 123
 
    24 matrix: matrix . '*' matrix
    25       | matrix . ELEMMULT matrix
-   25       | matrix ELEMMULT matrix .  [NEWLINE, ELEMMULT, '\'', LEFTSHIFT, RIGHTSHIFT, '*', ')']
+   25       | matrix ELEMMULT matrix .  [NEWLINE, ELEMMULT, '\'', LEFTSHIFT, RIGHTSHIFT, DOUBLEDOT, '*', ')']
    26       | matrix . '\''
    27       | matrix . RIGHTSHIFT
    28       | matrix . LEFTSHIFT
@@ -2780,7 +2809,7 @@ State 123
 State 124
 
    29 matrix: vector . '\''
-   30       | matrix ELEMMULT vector .  [NEWLINE, ELEMMULT, '\'', LEFTSHIFT, RIGHTSHIFT, '*', ')']
+   30       | matrix ELEMMULT vector .  [NEWLINE, ELEMMULT, '\'', LEFTSHIFT, RIGHTSHIFT, DOUBLEDOT, '*', ')']
    39 vector: vector . ELEMMULT vector
    40       | vector . RIGHTSHIFT
    41       | vector . LEFTSHIFT
@@ -2800,7 +2829,7 @@ State 124
 
 State 125
 
-   31 matrix: matrix ELEMMULT expr .  [NEWLINE, ELEMMULT, '\'', LEFTSHIFT, RIGHTSHIFT, '*', ')']
+   31 matrix: matrix ELEMMULT expr .  [NEWLINE, ELEMMULT, '\'', LEFTSHIFT, RIGHTSHIFT, DOUBLEDOT, '*', ')']
    65 expr: expr . '+' expr
    66     | expr . '-' expr
    67     | expr . '/' expr
@@ -2821,7 +2850,7 @@ State 125
 State 126
 
    24 matrix: matrix . '*' matrix
-   24       | matrix '*' matrix .  [NEWLINE, ELEMMULT, '\'', LEFTSHIFT, RIGHTSHIFT, '*', ')']
+   24       | matrix '*' matrix .  [NEWLINE, ELEMMULT, '\'', LEFTSHIFT, RIGHTSHIFT, DOUBLEDOT, '*', ')']
    25       | matrix . ELEMMULT matrix
    26       | matrix . '\''
    27       | matrix . RIGHTSHIFT
@@ -2846,7 +2875,7 @@ State 126
 State 127
 
    39 vector: vector . ELEMMULT vector
-   39       | vector ELEMMULT vector .  [NEWLINE, ELEMMULT, '\'', LEFTSHIFT, RIGHTSHIFT, ',', '*', ')', '}']
+   39       | vector ELEMMULT vector .  [NEWLINE, ELEMMULT, '\'', LEFTSHIFT, RIGHTSHIFT, ',', DOUBLEDOT, '*', ')', '}']
    40       | vector . RIGHTSHIFT
    41       | vector . LEFTSHIFT
    42       | vector . ELEMMULT expr
@@ -2863,7 +2892,7 @@ State 127
 
 State 128
 
-   42 vector: vector ELEMMULT expr .  [NEWLINE, ELEMMULT, '\'', LEFTSHIFT, RIGHTSHIFT, ',', '*', ')', '}']
+   42 vector: vector ELEMMULT expr .  [NEWLINE, ELEMMULT, '\'', LEFTSHIFT, RIGHTSHIFT, ',', DOUBLEDOT, '*', ')', '}']
    65 expr: expr . '+' expr
    66     | expr . '-' expr
    67     | expr . '/' expr
@@ -2889,7 +2918,7 @@ State 129
    68     | expr . '<' expr
    69     | expr . '>' expr
    71     | expr . CONJUNCTION expr
-   71     | expr CONJUNCTION expr .  [NEWLINE, CONJUNCTION, ELEMMULT, '\'', LEFTSHIFT, RIGHTSHIFT, ',', '<', '>', '+', '-', '*', '/', ')', ':', '}']
+   71     | expr CONJUNCTION expr .  [NEWLINE, CONJUNCTION, ELEMMULT, '\'', LEFTSHIFT, RIGHTSHIFT, ',', DOUBLEDOT, '<', '>', '+', '-', '*', '/', ')', '}']
 
     CONJUNCTION  сдвиг, и переход в состояние 84
     '<'          сдвиг, и переход в состояние 85
@@ -2913,7 +2942,7 @@ State 130
    66     | expr . '-' expr
    67     | expr . '/' expr
    68     | expr . '<' expr
-   68     | expr '<' expr .  [NEWLINE, CONJUNCTION, ELEMMULT, '\'', LEFTSHIFT, RIGHTSHIFT, ',', '<', '>', '*', ')', ':', '}']
+   68     | expr '<' expr .  [NEWLINE, CONJUNCTION, ELEMMULT, '\'', LEFTSHIFT, RIGHTSHIFT, ',', DOUBLEDOT, '<', '>', '*', ')', '}']
    69     | expr . '>' expr
    71     | expr . CONJUNCTION expr
 
@@ -2939,7 +2968,7 @@ State 131
    67     | expr . '/' expr
    68     | expr . '<' expr
    69     | expr . '>' expr
-   69     | expr '>' expr .  [NEWLINE, CONJUNCTION, ELEMMULT, '\'', LEFTSHIFT, RIGHTSHIFT, ',', '<', '>', '*', ')', ':', '}']
+   69     | expr '>' expr .  [NEWLINE, CONJUNCTION, ELEMMULT, '\'', LEFTSHIFT, RIGHTSHIFT, ',', DOUBLEDOT, '<', '>', '*', ')', '}']
    71     | expr . CONJUNCTION expr
 
     CONJUNCTION  сдвиг, и переход в состояние 84
@@ -2960,7 +2989,7 @@ State 131
 State 132
 
    65 expr: expr . '+' expr
-   65     | expr '+' expr .  [NEWLINE, CONJUNCTION, ELEMMULT, '\'', LEFTSHIFT, RIGHTSHIFT, ',', '<', '>', '+', '-', '*', ')', ':', '}']
+   65     | expr '+' expr .  [NEWLINE, CONJUNCTION, ELEMMULT, '\'', LEFTSHIFT, RIGHTSHIFT, ',', DOUBLEDOT, '<', '>', '+', '-', '*', ')', '}']
    66     | expr . '-' expr
    67     | expr . '/' expr
    68     | expr . '<' expr
@@ -2984,7 +3013,7 @@ State 133
 
    65 expr: expr . '+' expr
    66     | expr . '-' expr
-   66     | expr '-' expr .  [NEWLINE, CONJUNCTION, ELEMMULT, '\'', LEFTSHIFT, RIGHTSHIFT, ',', '<', '>', '+', '-', '*', ')', ':', '}']
+   66     | expr '-' expr .  [NEWLINE, CONJUNCTION, ELEMMULT, '\'', LEFTSHIFT, RIGHTSHIFT, ',', DOUBLEDOT, '<', '>', '+', '-', '*', ')', '}']
    67     | expr . '/' expr
    68     | expr . '<' expr
    69     | expr . '>' expr
@@ -3008,7 +3037,7 @@ State 134
    65 expr: expr . '+' expr
    66     | expr . '-' expr
    67     | expr . '/' expr
-   67     | expr '/' expr .  [NEWLINE, CONJUNCTION, ELEMMULT, '\'', LEFTSHIFT, RIGHTSHIFT, ',', '<', '>', '+', '-', '*', '/', ')', ':', '}']
+   67     | expr '/' expr .  [NEWLINE, CONJUNCTION, ELEMMULT, '\'', LEFTSHIFT, RIGHTSHIFT, ',', DOUBLEDOT, '<', '>', '+', '-', '*', '/', ')', '}']
    68     | expr . '<' expr
    69     | expr . '>' expr
    71     | expr . CONJUNCTION expr
@@ -3421,7 +3450,7 @@ State 151
    16     | . '(' stmts ')'
    17 iff: . IF expr NEWLINE BEGIF stmts ENDIF
    17    | IF expr NEWLINE BEGIF . stmts ENDIF
-   18 forr: . FOR type VAR DECLARE expr ':' expr NEWLINE BEGFOR NEWLINE stmts ENDFOR
+   18 forr: . FORR declaration DOUBLEDOT expr NEWLINE BEGFOR stmts ENDFOR
    19 matrix: . '{' listexprs '}'
    20       | . MVARIABLE '(' vector ',' '[' ']' ')'
    21       | . MVARIABLE '(' '[' ']' ',' vector ')'
@@ -3509,7 +3538,7 @@ State 151
     NEWLINE    сдвиг, и переход в состояние 21
     PRINT      сдвиг, и переход в состояние 22
     IF         сдвиг, и переход в состояние 23
-    FOR        сдвиг, и переход в состояние 24
+    FORR       сдвиг, и переход в состояние 24
     '-'        сдвиг, и переход в состояние 25
     '!'        сдвиг, и переход в состояние 26
     '('        сдвиг, и переход в состояние 27
@@ -3532,34 +3561,21 @@ State 151
 
 State 152
 
-   18 forr: FOR type VAR DECLARE . expr ':' expr NEWLINE BEGFOR NEWLINE stmts ENDFOR
-   62 expr: . const
-   63     | . VARIABLE
-   64     | . '-' expr
-   65     | . expr '+' expr
-   66     | . expr '-' expr
-   67     | . expr '/' expr
-   68     | . expr '<' expr
-   69     | . expr '>' expr
-   70     | . '!' expr
-   71     | . expr CONJUNCTION expr
-   72     | . '(' expr ')'
-   73     | . VVARIABLE '(' expr ')'
-   74     | . MVARIABLE '(' expr ',' expr ')'
-   87 const: . INTEGER
-   88      | . BOOL
+   18 forr: FORR declaration DOUBLEDOT expr . NEWLINE BEGFOR stmts ENDFOR
+   65 expr: expr . '+' expr
+   66     | expr . '-' expr
+   67     | expr . '/' expr
+   68     | expr . '<' expr
+   69     | expr . '>' expr
+   71     | expr . CONJUNCTION expr
 
-    BOOL       сдвиг, и переход в состояние 4
-    INTEGER    сдвиг, и переход в состояние 5
-    VARIABLE   сдвиг, и переход в состояние 48
-    VVARIABLE  сдвиг, и переход в состояние 49
-    MVARIABLE  сдвиг, и переход в состояние 50
-    '-'        сдвиг, и переход в состояние 25
-    '!'        сдвиг, и переход в состояние 26
-    '('        сдвиг, и переход в состояние 51
-
-    expr   переход в состояние 177
-    const  переход в состояние 41
+    NEWLINE      сдвиг, и переход в состояние 177
+    CONJUNCTION  сдвиг, и переход в состояние 84
+    '<'          сдвиг, и переход в состояние 85
+    '>'          сдвиг, и переход в состояние 86
+    '+'          сдвиг, и переход в состояние 87
+    '-'          сдвиг, и переход в состояние 88
+    '/'          сдвиг, и переход в состояние 89
 
 
 State 153
@@ -3682,7 +3698,7 @@ State 160
    28       | matrix . LEFTSHIFT
    30       | matrix . ELEMMULT vector
    31       | matrix . ELEMMULT expr
-   55 declaration: type VAR DECLARE matrix .  [NEWLINE]
+   55 declaration: type VAR DECLARE matrix .  [NEWLINE, DOUBLEDOT]
 
     ELEMMULT    сдвиг, и переход в состояние 69
     '\''        сдвиг, и переход в состояние 70
@@ -3700,7 +3716,7 @@ State 161
    40       | vector . RIGHTSHIFT
    41       | vector . LEFTSHIFT
    42       | vector . ELEMMULT expr
-   54 declaration: type VAR DECLARE vector .  [NEWLINE]
+   54 declaration: type VAR DECLARE vector .  [NEWLINE, DOUBLEDOT]
 
     ELEMMULT    сдвиг, и переход в состояние 75
     '\''        сдвиг, и переход в состояние 76
@@ -3712,7 +3728,7 @@ State 161
 
 State 162
 
-   53 declaration: type VAR DECLARE expr .  [NEWLINE]
+   53 declaration: type VAR DECLARE expr .  [NEWLINE, DOUBLEDOT]
    65 expr: expr . '+' expr
    66     | expr . '-' expr
    67     | expr . '/' expr
@@ -4003,7 +4019,7 @@ State 176
    16     | . '(' stmts ')'
    17 iff: . IF expr NEWLINE BEGIF stmts ENDIF
    17    | IF expr NEWLINE BEGIF stmts . ENDIF
-   18 forr: . FOR type VAR DECLARE expr ':' expr NEWLINE BEGFOR NEWLINE stmts ENDFOR
+   18 forr: . FORR declaration DOUBLEDOT expr NEWLINE BEGFOR stmts ENDFOR
    19 matrix: . '{' listexprs '}'
    20       | . MVARIABLE '(' vector ',' '[' ']' ')'
    21       | . MVARIABLE '(' '[' ']' ',' vector ')'
@@ -4091,7 +4107,7 @@ State 176
     NEWLINE    сдвиг, и переход в состояние 21
     PRINT      сдвиг, и переход в состояние 22
     IF         сдвиг, и переход в состояние 23
-    FOR        сдвиг, и переход в состояние 24
+    FORR       сдвиг, и переход в состояние 24
     ENDIF      сдвиг, и переход в состояние 194
     '-'        сдвиг, и переход в состояние 25
     '!'        сдвиг, и переход в состояние 26
@@ -4114,21 +4130,9 @@ State 176
 
 State 177
 
-   18 forr: FOR type VAR DECLARE expr . ':' expr NEWLINE BEGFOR NEWLINE stmts ENDFOR
-   65 expr: expr . '+' expr
-   66     | expr . '-' expr
-   67     | expr . '/' expr
-   68     | expr . '<' expr
-   69     | expr . '>' expr
-   71     | expr . CONJUNCTION expr
+   18 forr: FORR declaration DOUBLEDOT expr NEWLINE . BEGFOR stmts ENDFOR
 
-    CONJUNCTION  сдвиг, и переход в состояние 84
-    '<'          сдвиг, и переход в состояние 85
-    '>'          сдвиг, и переход в состояние 86
-    '+'          сдвиг, и переход в состояние 87
-    '-'          сдвиг, и переход в состояние 88
-    '/'          сдвиг, и переход в состояние 89
-    ':'          сдвиг, и переход в состояние 195
+    BEGFOR  сдвиг, и переход в состояние 195
 
 
 State 178
@@ -4345,7 +4349,61 @@ State 194
 
 State 195
 
-   18 forr: FOR type VAR DECLARE expr ':' . expr NEWLINE BEGFOR NEWLINE stmts ENDFOR
+    4 stmts: . stmt
+    5      | . stmts stmt
+    6 stmt: . NEWLINE
+    7     | . expr NEWLINE
+    8     | . vector NEWLINE
+    9     | . matrix NEWLINE
+   10     | . print NEWLINE
+   11     | . vmdeclaration NEWLINE
+   12     | . declaration NEWLINE
+   13     | . assignment NEWLINE
+   14     | . iff NEWLINE
+   15     | . forr NEWLINE
+   16     | . '(' stmts ')'
+   17 iff: . IF expr NEWLINE BEGIF stmts ENDIF
+   18 forr: . FORR declaration DOUBLEDOT expr NEWLINE BEGFOR stmts ENDFOR
+   18     | FORR declaration DOUBLEDOT expr NEWLINE BEGFOR . stmts ENDFOR
+   19 matrix: . '{' listexprs '}'
+   20       | . MVARIABLE '(' vector ',' '[' ']' ')'
+   21       | . MVARIABLE '(' '[' ']' ',' vector ')'
+   22       | . MVARIABLE '(' matrix ')'
+   23       | . MVARIABLE
+   24       | . matrix '*' matrix
+   25       | . matrix ELEMMULT matrix
+   26       | . matrix '\''
+   27       | . matrix RIGHTSHIFT
+   28       | . matrix LEFTSHIFT
+   29       | . vector '\''
+   30       | . matrix ELEMMULT vector
+   31       | . matrix ELEMMULT expr
+   34 vector: . '{' exprs '}'
+   35       | . VVARIABLE '(' vector ',' '[' ']' ')'
+   36       | . MVARIABLE '(' expr ',' '[' ']' ')'
+   37       | . MVARIABLE '(' '[' ']' ',' expr ')'
+   38       | . VVARIABLE
+   39       | . vector ELEMMULT vector
+   40       | . vector RIGHTSHIFT
+   41       | . vector LEFTSHIFT
+   42       | . vector ELEMMULT expr
+   45 vmdeclaration: . VVARIABLE '(' expr ')' ASSIGN expr
+   46              | . VVARIABLE '(' vector ',' '[' ']' ')' ASSIGN vector
+   47              | . MVARIABLE '(' expr ',' expr ')' ASSIGN expr
+   48              | . MVARIABLE '(' expr ',' '[' ']' ')' ASSIGN vector
+   49              | . MVARIABLE '(' '[' ']' ',' expr ')' ASSIGN vector
+   50              | . MVARIABLE '(' vector ',' '[' ']' ')' ASSIGN matrix
+   51              | . MVARIABLE '(' '[' ']' ',' vector ')' ASSIGN matrix
+   52              | . MVARIABLE '(' matrix ')' ASSIGN matrix
+   53 declaration: . type VAR DECLARE expr
+   54            | . type VAR DECLARE vector
+   55            | . type VAR DECLARE matrix
+   56 assignment: . VARIABLE ASSIGN expr
+   57           | . VVARIABLE ASSIGN vector
+   58           | . MVARIABLE ASSIGN matrix
+   59 print: . PRINT '(' expr ')'
+   60      | . PRINT '(' VVARIABLE ')'
+   61      | . PRINT '(' MVARIABLE ')'
    62 expr: . const
    63     | . VARIABLE
    64     | . '-' expr
@@ -4359,20 +4417,60 @@ State 195
    72     | . '(' expr ')'
    73     | . VVARIABLE '(' expr ')'
    74     | . MVARIABLE '(' expr ',' expr ')'
+   75 type: . INT
+   76     | . CINT
+   77     | . VINT
+   78     | . MINT
+   79     | . CVINT
+   80     | . CMINT
+   81     | . BOOLEAN
+   82     | . CBOOLEAN
+   83     | . VBOOLEAN
+   84     | . MBOOLEAN
+   85     | . CVBOOLEAN
+   86     | . CMBOOLEAN
    87 const: . INTEGER
    88      | . BOOL
 
     BOOL       сдвиг, и переход в состояние 4
     INTEGER    сдвиг, и переход в состояние 5
-    VARIABLE   сдвиг, и переход в состояние 48
-    VVARIABLE  сдвиг, и переход в состояние 49
-    MVARIABLE  сдвиг, и переход в состояние 50
+    VARIABLE   сдвиг, и переход в состояние 6
+    VVARIABLE  сдвиг, и переход в состояние 7
+    MVARIABLE  сдвиг, и переход в состояние 8
+    CINT       сдвиг, и переход в состояние 9
+    VINT       сдвиг, и переход в состояние 10
+    MINT       сдвиг, и переход в состояние 11
+    INT        сдвиг, и переход в состояние 12
+    CVINT      сдвиг, и переход в состояние 13
+    CMINT      сдвиг, и переход в состояние 14
+    BOOLEAN    сдвиг, и переход в состояние 15
+    CBOOLEAN   сдвиг, и переход в состояние 16
+    VBOOLEAN   сдвиг, и переход в состояние 17
+    MBOOLEAN   сдвиг, и переход в состояние 18
+    CVBOOLEAN  сдвиг, и переход в состояние 19
+    CMBOOLEAN  сдвиг, и переход в состояние 20
+    NEWLINE    сдвиг, и переход в состояние 21
+    PRINT      сдвиг, и переход в состояние 22
+    IF         сдвиг, и переход в состояние 23
+    FORR       сдвиг, и переход в состояние 24
     '-'        сдвиг, и переход в состояние 25
     '!'        сдвиг, и переход в состояние 26
-    '('        сдвиг, и переход в состояние 51
+    '('        сдвиг, и переход в состояние 27
+    '{'        сдвиг, и переход в состояние 28
 
-    expr   переход в состояние 208
-    const  переход в состояние 41
+    stmts          переход в состояние 208
+    stmt           переход в состояние 30
+    iff            переход в состояние 31
+    forr           переход в состояние 32
+    matrix         переход в состояние 33
+    vector         переход в состояние 34
+    vmdeclaration  переход в состояние 35
+    declaration    переход в состояние 36
+    assignment     переход в состояние 37
+    print          переход в состояние 38
+    expr           переход в состояние 39
+    type           переход в состояние 40
+    const          переход в состояние 41
 
 
 State 196
@@ -4563,21 +4661,127 @@ State 207
 
 State 208
 
-   18 forr: FOR type VAR DECLARE expr ':' expr . NEWLINE BEGFOR NEWLINE stmts ENDFOR
-   65 expr: expr . '+' expr
-   66     | expr . '-' expr
-   67     | expr . '/' expr
-   68     | expr . '<' expr
-   69     | expr . '>' expr
-   71     | expr . CONJUNCTION expr
+    5 stmts: stmts . stmt
+    6 stmt: . NEWLINE
+    7     | . expr NEWLINE
+    8     | . vector NEWLINE
+    9     | . matrix NEWLINE
+   10     | . print NEWLINE
+   11     | . vmdeclaration NEWLINE
+   12     | . declaration NEWLINE
+   13     | . assignment NEWLINE
+   14     | . iff NEWLINE
+   15     | . forr NEWLINE
+   16     | . '(' stmts ')'
+   17 iff: . IF expr NEWLINE BEGIF stmts ENDIF
+   18 forr: . FORR declaration DOUBLEDOT expr NEWLINE BEGFOR stmts ENDFOR
+   18     | FORR declaration DOUBLEDOT expr NEWLINE BEGFOR stmts . ENDFOR
+   19 matrix: . '{' listexprs '}'
+   20       | . MVARIABLE '(' vector ',' '[' ']' ')'
+   21       | . MVARIABLE '(' '[' ']' ',' vector ')'
+   22       | . MVARIABLE '(' matrix ')'
+   23       | . MVARIABLE
+   24       | . matrix '*' matrix
+   25       | . matrix ELEMMULT matrix
+   26       | . matrix '\''
+   27       | . matrix RIGHTSHIFT
+   28       | . matrix LEFTSHIFT
+   29       | . vector '\''
+   30       | . matrix ELEMMULT vector
+   31       | . matrix ELEMMULT expr
+   34 vector: . '{' exprs '}'
+   35       | . VVARIABLE '(' vector ',' '[' ']' ')'
+   36       | . MVARIABLE '(' expr ',' '[' ']' ')'
+   37       | . MVARIABLE '(' '[' ']' ',' expr ')'
+   38       | . VVARIABLE
+   39       | . vector ELEMMULT vector
+   40       | . vector RIGHTSHIFT
+   41       | . vector LEFTSHIFT
+   42       | . vector ELEMMULT expr
+   45 vmdeclaration: . VVARIABLE '(' expr ')' ASSIGN expr
+   46              | . VVARIABLE '(' vector ',' '[' ']' ')' ASSIGN vector
+   47              | . MVARIABLE '(' expr ',' expr ')' ASSIGN expr
+   48              | . MVARIABLE '(' expr ',' '[' ']' ')' ASSIGN vector
+   49              | . MVARIABLE '(' '[' ']' ',' expr ')' ASSIGN vector
+   50              | . MVARIABLE '(' vector ',' '[' ']' ')' ASSIGN matrix
+   51              | . MVARIABLE '(' '[' ']' ',' vector ')' ASSIGN matrix
+   52              | . MVARIABLE '(' matrix ')' ASSIGN matrix
+   53 declaration: . type VAR DECLARE expr
+   54            | . type VAR DECLARE vector
+   55            | . type VAR DECLARE matrix
+   56 assignment: . VARIABLE ASSIGN expr
+   57           | . VVARIABLE ASSIGN vector
+   58           | . MVARIABLE ASSIGN matrix
+   59 print: . PRINT '(' expr ')'
+   60      | . PRINT '(' VVARIABLE ')'
+   61      | . PRINT '(' MVARIABLE ')'
+   62 expr: . const
+   63     | . VARIABLE
+   64     | . '-' expr
+   65     | . expr '+' expr
+   66     | . expr '-' expr
+   67     | . expr '/' expr
+   68     | . expr '<' expr
+   69     | . expr '>' expr
+   70     | . '!' expr
+   71     | . expr CONJUNCTION expr
+   72     | . '(' expr ')'
+   73     | . VVARIABLE '(' expr ')'
+   74     | . MVARIABLE '(' expr ',' expr ')'
+   75 type: . INT
+   76     | . CINT
+   77     | . VINT
+   78     | . MINT
+   79     | . CVINT
+   80     | . CMINT
+   81     | . BOOLEAN
+   82     | . CBOOLEAN
+   83     | . VBOOLEAN
+   84     | . MBOOLEAN
+   85     | . CVBOOLEAN
+   86     | . CMBOOLEAN
+   87 const: . INTEGER
+   88      | . BOOL
 
-    NEWLINE      сдвиг, и переход в состояние 220
-    CONJUNCTION  сдвиг, и переход в состояние 84
-    '<'          сдвиг, и переход в состояние 85
-    '>'          сдвиг, и переход в состояние 86
-    '+'          сдвиг, и переход в состояние 87
-    '-'          сдвиг, и переход в состояние 88
-    '/'          сдвиг, и переход в состояние 89
+    BOOL       сдвиг, и переход в состояние 4
+    INTEGER    сдвиг, и переход в состояние 5
+    VARIABLE   сдвиг, и переход в состояние 6
+    VVARIABLE  сдвиг, и переход в состояние 7
+    MVARIABLE  сдвиг, и переход в состояние 8
+    CINT       сдвиг, и переход в состояние 9
+    VINT       сдвиг, и переход в состояние 10
+    MINT       сдвиг, и переход в состояние 11
+    INT        сдвиг, и переход в состояние 12
+    CVINT      сдвиг, и переход в состояние 13
+    CMINT      сдвиг, и переход в состояние 14
+    BOOLEAN    сдвиг, и переход в состояние 15
+    CBOOLEAN   сдвиг, и переход в состояние 16
+    VBOOLEAN   сдвиг, и переход в состояние 17
+    MBOOLEAN   сдвиг, и переход в состояние 18
+    CVBOOLEAN  сдвиг, и переход в состояние 19
+    CMBOOLEAN  сдвиг, и переход в состояние 20
+    NEWLINE    сдвиг, и переход в состояние 21
+    PRINT      сдвиг, и переход в состояние 22
+    IF         сдвиг, и переход в состояние 23
+    FORR       сдвиг, и переход в состояние 24
+    ENDFOR     сдвиг, и переход в состояние 220
+    '-'        сдвиг, и переход в состояние 25
+    '!'        сдвиг, и переход в состояние 26
+    '('        сдвиг, и переход в состояние 27
+    '{'        сдвиг, и переход в состояние 28
+
+    stmt           переход в состояние 65
+    iff            переход в состояние 31
+    forr           переход в состояние 32
+    matrix         переход в состояние 33
+    vector         переход в состояние 34
+    vmdeclaration  переход в состояние 35
+    declaration    переход в состояние 36
+    assignment     переход в состояние 37
+    print          переход в состояние 38
+    expr           переход в состояние 39
+    type           переход в состояние 40
+    const          переход в состояние 41
 
 
 State 209
@@ -4784,9 +4988,9 @@ State 219
 
 State 220
 
-   18 forr: FOR type VAR DECLARE expr ':' expr NEWLINE . BEGFOR NEWLINE stmts ENDFOR
+   18 forr: FORR declaration DOUBLEDOT expr NEWLINE BEGFOR stmts ENDFOR .
 
-    BEGFOR  сдвиг, и переход в состояние 231
+    $default  вывод с использованием правила 18 (forr)
 
 
 State 221
@@ -4907,268 +5111,3 @@ State 230
     RIGHTSHIFT  сдвиг, и переход в состояние 78
 
     $default  вывод с использованием правила 48 (vmdeclaration)
-
-
-State 231
-
-   18 forr: FOR type VAR DECLARE expr ':' expr NEWLINE BEGFOR . NEWLINE stmts ENDFOR
-
-    NEWLINE  сдвиг, и переход в состояние 232
-
-
-State 232
-
-    4 stmts: . stmt
-    5      | . stmts stmt
-    6 stmt: . NEWLINE
-    7     | . expr NEWLINE
-    8     | . vector NEWLINE
-    9     | . matrix NEWLINE
-   10     | . print NEWLINE
-   11     | . vmdeclaration NEWLINE
-   12     | . declaration NEWLINE
-   13     | . assignment NEWLINE
-   14     | . iff NEWLINE
-   15     | . forr NEWLINE
-   16     | . '(' stmts ')'
-   17 iff: . IF expr NEWLINE BEGIF stmts ENDIF
-   18 forr: . FOR type VAR DECLARE expr ':' expr NEWLINE BEGFOR NEWLINE stmts ENDFOR
-   18     | FOR type VAR DECLARE expr ':' expr NEWLINE BEGFOR NEWLINE . stmts ENDFOR
-   19 matrix: . '{' listexprs '}'
-   20       | . MVARIABLE '(' vector ',' '[' ']' ')'
-   21       | . MVARIABLE '(' '[' ']' ',' vector ')'
-   22       | . MVARIABLE '(' matrix ')'
-   23       | . MVARIABLE
-   24       | . matrix '*' matrix
-   25       | . matrix ELEMMULT matrix
-   26       | . matrix '\''
-   27       | . matrix RIGHTSHIFT
-   28       | . matrix LEFTSHIFT
-   29       | . vector '\''
-   30       | . matrix ELEMMULT vector
-   31       | . matrix ELEMMULT expr
-   34 vector: . '{' exprs '}'
-   35       | . VVARIABLE '(' vector ',' '[' ']' ')'
-   36       | . MVARIABLE '(' expr ',' '[' ']' ')'
-   37       | . MVARIABLE '(' '[' ']' ',' expr ')'
-   38       | . VVARIABLE
-   39       | . vector ELEMMULT vector
-   40       | . vector RIGHTSHIFT
-   41       | . vector LEFTSHIFT
-   42       | . vector ELEMMULT expr
-   45 vmdeclaration: . VVARIABLE '(' expr ')' ASSIGN expr
-   46              | . VVARIABLE '(' vector ',' '[' ']' ')' ASSIGN vector
-   47              | . MVARIABLE '(' expr ',' expr ')' ASSIGN expr
-   48              | . MVARIABLE '(' expr ',' '[' ']' ')' ASSIGN vector
-   49              | . MVARIABLE '(' '[' ']' ',' expr ')' ASSIGN vector
-   50              | . MVARIABLE '(' vector ',' '[' ']' ')' ASSIGN matrix
-   51              | . MVARIABLE '(' '[' ']' ',' vector ')' ASSIGN matrix
-   52              | . MVARIABLE '(' matrix ')' ASSIGN matrix
-   53 declaration: . type VAR DECLARE expr
-   54            | . type VAR DECLARE vector
-   55            | . type VAR DECLARE matrix
-   56 assignment: . VARIABLE ASSIGN expr
-   57           | . VVARIABLE ASSIGN vector
-   58           | . MVARIABLE ASSIGN matrix
-   59 print: . PRINT '(' expr ')'
-   60      | . PRINT '(' VVARIABLE ')'
-   61      | . PRINT '(' MVARIABLE ')'
-   62 expr: . const
-   63     | . VARIABLE
-   64     | . '-' expr
-   65     | . expr '+' expr
-   66     | . expr '-' expr
-   67     | . expr '/' expr
-   68     | . expr '<' expr
-   69     | . expr '>' expr
-   70     | . '!' expr
-   71     | . expr CONJUNCTION expr
-   72     | . '(' expr ')'
-   73     | . VVARIABLE '(' expr ')'
-   74     | . MVARIABLE '(' expr ',' expr ')'
-   75 type: . INT
-   76     | . CINT
-   77     | . VINT
-   78     | . MINT
-   79     | . CVINT
-   80     | . CMINT
-   81     | . BOOLEAN
-   82     | . CBOOLEAN
-   83     | . VBOOLEAN
-   84     | . MBOOLEAN
-   85     | . CVBOOLEAN
-   86     | . CMBOOLEAN
-   87 const: . INTEGER
-   88      | . BOOL
-
-    BOOL       сдвиг, и переход в состояние 4
-    INTEGER    сдвиг, и переход в состояние 5
-    VARIABLE   сдвиг, и переход в состояние 6
-    VVARIABLE  сдвиг, и переход в состояние 7
-    MVARIABLE  сдвиг, и переход в состояние 8
-    CINT       сдвиг, и переход в состояние 9
-    VINT       сдвиг, и переход в состояние 10
-    MINT       сдвиг, и переход в состояние 11
-    INT        сдвиг, и переход в состояние 12
-    CVINT      сдвиг, и переход в состояние 13
-    CMINT      сдвиг, и переход в состояние 14
-    BOOLEAN    сдвиг, и переход в состояние 15
-    CBOOLEAN   сдвиг, и переход в состояние 16
-    VBOOLEAN   сдвиг, и переход в состояние 17
-    MBOOLEAN   сдвиг, и переход в состояние 18
-    CVBOOLEAN  сдвиг, и переход в состояние 19
-    CMBOOLEAN  сдвиг, и переход в состояние 20
-    NEWLINE    сдвиг, и переход в состояние 21
-    PRINT      сдвиг, и переход в состояние 22
-    IF         сдвиг, и переход в состояние 23
-    FOR        сдвиг, и переход в состояние 24
-    '-'        сдвиг, и переход в состояние 25
-    '!'        сдвиг, и переход в состояние 26
-    '('        сдвиг, и переход в состояние 27
-    '{'        сдвиг, и переход в состояние 28
-
-    stmts          переход в состояние 233
-    stmt           переход в состояние 30
-    iff            переход в состояние 31
-    forr           переход в состояние 32
-    matrix         переход в состояние 33
-    vector         переход в состояние 34
-    vmdeclaration  переход в состояние 35
-    declaration    переход в состояние 36
-    assignment     переход в состояние 37
-    print          переход в состояние 38
-    expr           переход в состояние 39
-    type           переход в состояние 40
-    const          переход в состояние 41
-
-
-State 233
-
-    5 stmts: stmts . stmt
-    6 stmt: . NEWLINE
-    7     | . expr NEWLINE
-    8     | . vector NEWLINE
-    9     | . matrix NEWLINE
-   10     | . print NEWLINE
-   11     | . vmdeclaration NEWLINE
-   12     | . declaration NEWLINE
-   13     | . assignment NEWLINE
-   14     | . iff NEWLINE
-   15     | . forr NEWLINE
-   16     | . '(' stmts ')'
-   17 iff: . IF expr NEWLINE BEGIF stmts ENDIF
-   18 forr: . FOR type VAR DECLARE expr ':' expr NEWLINE BEGFOR NEWLINE stmts ENDFOR
-   18     | FOR type VAR DECLARE expr ':' expr NEWLINE BEGFOR NEWLINE stmts . ENDFOR
-   19 matrix: . '{' listexprs '}'
-   20       | . MVARIABLE '(' vector ',' '[' ']' ')'
-   21       | . MVARIABLE '(' '[' ']' ',' vector ')'
-   22       | . MVARIABLE '(' matrix ')'
-   23       | . MVARIABLE
-   24       | . matrix '*' matrix
-   25       | . matrix ELEMMULT matrix
-   26       | . matrix '\''
-   27       | . matrix RIGHTSHIFT
-   28       | . matrix LEFTSHIFT
-   29       | . vector '\''
-   30       | . matrix ELEMMULT vector
-   31       | . matrix ELEMMULT expr
-   34 vector: . '{' exprs '}'
-   35       | . VVARIABLE '(' vector ',' '[' ']' ')'
-   36       | . MVARIABLE '(' expr ',' '[' ']' ')'
-   37       | . MVARIABLE '(' '[' ']' ',' expr ')'
-   38       | . VVARIABLE
-   39       | . vector ELEMMULT vector
-   40       | . vector RIGHTSHIFT
-   41       | . vector LEFTSHIFT
-   42       | . vector ELEMMULT expr
-   45 vmdeclaration: . VVARIABLE '(' expr ')' ASSIGN expr
-   46              | . VVARIABLE '(' vector ',' '[' ']' ')' ASSIGN vector
-   47              | . MVARIABLE '(' expr ',' expr ')' ASSIGN expr
-   48              | . MVARIABLE '(' expr ',' '[' ']' ')' ASSIGN vector
-   49              | . MVARIABLE '(' '[' ']' ',' expr ')' ASSIGN vector
-   50              | . MVARIABLE '(' vector ',' '[' ']' ')' ASSIGN matrix
-   51              | . MVARIABLE '(' '[' ']' ',' vector ')' ASSIGN matrix
-   52              | . MVARIABLE '(' matrix ')' ASSIGN matrix
-   53 declaration: . type VAR DECLARE expr
-   54            | . type VAR DECLARE vector
-   55            | . type VAR DECLARE matrix
-   56 assignment: . VARIABLE ASSIGN expr
-   57           | . VVARIABLE ASSIGN vector
-   58           | . MVARIABLE ASSIGN matrix
-   59 print: . PRINT '(' expr ')'
-   60      | . PRINT '(' VVARIABLE ')'
-   61      | . PRINT '(' MVARIABLE ')'
-   62 expr: . const
-   63     | . VARIABLE
-   64     | . '-' expr
-   65     | . expr '+' expr
-   66     | . expr '-' expr
-   67     | . expr '/' expr
-   68     | . expr '<' expr
-   69     | . expr '>' expr
-   70     | . '!' expr
-   71     | . expr CONJUNCTION expr
-   72     | . '(' expr ')'
-   73     | . VVARIABLE '(' expr ')'
-   74     | . MVARIABLE '(' expr ',' expr ')'
-   75 type: . INT
-   76     | . CINT
-   77     | . VINT
-   78     | . MINT
-   79     | . CVINT
-   80     | . CMINT
-   81     | . BOOLEAN
-   82     | . CBOOLEAN
-   83     | . VBOOLEAN
-   84     | . MBOOLEAN
-   85     | . CVBOOLEAN
-   86     | . CMBOOLEAN
-   87 const: . INTEGER
-   88      | . BOOL
-
-    BOOL       сдвиг, и переход в состояние 4
-    INTEGER    сдвиг, и переход в состояние 5
-    VARIABLE   сдвиг, и переход в состояние 6
-    VVARIABLE  сдвиг, и переход в состояние 7
-    MVARIABLE  сдвиг, и переход в состояние 8
-    CINT       сдвиг, и переход в состояние 9
-    VINT       сдвиг, и переход в состояние 10
-    MINT       сдвиг, и переход в состояние 11
-    INT        сдвиг, и переход в состояние 12
-    CVINT      сдвиг, и переход в состояние 13
-    CMINT      сдвиг, и переход в состояние 14
-    BOOLEAN    сдвиг, и переход в состояние 15
-    CBOOLEAN   сдвиг, и переход в состояние 16
-    VBOOLEAN   сдвиг, и переход в состояние 17
-    MBOOLEAN   сдвиг, и переход в состояние 18
-    CVBOOLEAN  сдвиг, и переход в состояние 19
-    CMBOOLEAN  сдвиг, и переход в состояние 20
-    NEWLINE    сдвиг, и переход в состояние 21
-    PRINT      сдвиг, и переход в состояние 22
-    IF         сдвиг, и переход в состояние 23
-    FOR        сдвиг, и переход в состояние 24
-    ENDFOR     сдвиг, и переход в состояние 234
-    '-'        сдвиг, и переход в состояние 25
-    '!'        сдвиг, и переход в состояние 26
-    '('        сдвиг, и переход в состояние 27
-    '{'        сдвиг, и переход в состояние 28
-
-    stmt           переход в состояние 65
-    iff            переход в состояние 31
-    forr           переход в состояние 32
-    matrix         переход в состояние 33
-    vector         переход в состояние 34
-    vmdeclaration  переход в состояние 35
-    declaration    переход в состояние 36
-    assignment     переход в состояние 37
-    print          переход в состояние 38
-    expr           переход в состояние 39
-    type           переход в состояние 40
-    const          переход в состояние 41
-
-
-State 234
-
-   18 forr: FOR type VAR DECLARE expr ':' expr NEWLINE BEGFOR NEWLINE stmts ENDFOR .
-
-    $default  вывод с использованием правила 18 (forr)

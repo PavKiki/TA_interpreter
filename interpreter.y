@@ -36,7 +36,7 @@ void yyerror(const char*);
 %token <intPtr> INTEGER
 %token <varName> VARIABLE VVARIABLE MVARIABLE VAR
 %token <vtype> CINT VINT MINT INT CVINT CMINT BOOLEAN CBOOLEAN VBOOLEAN MBOOLEAN CVBOOLEAN CMBOOLEAN
-%token NEWLINE PRINT CONJUNCTION ELEMMULT '\'' LEFTSHIFT RIGHTSHIFT ',' IF FOR BEGIF ENDIF BEGFOR ENDFOR ER
+%token NEWLINE PRINT CONJUNCTION ELEMMULT '\'' LEFTSHIFT RIGHTSHIFT ',' IF FORR BEGIF ENDIF BEGFOR ENDFOR ER DOUBLEDOT
 
 %left ASSIGN DECLARE
 %left '<' '>' 
@@ -104,16 +104,13 @@ iff:
 ;
 
 forr:
-    FOR type VAR DECLARE expr ':' expr NEWLINE BEGFOR NEWLINE stmts ENDFOR          {
-                                                                                        if ($2 != Interpreter::INT) yyerror("Variable should be non-const integer scalar");
-                                                                                        auto tmp = new Interpreter::VariableOperationNode($2, declare, *$3, $5);
-                                                                                        std::vector<Interpreter::Node*> kids;
-                                                                                        kids.push_back(tmp);
-                                                                                        kids.push_back($5);
-                                                                                        kids.push_back($7);
-                                                                                        kids.push_back($11);
-                                                                                        $$ = new Interpreter::OperationNode(forr, kids);
-                                                                                    }
+    FORR declaration DOUBLEDOT expr NEWLINE BEGFOR stmts ENDFOR        {
+                                                                    std::vector<Interpreter::Node*> kids;
+                                                                    kids.push_back($2);
+                                                                    kids.push_back($4);
+                                                                    kids.push_back($7);
+                                                                    $$ = new Interpreter::OperationNode(forr, kids);
+                                                                }
 ;
 
 matrix:

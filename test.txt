@@ -6,4 +6,13 @@ print(b)
 print(c)
 mint d = c([], {true, false, true})
 print(d)
+int e = b - 7
+print(e)
+
+for int f = 0 : 3 
+begin[for]
+print(a)
+print(f)
+end[for]
+
 

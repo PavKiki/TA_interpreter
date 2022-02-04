@@ -75,15 +75,16 @@ extern int yydebug;
     LEFTSHIFT = 281,
     RIGHTSHIFT = 282,
     IF = 283,
-    FOR = 284,
+    FORR = 284,
     BEGIF = 285,
     ENDIF = 286,
     BEGFOR = 287,
     ENDFOR = 288,
     ER = 289,
-    ASSIGN = 290,
-    DECLARE = 291,
-    UMINUS = 292
+    DOUBLEDOT = 290,
+    ASSIGN = 291,
+    DECLARE = 292,
+    UMINUS = 293
   };
 #endif
 
@@ -101,7 +102,7 @@ union YYSTYPE
     Interpreter::VariableOperationNode* varOpPtr;
     Interpreter::varType vtype;
 
-#line 105 "interpreter.tab.h" /* yacc.c:1921  */
+#line 106 "interpreter.tab.h" /* yacc.c:1921  */
 };
 
 typedef union YYSTYPE YYSTYPE;

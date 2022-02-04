@@ -204,6 +204,36 @@
             return search->second->execute();
         }
 
+        case iff: {
+            if (kids[0]->execute()) kids[1]->execute();
+            return 0;
+        }
+
+        case forr: {
+            auto oper = dynamic_cast<Interpreter::VariableOperationNode*>(kids[0]);
+            oper->execute();
+            if (oper->getVarType() != Interpreter::INT) throw "Variable should be non-const integer scalar";
+
+            if (!suitForArithm(kids[1])) throw "Range boundaries should be integer!";
+
+            auto rightBorder = kids[1]->execute();
+            auto search = Interpreter::varStorage.find(oper->getVarName());
+            auto leftBorder = search->second->execute();
+
+            if (leftBorder > rightBorder) throw "Left border should be less or equal than right border";
+            auto varName = oper->getVarName();
+
+            auto var = static_cast<Interpreter::IntegerNode*>(search->second);
+
+            for (int i = leftBorder; i < rightBorder; i++) {
+                var->setDecData(i);
+                kids[2]->execute();
+            }
+
+            // Interpreter::varStorage.erase(varName);
+            return 0;
+        }
+
         default:
             throw "Unknown operand type!";
         }

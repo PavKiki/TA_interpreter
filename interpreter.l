@@ -29,7 +29,9 @@ true|false              {yylloc.last_line = yylloc.first_line = yylineno; yylval
 
 \>\>                    {return RIGHTSHIFT;}
 
-[-+*/()\<\>!{},\'\[\]\:]  {return *yytext;}
+\:                      {return DOUBLEDOT;}
+
+[-+*/()\<\>!{},\'\[\]]  {return *yytext;}
 
 and|&&                  {return CONJUNCTION;}
 
@@ -61,7 +63,7 @@ cmbool                  {yylval.vtype = Interpreter::CMBOOL; return CMBOOLEAN;}
 
 if                      {return IF;}
 
-for                     {return FOR;}
+for                     {return FORR;}
 
 "begin[if]"             {return BEGIF;}
 
