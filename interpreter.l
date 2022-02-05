@@ -89,6 +89,16 @@ end                     {return E;}
                                 else if (search->second->nType == Interpreter::FUNCNODE) return FVARIABLE;
                                 else return ER;
                             }
+                            if (!Interpreter::tmpStorage.empty()) {
+                                auto search = Interpreter::tmpStorage.find(*(yylval.varName));
+                                if (search != Interpreter::tmpStorage.end()) {
+                                    if (search->second->nType == Interpreter::INTMATNODE || search->second->nType == Interpreter::BOOLMATNODE || search->second->nType == Interpreter::ABSTRACTMATNODE) return MVARIABLE;
+                                    else if (search->second->nType == Interpreter::INTVECNODE || search->second->nType == Interpreter::BOOLVECNODE || search->second->nType == Interpreter::ABSTRACTVECNODE) return VVARIABLE;
+                                    else if (search->second->nType == Interpreter::INTNODE || search->second->nType == Interpreter::BOOLNODE) return VARIABLE;
+                                    else if (search->second->nType == Interpreter::FUNCNODE) return FVARIABLE;
+                                    else return ER;
+                                }
+                            }
                             return VAR;
                         }
 

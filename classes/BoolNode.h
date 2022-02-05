@@ -10,7 +10,7 @@ private:
 public:
     int execute() override {return data;};
 
-    void writeData(bool data) {data = data;};
+    void writeData(bool dat) {data = dat;};
 
     void print(std::ostringstream& strm) override;
 

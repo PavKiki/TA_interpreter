@@ -316,9 +316,10 @@
                     break;
                 }
                 case gscalar: {
-                        auto nnode = dynamic_cast<Interpreter::OperationNode*>(scalarData);
-                        auto search = Interpreter::varStorage.find(nnode->getVN());
-                        if (search->second->nType == Interpreter::INTNODE) newNode = new Interpreter::IntegerNode(decimal, std::to_string(scalarData->execute()));
+                    auto nnode = dynamic_cast<Interpreter::OperationNode*>(scalarData);
+                    auto search = Interpreter::varStorage.find(nnode->getVN());
+                    if (search->second->nType == Interpreter::INTNODE) newNode = new Interpreter::IntegerNode(decimal, std::to_string(scalarData->execute()));
+                    break;
                 }
                 default:
                     throw "Can't declare variable by this expression!";
@@ -344,9 +345,10 @@
                     break;
                 } 
                 case gscalar: {
-                        auto nnode = dynamic_cast<Interpreter::OperationNode*>(scalarData);
-                        auto search = Interpreter::varStorage.find(nnode->getVN());
-                        if (search->second->nType == Interpreter::BOOLNODE) newNode = new Interpreter::BoolNode(scalarData->execute() ? std::string("true") : std::string("false"));
+                    auto nnode = dynamic_cast<Interpreter::OperationNode*>(scalarData);
+                    auto search = Interpreter::varStorage.find(nnode->getVN());
+                    if (search->second->nType == Interpreter::BOOLNODE) newNode = new Interpreter::BoolNode(scalarData->execute() ? std::string("true") : std::string("false"));
+                    break;
                 }
                 default:
                     throw "Can't declare variable by this expression!";
@@ -463,7 +465,9 @@
             }
             else if (search->second->nType == Interpreter::BOOLNODE) {
                 newNode = getScalarExprResult(Interpreter::BOOL, scalarData);
+                std::cout << newNode->execute() << std::endl;
                 dynamic_cast<Interpreter::BoolNode*>(varSt[varName])->writeData(dynamic_cast<Interpreter::BoolNode*>(newNode)->getData());
+                std::cout << varSt[varName]->execute() << std::endl;
             }
             else if (search->second->nType == Interpreter::INTVECNODE) {
                 newNode = new Interpreter::IntegerVectorNode(getVectorExprResult(Interpreter::VINT, vectorData), vectorData->getSize());

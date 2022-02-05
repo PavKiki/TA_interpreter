@@ -180,18 +180,18 @@ return_func:
 ;
 
 args_func:
-    declaration                                                 {$$ = new Interpreter::args_func($1);}
-    | type VAR                                                  {$$ = new Interpreter::args_func($1, *$2);}
-    | ',' declaration                                           {dynamic_cast<Interpreter::args_func*>($$)->addByNode($2);}
-    | ',' type VAR                                              {dynamic_cast<Interpreter::args_func*>($$)->addByVTypeandName($2, *$3);}
+     '[' type VAR ']'                                                  {$$ = new Interpreter::args_func($2, *$3);}
+    | args_func ',' '[' type VAR ']'                                              {dynamic_cast<Interpreter::args_func*>($$)->addByVTypeandName($4, *$5);}
 ;
 
 function:
-    return_func DECLARE FUNC VAR '(' args_func ')' B NEWLINE stmts E    {
-                                                                            auto plug = new Interpreter::func_descript(dynamic_cast<Interpreter::args_func*>($6)->localStorage, dynamic_cast<Interpreter::args_func*>($6)->localisConst, 
-                                                                            dynamic_cast<Interpreter::return_funcNode*>($1)->container, dynamic_cast<Interpreter::return_funcNode*>($1)->retVarNames,
-                                                                            $10, *$4, dynamic_cast<Interpreter::args_func*>($6)->types, dynamic_cast<Interpreter::args_func*>($6)->names);
-                                                                            Interpreter::varStorage.insert_or_assign(*$4, plug);
+    '[' return_func ']' DECLARE FUNC VAR '(' args_func ')' B NEWLINE stmts E    {
+                                                                            auto plug = new Interpreter::func_descript(dynamic_cast<Interpreter::args_func*>($8)->localStorage, dynamic_cast<Interpreter::args_func*>($8)->localisConst, 
+                                                                            dynamic_cast<Interpreter::return_funcNode*>($2)->container, dynamic_cast<Interpreter::return_funcNode*>($2)->retVarNames,
+                                                                            $12, *$6, dynamic_cast<Interpreter::args_func*>($8)->types, dynamic_cast<Interpreter::args_func*>($8)->names);
+                                                                            Interpreter::varStorage.insert_or_assign(*$6, plug);
+                                                                            Interpreter::tmpStorage.clear();
+                                                                            $$ = plug;
                                                                         }
 ;
 
@@ -199,9 +199,9 @@ callfunc_args:
     expr                {$$ = new Interpreter::callfunc_args(expR, $1);}
     | vector            {$$ = new Interpreter::callfunc_args(vectoR, $1);}
     | matrix            {$$ = new Interpreter::callfunc_args(matriX, $1);}
-    | ',' expr          {dynamic_cast<Interpreter::callfunc_args*>($$)->addArg(expR, $2);}
-    | ',' vector        {dynamic_cast<Interpreter::callfunc_args*>($$)->addArg(vectoR, $2);}
-    | ',' matrix        {dynamic_cast<Interpreter::callfunc_args*>($$)->addArg(matriX, $2);}
+    | callfunc_args ',' expr          {dynamic_cast<Interpreter::callfunc_args*>($$)->addArg(expR, $3);}
+    | callfunc_args ',' vector        {dynamic_cast<Interpreter::callfunc_args*>($$)->addArg(vectoR, $3);}
+    | callfunc_args ',' matrix        {dynamic_cast<Interpreter::callfunc_args*>($$)->addArg(matriX, $3);}
 ;
 
 callfunction:

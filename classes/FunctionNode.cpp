@@ -36,24 +36,28 @@ void Interpreter::args_func::addByVTypeandName(Interpreter::varType vt, std::str
     if (vt == INT || vt == CINT) {
         auto plug = new Interpreter::IntegerNode();
         localStorage.insert_or_assign(name, plug);
+        tmpStorage.insert_or_assign(name, plug);
         // auto tmp = new Interpreter::VariableOperationNode(vt, declare, name, plug, localStorage, localisConst);
         // tmp->execute();
     }
     else if (vt == BOOL || vt == CBOOL) {
         auto plug = new Interpreter::BoolNode();
         localStorage.insert_or_assign(name, plug);
+        tmpStorage.insert_or_assign(name, plug);
         // auto tmp = new Interpreter::VariableOperationNode(vt, declare, name, plug, localStorage, localisConst);
         // tmp->execute();
     }
     else if (vt == VINT || vt == CVINT || vt == VBOOL || vt == CVBOOL) {
         auto plug = new Interpreter::AbstractVectorNode();
         localStorage.insert_or_assign(name, plug);
+        tmpStorage.insert_or_assign(name, plug);
         // auto tmp = new Interpreter::VariableOperationNode(vt, declare, name, dynamic_cast<Interpreter::ContainerVectorNode*>(plug), localStorage, localisConst);
         // tmp->execute();
     }
     else if (vt == MBOOL || vt == CMBOOL || vt == MINT || vt == CMINT) {
         auto plug = new Interpreter::AbstractMatrixNode();
         localStorage.insert_or_assign(name, plug);
+        tmpStorage.insert_or_assign(name, plug);
         // auto tmp = new Interpreter::VariableOperationNode(vt, declare, name, dynamic_cast<Interpreter::ContainerMatrixNode*>(plug), localStorage, localisConst);
         // tmp->execute();
     }
@@ -101,7 +105,7 @@ void Interpreter::func_descript::run() {
 
 int Interpreter::callfunc::execute() {
     if (Interpreter::varStorage.find(fname) == Interpreter::varStorage.end()) throw "No function with this name";
-    function = dynamic_cast<Interpreter::func_descript*>(Interpreter::varStorage.find(fname)->second);
+    auto function = dynamic_cast<Interpreter::func_descript*>(Interpreter::varStorage.find(fname)->second);
 
     if (function->types.size() != args.size()) throw "Incorrect amount of arguments";
 
@@ -127,6 +131,11 @@ int Interpreter::callfunc::execute() {
             break;
         }
     }
+
+    std::cout << function->localStorage["a"]->execute() << std::endl;
+    std::cout << function->localStorage["b"]->execute() << std::endl;
+    std::cout << function->localStorage["i"]->execute() << std::endl;
+    std::cout << function->localStorage["j"]->execute() << std::endl;
 
     function->run();
     return 0;

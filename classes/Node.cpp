@@ -7,6 +7,8 @@ std::unordered_map<std::string, Interpreter::Node*> Interpreter::varStorage;
 std::unordered_map<std::string, bool> Interpreter::isConst;
 std::ostringstream Interpreter::out;
 
+std::unordered_map<std::string, Interpreter::Node*> Interpreter::tmpStorage;
+
 Interpreter::Node::Node() {
     nType = Interpreter::ABSTRACTNODE;
 }

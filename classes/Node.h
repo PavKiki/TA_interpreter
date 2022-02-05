@@ -205,7 +205,6 @@ extern std::unordered_map<std::string, Node*> varStorage;
 extern std::unordered_map<std::string, bool> isConst;
 extern std::ostringstream out;
 
-extern bool isFunctionActive;
-extern std::string activeFunction;
+extern std::unordered_map<std::string, Node*> tmpStorage;
 
 }
