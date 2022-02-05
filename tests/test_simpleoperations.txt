@@ -1,0 +1,17 @@
+int a = 5 + 5
+print(a)
+
+int b = 6 - 3
+print(b)
+
+bool c = 10 < 20
+print(c)
+
+bool d = true && false
+print(d)
+
+bool e = !true
+print(e)
+
+bool f = !false
+print(f)

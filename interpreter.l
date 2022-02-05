@@ -19,75 +19,75 @@ true|false              {yylloc.last_line = yylloc.first_line = yylineno; yylval
 
 [0-9]+                  {yylloc.last_line = yylloc.first_line = yylineno; yylval.intPtr = new Interpreter::IntegerNode(decimal, yytext); return INTEGER;}
 
-\<\-                    {return ASSIGN;}
+\<\-                    {yylloc.last_line = yylloc.first_line = yylineno; return ASSIGN;}
 
-\=                      {return DECLARE;}
+\=                      {yylloc.last_line = yylloc.first_line = yylineno; return DECLARE;}
 
-\.\*                    {return ELEMMULT;}
+\.\*                    {yylloc.last_line = yylloc.first_line = yylineno; return ELEMMULT;}
 
-\<\<                    {return LEFTSHIFT;}
+\<\<                    {yylloc.last_line = yylloc.first_line = yylineno; return LEFTSHIFT;}
 
-\>\>                    {return RIGHTSHIFT;}
+\>\>                    {yylloc.last_line = yylloc.first_line = yylineno; return RIGHTSHIFT;}
 
-\:                      {return DOUBLEDOT;}
+\:                      {yylloc.last_line = yylloc.first_line = yylineno; return DOUBLEDOT;}
 
-[-+*/()\<\>!{},\'\[\]]  {return *yytext;}
+[-+*/()\<\>!{},\'\[\]]  {yylloc.last_line = yylloc.first_line = yylineno; return *yytext;}
 
-and|&&                  {return CONJUNCTION;}
+and|&&                  {yylloc.last_line = yylloc.first_line = yylineno; return CONJUNCTION;}
 
-print                   {return PRINT;}
+print                   {yylloc.last_line = yylloc.first_line = yylineno; return PRINT;}
 
-int                     {yylval.vtype = Interpreter::INT; return INT;}      
+int                     {yylloc.last_line = yylloc.first_line = yylineno; yylval.vtype = Interpreter::INT; return INT;}      
 
-cint                    {yylval.vtype = Interpreter::CINT; return CINT;}    
+cint                    {yylloc.last_line = yylloc.first_line = yylineno; yylval.vtype = Interpreter::CINT; return CINT;}    
 
-vint                    {yylval.vtype = Interpreter::VINT; return VINT;}    
+vint                    {yylloc.last_line = yylloc.first_line = yylineno; yylval.vtype = Interpreter::VINT; return VINT;}    
 
-mint                    {yylval.vtype = Interpreter::MINT; return MINT;}    
+mint                    {yylloc.last_line = yylloc.first_line = yylineno; yylval.vtype = Interpreter::MINT; return MINT;}    
 
-cvint                   {yylval.vtype = Interpreter::CVINT; return CVINT;}  
+cvint                   {yylloc.last_line = yylloc.first_line = yylineno; yylval.vtype = Interpreter::CVINT; return CVINT;}  
 
-cmint                   {yylval.vtype = Interpreter::CMINT; return CMINT;}  
+cmint                   {yylloc.last_line = yylloc.first_line = yylineno; yylval.vtype = Interpreter::CMINT; return CMINT;}  
 
-bool                    {yylval.vtype = Interpreter::BOOL; return BOOLEAN;}
+bool                    {yylloc.last_line = yylloc.first_line = yylineno; yylval.vtype = Interpreter::BOOL; return BOOLEAN;}
 
-cbool                   {yylval.vtype = Interpreter::CBOOL; return CBOOLEAN;}
+cbool                   {yylloc.last_line = yylloc.first_line = yylineno; yylval.vtype = Interpreter::CBOOL; return CBOOLEAN;}
 
-vbool                   {yylval.vtype = Interpreter::VBOOL; return VBOOLEAN;}
+vbool                   {yylloc.last_line = yylloc.first_line = yylineno; yylval.vtype = Interpreter::VBOOL; return VBOOLEAN;}
 
-mbool                   {yylval.vtype = Interpreter::MBOOL; return MBOOLEAN;}
+mbool                   {yylloc.last_line = yylloc.first_line = yylineno; yylval.vtype = Interpreter::MBOOL; return MBOOLEAN;}
 
-cvbool                  {yylval.vtype = Interpreter::CVBOOL; return CVBOOLEAN;}
+cvbool                  {yylloc.last_line = yylloc.first_line = yylineno; yylval.vtype = Interpreter::CVBOOL; return CVBOOLEAN;}
 
-cmbool                  {yylval.vtype = Interpreter::CMBOOL; return CMBOOLEAN;}
+cmbool                  {yylloc.last_line = yylloc.first_line = yylineno; yylval.vtype = Interpreter::CMBOOL; return CMBOOLEAN;}
 
-if                      {return IF;}
+if                      {yylloc.last_line = yylloc.first_line = yylineno; return IF;}
 
-for                     {return FORR;}
+for                     {yylloc.last_line = yylloc.first_line = yylineno; return FORR;}
 
-function                {return FUNC;}
+function                {yylloc.last_line = yylloc.first_line = yylineno; return FUNC;}
 
-begin                   {return B;}
+begin                   {yylloc.last_line = yylloc.first_line = yylineno; return B;}
 
-end                     {return E;}
+end                     {yylloc.last_line = yylloc.first_line = yylineno; return E;}
 
-"begin[if]"             {return BEGIF;}
+"begin[if]"             {yylloc.last_line = yylloc.first_line = yylineno; return BEGIF;}
 
-"end[if]"               {return ENDIF;}
+"end[if]"               {yylloc.last_line = yylloc.first_line = yylineno; return ENDIF;}
 
-"begin[for]"            {return BEGFOR;}
+"begin[for]"            {yylloc.last_line = yylloc.first_line = yylineno; return BEGFOR;}
 
-"end[for]"              {return ENDFOR;}
+"end[for]"              {yylloc.last_line = yylloc.first_line = yylineno; return ENDFOR;}
 
-move                    {return MOVE;}
+move                    {yylloc.last_line = yylloc.first_line = yylineno; return MOVE;}
 
-right                   {return RIGHT;}
+right                   {yylloc.last_line = yylloc.first_line = yylineno; return RIGHT;}
 
-left                    {return LEFT;}
+left                    {yylloc.last_line = yylloc.first_line = yylineno; return LEFT;}
 
-exit                    {return ROBEX;}
+exit                    {yylloc.last_line = yylloc.first_line = yylineno; return ROBEX;}
 
-wall                    {return WALL;}
+wall                    {yylloc.last_line = yylloc.first_line = yylineno; return WALL;}
 
 [a-zA-Z][a-zA-Z0-9_]*   {
                             yylloc.last_line = yylloc.first_line = yylineno; yylval.varName = new std::string(yytext);
@@ -112,9 +112,11 @@ wall                    {return WALL;}
                             return VAR;
                         }
 
-[\n]                    {return NEWLINE;}
+\.\.\.\n                ;
 
-.                       {yyerror("Unknown character!");}
+[\n]                    {yylloc.last_line = yylloc.first_line = yylineno;return NEWLINE;}
+
+.                       {yylloc.last_line = yylloc.first_line = yylineno; yyerror("Unknown character!");}
 
 %%
 

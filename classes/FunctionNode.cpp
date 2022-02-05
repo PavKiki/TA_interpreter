@@ -131,12 +131,6 @@ int Interpreter::callfunc::execute() {
             break;
         }
     }
-
-    std::cout << function->localStorage["a"]->execute() << std::endl;
-    std::cout << function->localStorage["b"]->execute() << std::endl;
-    std::cout << function->localStorage["i"]->execute() << std::endl;
-    std::cout << function->localStorage["j"]->execute() << std::endl;
-
     function->run();
     return 0;
 }

@@ -1,0 +1,38 @@
+vint a = {0,1,2,3,4,5,10}
+print(a)
+
+a(6) <- 20
+print(a)
+
+vint c = a({true, false, true, true, false, false, false}, [])
+print(c)
+
+vint d = a({0,2,3, 5, 6}, [])
+print(d)
+
+mint e = {{9,8,7}, {6,5,4}, {3,2,1}}
+print(e)
+
+e(0,2) <- 100
+print(e)
+
+vint f = e(1, [])
+print(f)
+
+vint g = e([], 1)
+print(g)
+
+mint h = e({0,2}, [])
+print(h)
+
+mint i = e([], {0,2})
+print(i)
+
+mint j = e([], {true, false, false})
+print(j)
+
+mint k = e({true, false, true}, [])
+print(k)
+
+mint l = e({{true, false, false}, {false, true, false}, {false, false, true}})
+print(l)

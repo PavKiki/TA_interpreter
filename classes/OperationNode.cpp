@@ -12,12 +12,22 @@
             case Interpreter::OPNODE: {
                 operName tmp = dynamic_cast<Interpreter::OperationNode*>(node)->getOperation();
                 switch (tmp) {
-                    case plus: case minus: case divide: case vintgetexp: case mintgetexp: case uminus: case wall:
+                    case plus: case minus: case divide: case uminus: case wall:
                         return true;
                     case gscalar: {
                         auto nnode = dynamic_cast<Interpreter::OperationNode*>(node);
                         auto search = Interpreter::varStorage.find(nnode->getVN());
                         if (search->second->nType == Interpreter::INTNODE) return true;
+                    }
+                    case mgetexp: {
+                        auto nnode = dynamic_cast<Interpreter::OperationNode*>(node);
+                        auto search = Interpreter::varStorage.find(nnode->getVN());
+                        if (search->second->nType == Interpreter::INTMATNODE) return true;
+                    }
+                    case vgetexp: {
+                        auto nnode = dynamic_cast<Interpreter::OperationNode*>(node);
+                        auto search = Interpreter::varStorage.find(nnode->getVN());
+                        if (search->second->nType == Interpreter::INTVECNODE) return true;
                     }
                     default:
                         return false;
@@ -37,12 +47,22 @@
             case Interpreter::OPNODE: {
                 operName tmp = dynamic_cast<Interpreter::OperationNode*>(node)->getOperation();
                 switch (tmp) {
-                    case less: case greater: case denial: case conjunction: case vboolgetexp: case mboolgetexp: case move: case exxit:
+                    case less: case greater: case denial: case conjunction: case move: case exxit:
                         return true; 
                     case gscalar: {
                         auto nnode = dynamic_cast<Interpreter::OperationNode*>(node);
                         auto search = Interpreter::varStorage.find(nnode->getVN());
                         if (search->second->nType == Interpreter::BOOLNODE) return true;
+                    }
+                    case mgetexp: {
+                        auto nnode = dynamic_cast<Interpreter::OperationNode*>(node);
+                        auto search = Interpreter::varStorage.find(nnode->getVN());
+                        if (search->second->nType == Interpreter::BOOLMATNODE) return true;
+                    }
+                    case vgetexp: {
+                        auto nnode = dynamic_cast<Interpreter::OperationNode*>(node);
+                        auto search = Interpreter::varStorage.find(nnode->getVN());
+                        if (search->second->nType == Interpreter::BOOLVECNODE) return true;
                     }
                     default:
                         return false;
@@ -57,16 +77,28 @@
     void Interpreter::OperationNode::print(std::ostringstream& strm) {
         switch (operation)
         {
-        case plus: case minus: case divide: case vintgetexp: case mintgetexp: case wall:
+        case plus: case minus: case divide: case wall:
             strm << execute() << '\n';
             break;
-        case less: case greater: case denial: case conjunction: case vboolgetexp: case mboolgetexp: case move: case exxit:
+        case less: case greater: case denial: case conjunction: case move: case exxit:
             strm << (execute() ? "true" : "false") << '\n';
             break;
         case gscalar: {
             auto search = Interpreter::varStorage.find(varname);
             if (search->second->nType == Interpreter::INTNODE) strm << execute() << '\n';
             else if (search->second->nType == Interpreter::BOOLNODE) strm << (execute() ? "true" : "false") << '\n';
+            break;
+        }
+        case mgetexp: {
+            auto search = Interpreter::varStorage.find(varname);
+            if (search->second->nType == Interpreter::INTMATNODE) strm << execute() << '\n';
+            else if (search->second->nType == Interpreter::BOOLMATNODE) strm << (execute() ? "true" : "false") << '\n';
+            break;
+        }
+        case vgetexp: {
+            auto search = Interpreter::varStorage.find(varname);
+            if (search->second->nType == Interpreter::INTVECNODE) strm << execute() << '\n';
+            else if (search->second->nType == Interpreter::BOOLVECNODE) strm << (execute() ? "true" : "false") << '\n';
             break;
         }
         default:
@@ -154,44 +186,22 @@
             }
             return 0;
         }
-        
-        case vintgetexp: {
+
+        case vgetexp: {
             if (!Interpreter::suitForArithm(kids[0])) {
                 throw "Incorrect index!";
             }
-            auto tmp = static_cast<Interpreter::IntegerVectorNode*>(kids[1]);
+            auto tmp = static_cast<Interpreter::AbstractVectorNode*>(kids[1]);
             auto index = kids[0]->execute();
             if (index >= tmp->getSize() || index < 0) throw "Incorrect index!";
-            return (*tmp)[index].execute();
-        }
-
-        case vboolgetexp: {
-            if (!Interpreter::suitForArithm(kids[0])) {
-                throw "Incorrect index!";
-            }
-            auto tmp = static_cast<Interpreter::BoolVectorNode*>(kids[1]);
-            auto index = kids[0]->execute();
-            if (index >= tmp->getSize() || index < 0) throw "Incorrect index!";
-            return (*tmp)[index].execute();
+            return tmp->getByIndex(index)->execute();
         }
         
-        case mintgetexp: {
+        case mgetexp: {
             if (!Interpreter::suitForArithm(kids[0]) || !Interpreter::suitForArithm(kids[1])) {
                 throw "Incorrect index!";
             }
-            auto tmp = static_cast<Interpreter::IntegerMatrixNode*>(kids[2]);
-            auto index1 = kids[0]->execute();
-            auto index2 = kids[1]->execute();
-            if (index1 >= tmp->getSizeX() || index1 < 0) throw "Incorrect index!";
-            if (index2 >= tmp->getSizeY() || index2 < 0) throw "Incorrect index!";
-            return (tmp->getByIndex(index1))->getByIndex(index2)->execute();
-        }
-
-        case mboolgetexp: {
-            if (!Interpreter::suitForArithm(kids[0]) || !Interpreter::suitForArithm(kids[1])) {
-                throw "Incorrect index!";
-            }
-            auto tmp = static_cast<Interpreter::BoolMatrixNode*>(kids[2]);
+            auto tmp = static_cast<Interpreter::AbstractMatrixNode*>(kids[2]);
             auto index1 = kids[0]->execute();
             auto index2 = kids[1]->execute();
             if (index1 >= tmp->getSizeX() || index1 < 0) throw "Incorrect index!";
@@ -271,6 +281,7 @@
     Interpreter::OperationNode::OperationNode(operName name, std::vector<Interpreter::Node*> kids): Interpreter::Node(Interpreter::OPNODE) {
         operation = name;
         for (auto& kid: kids) this->kids.push_back(kid);
+        
     }
 
     Interpreter::VariableOperationNode::VariableOperationNode(varType vType, varOperName vopName, std::string name, Interpreter::Node* data): vType(vType), vopType(vopName), varName(name), varSt(Interpreter::varStorage), isCo(Interpreter::isConst) {
@@ -339,7 +350,7 @@
                 Interpreter::OperationNode* tmp = dynamic_cast<Interpreter::OperationNode*>(scalarData);
                 switch (tmp->getOperation())
                 {
-                case plus: case minus: case divide: case vintgetexp: case mintgetexp: case wall: {
+                case plus: case minus: case divide: case wall: {
                     newNode = new Interpreter::IntegerNode(decimal, std::to_string(scalarData->execute()));
                     break;
                 }
@@ -347,6 +358,18 @@
                     auto nnode = dynamic_cast<Interpreter::OperationNode*>(scalarData);
                     auto search = Interpreter::varStorage.find(nnode->getVN());
                     if (search->second->nType == Interpreter::INTNODE) newNode = new Interpreter::IntegerNode(decimal, std::to_string(scalarData->execute()));
+                    break;
+                }
+                case mgetexp: {
+                    auto nnode = dynamic_cast<Interpreter::OperationNode*>(scalarData);
+                    auto search = Interpreter::varStorage.find(nnode->getVN());
+                    if (search->second->nType == Interpreter::INTMATNODE) newNode = new Interpreter::IntegerNode(decimal, std::to_string(scalarData->execute()));
+                    break;
+                }
+                case vgetexp: {
+                    auto nnode = dynamic_cast<Interpreter::OperationNode*>(scalarData);
+                    auto search = Interpreter::varStorage.find(nnode->getVN());
+                    if (search->second->nType == Interpreter::INTVECNODE) newNode = new Interpreter::IntegerNode(decimal, std::to_string(scalarData->execute()));
                     break;
                 }
                 default:
@@ -368,7 +391,7 @@
                 Interpreter::OperationNode* tmp = dynamic_cast<Interpreter::OperationNode*>(scalarData);
                 switch (tmp->getOperation())
                 {
-                case less: case greater: case denial: case conjunction: case vboolgetexp: case mboolgetexp: case move: case exxit:{ //and more and more and more
+                case less: case greater: case denial: case conjunction: case move: case exxit:{ //and more and more and more
                     newNode = new Interpreter::BoolNode(scalarData->execute() ? std::string("true") : std::string("false"));
                     break;
                 } 
@@ -376,6 +399,18 @@
                     auto nnode = dynamic_cast<Interpreter::OperationNode*>(scalarData);
                     auto search = Interpreter::varStorage.find(nnode->getVN());
                     if (search->second->nType == Interpreter::BOOLNODE) newNode = new Interpreter::BoolNode(scalarData->execute() ? std::string("true") : std::string("false"));
+                    break;
+                }
+                case mgetexp: {
+                    auto nnode = dynamic_cast<Interpreter::OperationNode*>(scalarData);
+                    auto search = Interpreter::varStorage.find(nnode->getVN());
+                    if (search->second->nType == Interpreter::BOOLMATNODE) newNode = new Interpreter::BoolNode(scalarData->execute() ? std::string("true") : std::string("false"));
+                    break;
+                }
+                case vgetexp: {
+                    auto nnode = dynamic_cast<Interpreter::OperationNode*>(scalarData);
+                    auto search = Interpreter::varStorage.find(nnode->getVN());
+                    if (search->second->nType == Interpreter::BOOLVECNODE) newNode = new Interpreter::BoolNode(scalarData->execute() ? std::string("true") : std::string("false"));
                     break;
                 }
                 default:
@@ -486,6 +521,7 @@
         }
         else if (vopType == assign) {
             auto search = varSt.find(varName);
+            if (isCo[varName] == true) throw "Can not change constant variable!";
             Node* newNode = nullptr;
             if (search->second->nType == Interpreter::INTNODE) {
                 newNode = getScalarExprResult(Interpreter::INT, scalarData);
@@ -493,9 +529,7 @@
             }
             else if (search->second->nType == Interpreter::BOOLNODE) {
                 newNode = getScalarExprResult(Interpreter::BOOL, scalarData);
-                std::cout << newNode->execute() << std::endl;
                 dynamic_cast<Interpreter::BoolNode*>(varSt[varName])->writeData(dynamic_cast<Interpreter::BoolNode*>(newNode)->getData());
-                std::cout << varSt[varName]->execute() << std::endl;
             }
             else if (search->second->nType == Interpreter::INTVECNODE) {
                 newNode = new Interpreter::IntegerVectorNode(getVectorExprResult(Interpreter::VINT, vectorData), vectorData->getSize());

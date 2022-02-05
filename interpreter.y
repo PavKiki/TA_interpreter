@@ -51,6 +51,12 @@ void yyerror(const char*);
 %type <varOpPtr> declaration assignment
 %type <vtype> type
 
+%destructor {delete $$;} <boolPtr>
+%destructor {delete $$;} <intPtr>
+%destructor {delete $$;} <ptr>
+%destructor {delete $$;} <varName>
+%destructor {delete $$;} <varOpPtr>
+
 %%
 
 program:
@@ -66,6 +72,9 @@ func:
                                         std::cerr << error << std::endl;
                                     }
                                 }
+    | func error                {
+                                    std::cerr << "Error at line " << @2.first_line << std::endl;
+                                }
     |                           
 ;
 
@@ -76,6 +85,14 @@ stmts:
                                     kids.push_back($1);
                                     kids.push_back($2);
                                     $$ = new Interpreter::OperationNode(newline, kids);
+                                }
+    | stmts error               {
+                                    std::cerr << "Error at line " << @2.first_line << std::endl;
+                                    delete $1; delete $$;
+                                }
+    | error                     {
+                                    std::cerr << "Error at line " << @1.first_line << std::endl;
+                                    delete $$;
                                 }
 ;
 
@@ -97,6 +114,10 @@ stmt:
     | callfunction NEWLINE      {$$ = $1;}
     | robotactions NEWLINE      {$$ = $1;}
     | '(' stmts ')'             {$$ = $2;}
+    | error NEWLINE             {
+                                    std::cerr << "Error at line " << @1.first_line << std::endl;
+                                    delete $$;
+                                }
 ;
 
 robotactions:
@@ -142,89 +163,128 @@ robotexit:
 
 iff:
     IF expr NEWLINE BEGIF stmts ENDIF       {
-                                                std::vector<Interpreter::Node*> kids;
-                                                kids.push_back($2);
-                                                kids.push_back($5);
-                                                $$ = new Interpreter::OperationNode(iff, kids);
+                                                try {
+                                                    std::vector<Interpreter::Node*> kids;
+                                                    kids.push_back($2);
+                                                    kids.push_back($5);
+                                                    $$ = new Interpreter::OperationNode(iff, kids);
+                                                }
+                                                catch (const char* error) {
+                                                    std::cerr << error << std::endl;
+                                                }
+                                            }
+    | IF error ENDIF                        {
+                                                std::cerr << "Error at line " << @2.first_line << "-" << std::endl;
+                                                delete $$; 
                                             }
 ;
 
 forr:
-    FORR declaration DOUBLEDOT expr NEWLINE BEGFOR stmts ENDFOR        {
-                                                                    std::vector<Interpreter::Node*> kids;
-                                                                    kids.push_back($2);
-                                                                    kids.push_back($4);
-                                                                    kids.push_back($7);
-                                                                    $$ = new Interpreter::OperationNode(forr, kids);
+    FORR declaration DOUBLEDOT expr NEWLINE BEGFOR stmts ENDFOR {  try {
+                                                                        std::vector<Interpreter::Node*> kids;
+                                                                        kids.push_back($2);
+                                                                        kids.push_back($4);
+                                                                        kids.push_back($7);
+                                                                        $$ = new Interpreter::OperationNode(forr, kids);
+                                                                    }
+                                                                    catch (const char* error) {
+                                                                        std::cerr << error << std::endl;
+                                                                    }
+                                                                }
+    | FORR error ENDFOR                                         {
+                                                                    std::cerr << "Error at line " << @2.first_line << std::endl;
+                                                                    delete $$;
                                                                 }
 ;
 
 return_func:
     type VAR                                                    {
-                                                                    if ($1 == Interpreter::INT) {
-                                                                        auto plug = new Interpreter::IntegerNode();
-                                                                        Interpreter::varStorage.insert_or_assign(*$2, plug);
+                                                                    try {
+                                                                        if ($1 == Interpreter::INT) {
+                                                                            auto plug = new Interpreter::IntegerNode();
+                                                                            Interpreter::varStorage.insert_or_assign(*$2, plug);
+                                                                        }
+                                                                        else if ($1 == Interpreter::BOOL) {
+                                                                            auto plug = new Interpreter::BoolNode();
+                                                                            Interpreter::varStorage.insert_or_assign(*$2, plug);
+                                                                        }
+                                                                        else if ($1 == Interpreter::VINT) {
+                                                                            auto plug = new Interpreter::IntegerVectorNode();
+                                                                            Interpreter::varStorage.insert_or_assign(*$2, plug);
+                                                                        }
+                                                                        else if ($1 == Interpreter::VBOOL) {
+                                                                            auto plug = new Interpreter::BoolVectorNode();
+                                                                            Interpreter::varStorage.insert_or_assign(*$2, plug);
+                                                                        }
+                                                                        else if ($1 == Interpreter::MINT) {
+                                                                            auto plug = new Interpreter::IntegerMatrixNode();
+                                                                            Interpreter::varStorage.insert_or_assign(*$2, plug);
+                                                                        }
+                                                                        else if ($1 == Interpreter::MBOOL) {
+                                                                            auto plug = new Interpreter::BoolMatrixNode();
+                                                                            Interpreter::varStorage.insert_or_assign(*$2, plug);
+                                                                        }
+                                                                        else throw "Return parameters can not be const!";
+                                                                        auto search = Interpreter::varStorage.find(*$2);
+                                                                        $$ = new Interpreter::return_funcNode({$1, search->second});
+                                                                        dynamic_cast<Interpreter::return_funcNode*>($$)->retVarNames.push_back(*$2);
                                                                     }
-                                                                    else if ($1 == Interpreter::BOOL) {
-                                                                        auto plug = new Interpreter::BoolNode();
-                                                                        Interpreter::varStorage.insert_or_assign(*$2, plug);
+                                                                    catch (const char* error) {
+                                                                        std::cerr << error << std::endl;
                                                                     }
-                                                                    else if ($1 == Interpreter::VINT) {
-                                                                        auto plug = new Interpreter::IntegerVectorNode();
-                                                                        Interpreter::varStorage.insert_or_assign(*$2, plug);
-                                                                    }
-                                                                    else if ($1 == Interpreter::VBOOL) {
-                                                                        auto plug = new Interpreter::BoolVectorNode();
-                                                                        Interpreter::varStorage.insert_or_assign(*$2, plug);
-                                                                    }
-                                                                    else if ($1 == Interpreter::MINT) {
-                                                                        auto plug = new Interpreter::IntegerMatrixNode();
-                                                                        Interpreter::varStorage.insert_or_assign(*$2, plug);
-                                                                    }
-                                                                    else if ($1 == Interpreter::MBOOL) {
-                                                                        auto plug = new Interpreter::BoolMatrixNode();
-                                                                        Interpreter::varStorage.insert_or_assign(*$2, plug);
-                                                                    }
-                                                                    else throw "Return parameters can not be const!";
-                                                                    auto search = Interpreter::varStorage.find(*$2);
-                                                                    $$ = new Interpreter::return_funcNode({$1, search->second});
-                                                                    dynamic_cast<Interpreter::return_funcNode*>($$)->retVarNames.push_back(*$2);
                                                                 }
     | return_func ',' type VAR                                  {
-                                                                    if ($3 == Interpreter::INT) {
-                                                                        auto plug = new Interpreter::IntegerNode();
-                                                                        Interpreter::varStorage.insert_or_assign(*$4, plug);
+                                                                    try {
+                                                                        if ($3 == Interpreter::INT) {
+                                                                            auto plug = new Interpreter::IntegerNode();
+                                                                            Interpreter::varStorage.insert_or_assign(*$4, plug);
+                                                                        }
+                                                                        else if ($3 == Interpreter::BOOL) {
+                                                                            auto plug = new Interpreter::BoolNode();
+                                                                            Interpreter::varStorage.insert_or_assign(*$4, plug);
+                                                                        }
+                                                                        else if ($3 == Interpreter::VINT) {
+                                                                            auto plug = new Interpreter::IntegerVectorNode();
+                                                                            Interpreter::varStorage.insert_or_assign(*$4, plug);
+                                                                        }
+                                                                        else if ($3 == Interpreter::VBOOL) {
+                                                                            auto plug = new Interpreter::BoolVectorNode();
+                                                                            Interpreter::varStorage.insert_or_assign(*$4, plug);
+                                                                        }
+                                                                        else if ($3 == Interpreter::MINT) {
+                                                                            auto plug = new Interpreter::IntegerMatrixNode();
+                                                                            Interpreter::varStorage.insert_or_assign(*$4, plug);
+                                                                        }
+                                                                        else if ($3 == Interpreter::MBOOL) {
+                                                                            auto plug = new Interpreter::BoolMatrixNode();
+                                                                            Interpreter::varStorage.insert_or_assign(*$4, plug);
+                                                                        }
+                                                                        else throw "Return parameters can not be const!";
+                                                                        auto search = Interpreter::varStorage.find(*$4);
+                                                                        dynamic_cast<Interpreter::return_funcNode*>($$)->container.push_back({$3, search->second});
+                                                                        dynamic_cast<Interpreter::return_funcNode*>($$)->retVarNames.push_back(*$4);
                                                                     }
-                                                                    else if ($3 == Interpreter::BOOL) {
-                                                                        auto plug = new Interpreter::BoolNode();
-                                                                        Interpreter::varStorage.insert_or_assign(*$4, plug);
+                                                                    catch (const char* error) {
+                                                                        std::cerr << error << std::endl;
                                                                     }
-                                                                    else if ($3 == Interpreter::VINT) {
-                                                                        auto plug = new Interpreter::IntegerVectorNode();
-                                                                        Interpreter::varStorage.insert_or_assign(*$4, plug);
-                                                                    }
-                                                                    else if ($3 == Interpreter::VBOOL) {
-                                                                        auto plug = new Interpreter::BoolVectorNode();
-                                                                        Interpreter::varStorage.insert_or_assign(*$4, plug);
-                                                                    }
-                                                                    else if ($3 == Interpreter::MINT) {
-                                                                        auto plug = new Interpreter::IntegerMatrixNode();
-                                                                        Interpreter::varStorage.insert_or_assign(*$4, plug);
-                                                                    }
-                                                                    else if ($3 == Interpreter::MBOOL) {
-                                                                        auto plug = new Interpreter::BoolMatrixNode();
-                                                                        Interpreter::varStorage.insert_or_assign(*$4, plug);
-                                                                    }
-                                                                    else throw "Return parameters can not be const!";
-                                                                    auto search = Interpreter::varStorage.find(*$4);
-                                                                    dynamic_cast<Interpreter::return_funcNode*>($$)->container.push_back({$3, search->second});
-                                                                    dynamic_cast<Interpreter::return_funcNode*>($$)->retVarNames.push_back(*$4);
                                                                 }
+    | return_func error                                     {
+                                                                std::cerr << "Error at line " << @2.first_line << std::endl;
+                                                                delete $1;
+                                                            }
 ;
 
 args_func:
      '[' type VAR ']'                                                  {$$ = new Interpreter::args_func($2, *$3);}
     | args_func ',' '[' type VAR ']'                                              {dynamic_cast<Interpreter::args_func*>($$)->addByVTypeandName($4, *$5);}
+    | args_func error                                                   {
+                                                                            std::cerr << "Error at line " << @2.first_line << std::endl;
+                                                                            delete $1; delete $$;
+                                                                        }
+    | error                                                             {
+                                                                            std::cerr << "Error at line " << @1.first_line << std::endl;
+                                                                            delete $$;
+                                                                        }
 ;
 
 function:
@@ -236,6 +296,10 @@ function:
                                                                             Interpreter::tmpStorage.clear();
                                                                             $$ = plug;
                                                                         }
+    | error E                                                           {
+                                                                            std::cerr << "Error at line " << @1.first_line << std::endl;
+                                                                            delete $$;
+                                                                        }
 ;
 
 callfunc_args:
@@ -245,10 +309,22 @@ callfunc_args:
     | callfunc_args ',' expr          {dynamic_cast<Interpreter::callfunc_args*>($$)->addArg(expR, $3);}
     | callfunc_args ',' vector        {dynamic_cast<Interpreter::callfunc_args*>($$)->addArg(vectoR, $3);}
     | callfunc_args ',' matrix        {dynamic_cast<Interpreter::callfunc_args*>($$)->addArg(matriX, $3);}
+    | callfunc_args error           {
+                                        std::cerr << "Error at line " << @2.first_line << std::endl;
+                                        delete $1;
+                                    }
+    | error                         {
+                                        std::cerr << "Error at line " << @1.first_line << std::endl;
+                                        delete $$;
+                                    }
 ;
 
 callfunction:
     FVARIABLE '[' callfunc_args ']'         {$$ = new Interpreter::callfunc(*$1, dynamic_cast<Interpreter::callfunc_args*>($3)->args);}
+    | error '[' callfunc_args ']'           {
+                                               std::cerr << "Error at line " << @1.first_line << std::endl;
+                                               delete $3; delete $$;
+                                            }
 ;
 
 matrix:
@@ -276,29 +352,30 @@ matrix:
                                                 }
     | MVARIABLE                     {
                                         auto search = Interpreter::varStorage.find(*$1);
-                                        auto tmp = dynamic_cast<Interpreter::AbstractMatrixNode*>(search->second)->copy();
-                                        $$ = new Interpreter::ContainerMatrixNode(dynamic_cast<Interpreter::AbstractMatrixNode*>(tmp)->getData(), dynamic_cast<Interpreter::AbstractMatrixNode*>(tmp)->getSizeX(), dynamic_cast<Interpreter::AbstractMatrixNode*>(tmp)->getSizeY());
+                                        std::vector<Interpreter::ContainerMatrixNode*> kids;
+                                        kids.push_back(static_cast<Interpreter::ContainerMatrixNode*>(search->second));
+                                        $$ = new Interpreter::ContainerMatrixNode(kids, getmat);
                                     }
     | matrix '*' matrix             {
                                         std::vector<Interpreter::ContainerMatrixNode*> kids;
-                                        kids.push_back(dynamic_cast<Interpreter::ContainerMatrixNode*>($1));
-                                        kids.push_back(dynamic_cast<Interpreter::ContainerMatrixNode*>($3));
+                                        kids.push_back(static_cast<Interpreter::ContainerMatrixNode*>($1));
+                                        kids.push_back(static_cast<Interpreter::ContainerMatrixNode*>($3));
                                         $$ = new Interpreter::ContainerMatrixNode(kids, mmultiply);
                                     }
     | matrix ELEMMULT matrix        {
                                         std::vector<Interpreter::ContainerMatrixNode*> kids;
-                                        kids.push_back(dynamic_cast<Interpreter::ContainerMatrixNode*>($1));
-                                        kids.push_back(dynamic_cast<Interpreter::ContainerMatrixNode*>($3));
+                                        kids.push_back(static_cast<Interpreter::ContainerMatrixNode*>($1));
+                                        kids.push_back(static_cast<Interpreter::ContainerMatrixNode*>($3));
                                         $$ = new Interpreter::ContainerMatrixNode(kids, melemmultiply);
                                     }
     | matrix '\''                   {
                                         std::vector<Interpreter::ContainerMatrixNode*> kids;
-                                        kids.push_back(dynamic_cast<Interpreter::ContainerMatrixNode*>($1));
+                                        kids.push_back(static_cast<Interpreter::ContainerMatrixNode*>($1));
                                         $$ = new Interpreter::ContainerMatrixNode(kids, mtransposition);
                                     }
     | matrix RIGHTSHIFT             {
                                         std::vector<Interpreter::ContainerMatrixNode*> kids;
-                                        kids.push_back(dynamic_cast<Interpreter::ContainerMatrixNode*>($1));
+                                        kids.push_back(static_cast<Interpreter::ContainerMatrixNode*>($1));
                                         $$ = new Interpreter::ContainerMatrixNode(kids, mcycshiftright);
                                     }
     | matrix LEFTSHIFT              {
@@ -307,16 +384,15 @@ matrix:
                                         $$ = new Interpreter::ContainerMatrixNode(kids, mcycshiftleft);
                                     }
     | vector '\''                   {
-                                        auto kid = new Interpreter::ContainerMatrixNode(dynamic_cast<Interpreter::ContainerVectorNode*>($1));
                                         std::vector<Interpreter::ContainerMatrixNode*> kids;
-                                        kids.push_back(dynamic_cast<Interpreter::ContainerMatrixNode*>(kid));
-                                        $$ = new Interpreter::ContainerMatrixNode(kids, mtransposition);
+                                        kids.push_back((Interpreter::ContainerMatrixNode*)($1));
+                                        $$ = new Interpreter::ContainerMatrixNode(kids, vtransposition);
                                     }
     | matrix ELEMMULT vector        {
                                         std::vector<Interpreter::ContainerMatrixNode*> kids;
                                         kids.push_back(dynamic_cast<Interpreter::ContainerMatrixNode*>($1));
                                         kids.push_back(static_cast<Interpreter::ContainerMatrixNode*>($3));
-                                        $$ = new Interpreter::ContainerMatrixNode(kids, mcycshiftleft);
+                                        $$ = new Interpreter::ContainerMatrixNode(kids, MEMvec);
                                     }
     | matrix ELEMMULT expr          {
                                         std::vector<Interpreter::ContainerMatrixNode*> kids;
@@ -324,6 +400,18 @@ matrix:
                                         kids.push_back(static_cast<Interpreter::ContainerMatrixNode*>($3));
                                         $$ = new Interpreter::ContainerMatrixNode(kids, MEMexpr);
                                     }
+    | error matrix                  {
+                                               std::cerr << "Error at line " << @1.first_line << std::endl;
+                                               delete $2;
+                                            }
+    | error vector                  {
+                                               std::cerr << "Error at line " << @1.first_line << std::endl;
+                                               delete $2;
+                                            }
+    | error expr                    {
+                                               std::cerr << "Error at line " << @1.first_line << std::endl;
+                                               delete $2;
+                                            }
 ;
 
 listexprs:
@@ -332,6 +420,10 @@ listexprs:
                                             dynamic_cast<Interpreter::ContainerMatrixNode*>($$)->addData(dynamic_cast<Interpreter::ContainerVectorNode*>($3));
                                         }
     | listexprs ',' vector              {dynamic_cast<Interpreter::ContainerMatrixNode*>($$)->addData(dynamic_cast<Interpreter::ContainerVectorNode*>($3));}
+    | listexprs error                   {
+                                               std::cerr << "Error at line " << @2.first_line << std::endl;
+                                               delete $1;
+                                            }
 ;
 
 vector:
@@ -359,8 +451,9 @@ vector:
                                                 }
     | VVARIABLE                         {
                                             auto search = Interpreter::varStorage.find(*$1);
-                                            auto tmp = dynamic_cast<Interpreter::AbstractVectorNode*>(search->second)->copy();
-                                            $$ = new Interpreter::ContainerVectorNode(dynamic_cast<Interpreter::AbstractVectorNode*>(tmp)->getData(), dynamic_cast<Interpreter::AbstractVectorNode*>(tmp)->getSize());
+                                            std::vector<Interpreter::ContainerVectorNode*> kids;
+                                            kids.push_back((Interpreter::ContainerVectorNode*)(search->second));
+                                            $$ = new Interpreter::ContainerVectorNode(kids, getvec);
                                         }
     | vector ELEMMULT vector            {
                                             std::vector<Interpreter::ContainerVectorNode*> kids;
@@ -384,6 +477,14 @@ vector:
                                             kids.push_back(static_cast<Interpreter::ContainerVectorNode*>($3));
                                             $$ = new Interpreter::ContainerVectorNode(kids, VEMexpr);
                                         }
+    | error vector                      {
+                                               std::cerr << "Error at line " << @1.first_line << std::endl;
+                                               delete $2; delete $$;
+                                            }
+    | error expr                        {
+                                               std::cerr << "Error at line " << @1.first_line << std::endl;
+                                               delete $2; delete $$;
+                                            }
 
 ;
 
@@ -393,6 +494,10 @@ exprs:
                                     dynamic_cast<Interpreter::ContainerVectorNode*>($$)->addData($3);
                                 }
     | exprs ',' expr            {dynamic_cast<Interpreter::ContainerVectorNode*>($$)->addData($3);}
+    | exprs error               {
+                                    std::cerr << "Error at line " << @2.first_line << std::endl;
+                                    delete $1;
+                                }
 ;
 
 vmdeclaration:
@@ -503,11 +608,13 @@ declaration:
                                                     if ($1 == Interpreter::INT || $1 == Interpreter::CINT) {
                                                         auto plug = new Interpreter::IntegerNode();
                                                         Interpreter::varStorage.insert_or_assign(*$2, plug);
+                                                        if ($1 == Interpreter::CINT) Interpreter::isConst.insert_or_assign(*$2, true);
                                                         $$ = new Interpreter::VariableOperationNode($1, declare, *$2, $4);
                                                     }
                                                     else if ($1 == Interpreter::BOOL || $1 == Interpreter::CBOOL) {
                                                         auto plug = new Interpreter::BoolNode();
                                                         Interpreter::varStorage.insert_or_assign(*$2, plug);
+                                                        if ($1 == Interpreter::CBOOL) Interpreter::isConst.insert_or_assign(*$2, true);
                                                         $$ = new Interpreter::VariableOperationNode($1, declare, *$2, $4);
                                                     }
                                                     else yyerror("Type mismatch!");
@@ -516,6 +623,7 @@ declaration:
                                                     if ($1 == Interpreter::VINT || $1 == Interpreter::CVINT || $1 == Interpreter::VBOOL || $1 == Interpreter::CVBOOL) {
                                                         auto plug = new Interpreter::AbstractVectorNode();
                                                         Interpreter::varStorage.insert_or_assign(*$2, plug);
+                                                        if ($1 == Interpreter::CVBOOL || $1 == Interpreter::CVINT) Interpreter::isConst.insert_or_assign(*$2, true);
                                                         $$ = new Interpreter::VariableOperationNode($1, declare, *$2, dynamic_cast<Interpreter::ContainerVectorNode*>($4));
                                                     }
                                                     else yyerror("Type mismatch!");
@@ -524,6 +632,7 @@ declaration:
                                                     if ($1 == Interpreter::MINT || $1 == Interpreter::CMINT || $1 == Interpreter::MBOOL || $1 == Interpreter::CMBOOL) {
                                                         auto plug = new Interpreter::AbstractMatrixNode();
                                                         Interpreter::varStorage.insert_or_assign(*$2, plug);
+                                                        if ($1 == Interpreter::CMBOOL || $1 == Interpreter::CMINT) Interpreter::isConst.insert_or_assign(*$2, true);
                                                         $$ = new Interpreter::VariableOperationNode($1, declare, *$2, dynamic_cast<Interpreter::ContainerMatrixNode*>($4));
                                                     }
                                                     else yyerror("Type mismatch!");
@@ -630,28 +739,22 @@ expr:
     | '(' expr ')'              {$$ = $2;}
     | VVARIABLE '(' expr ')'    {
                                     auto search = Interpreter::varStorage.find(*$1);
-                                        std::vector<Interpreter::Node*> kids;
-                                        kids.push_back($3);
-                                        kids.push_back(search->second);
-                                        if (search->second->nType == Interpreter::INTVECNODE) {
-                                            $$ = new Interpreter::OperationNode(vintgetexp, kids);
-                                        }
-                                        else if (search->second->nType == Interpreter::BOOLVECNODE) {
-                                            $$ = new Interpreter::OperationNode(vboolgetexp, kids);
-                                        }
+                                    std::vector<Interpreter::Node*> kids;
+                                    kids.push_back($3);
+                                    kids.push_back(search->second);
+                                    $$ = new Interpreter::OperationNode(vgetexp, *$1, kids);
                                 }
     | MVARIABLE '(' expr ',' expr ')'   {
                                             auto search = Interpreter::varStorage.find(*$1);
-                                                std::vector<Interpreter::Node*> kids;
-                                                kids.push_back($3);
-                                                kids.push_back($5);
-                                                kids.push_back(search->second);
-                                                if (search->second->nType == Interpreter::INTMATNODE) {
-                                                    $$ = new Interpreter::OperationNode(mintgetexp, kids);
-                                                }
-                                                else if (search->second->nType == Interpreter::BOOLMATNODE) {
-                                                    $$ = new Interpreter::OperationNode(mboolgetexp, kids);
-                                                }
+                                            std::vector<Interpreter::Node*> kids;
+                                            kids.push_back($3);
+                                            kids.push_back($5);
+                                            kids.push_back(search->second);
+                                            $$ = new Interpreter::OperationNode(mgetexp, *$1, kids);
+                                        }
+    | error expr                        {
+                                            std::cerr << "Error at line " << @1.first_line << std::endl;
+                                            delete $2;
                                         }
 ;
 
@@ -681,9 +784,15 @@ void yyerror(const char* error) {
     std::cerr << error << std::endl;
 }
 
-int main(void) {
-    yyin = std::fopen("test.txt", "r");
+int main(int argc, char* argv[]) {
+    if (argc == 1) yyin = std::fopen("test.txt", "r");
+    else if (argc == 2) yyin = std::fopen(argv[1], "r");
+    else {
+        std::cerr << "Invalid amount of parameters, please try again!" << std::endl;
+        return 1;
+    }
     yyparse();
     std::fclose(yyin);
+    std::cerr << "Total amount of error: " << yynerrs << std::endl;
     return 0;
 }

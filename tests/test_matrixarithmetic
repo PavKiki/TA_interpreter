@@ -1,0 +1,29 @@
+mint a = {{0,1},{2,3}}
+print(a)
+
+mint b = {{4,5},{6,7}}
+print(b)
+
+mint e = a * b
+print(e)
+
+mint f = a .* b
+print(f)
+
+mint c = a'
+print(c)
+
+mint d = a<<
+print(d)
+
+mint g = b>>
+print(g)
+
+mint h = a .* 5
+print(h)
+
+mint i = a .* {2,4}
+print(i)
+
+mint j = a .* {3,6}
+print(j)

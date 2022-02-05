@@ -1,0 +1,14 @@
+int a = 120
+print(a)
+if true and true
+begin[if]
+a <- 10
+print(a)
+end[if]
+print(a)
+if !true
+begin[if]
+a <- 99
+print(a)
+end[if]
+

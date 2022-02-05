@@ -1,0 +1,20 @@
+vint a = {0,1,2,3,4,5}
+print(a)
+
+vint b = {6,7,8,9,10,11}
+print(b)
+
+vint c = a.*b
+print(c)
+
+mint d = a'
+print(d)
+
+mint e = b'
+print(e)
+
+vint f = a<<
+print(f)
+
+vint g = b>>
+print(g)

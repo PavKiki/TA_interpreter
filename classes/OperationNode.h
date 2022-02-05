@@ -16,10 +16,8 @@ enum operName {
     conjunction,
     newline,
     pprint,
-    vintgetexp,
-    vboolgetexp,
-    mintgetexp,
-    mboolgetexp,
+    vgetexp,
+    mgetexp,
     iff,
     forr,
     gscalar,
@@ -54,6 +52,7 @@ public:
 
     OperationNode(): Node(OPNODE) {operation = nothing;};
     OperationNode(operName name, std::vector<Node*> kids);
+    OperationNode(operName name, std::string vname, std::vector<Node*> kids): operation(name), varname(vname), kids(kids), Node(OPNODE) {};
     OperationNode(operName name, std::string vname): operation(name), varname(vname), Node(OPNODE) {};
     ~OperationNode() {};
 };

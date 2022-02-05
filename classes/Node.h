@@ -17,7 +17,8 @@ enum mOpType {
     MEMvec,
     mveccolumnindex,
     mvecrowindex,
-    mmatindex
+    mmatindex,
+    getmat
 };
 
 enum vecOpType {
@@ -28,7 +29,8 @@ enum vecOpType {
     VEMexpr,
     vvecindex,
     mexprcolumnindex,
-    mexprrowindex
+    mexprrowindex,
+    getvec
 };
 
 enum VMOpName {

@@ -130,6 +130,14 @@ int Interpreter::ContainerVectorNode::execute() {
             }
             break;
         }
+        case getvec: {
+            auto tmp = static_cast<AbstractVectorNode*>((Node*)(kids[0]));
+            auto ttmp = new ContainerVectorNode(tmp->getData(), tmp->getSize());
+            for (size_t i = 0; i < ttmp->getSize(); i++) {
+                this->addData((*ttmp)[i]);
+            }
+            break;
+        }
         default:
             throw "Incorrect operation type!";
     }
@@ -191,23 +199,25 @@ int Interpreter::ContainerMatrixNode::execute() {
         x = resX;
         y = resY;
 
-        Interpreter::ContainerVectorNode tmp1, tmp2;
+        Interpreter::ContainerVectorNode* tmp1, *tmp2;
         for (size_t i = 0; i < resX; i++) {
             Interpreter::ContainerVectorNode* newRow = new Interpreter::ContainerVectorNode();
-            tmp1 = *(mat1[i]);
+            tmp1 = mat1[i];
             for (size_t j = 0; j < resY; j++) {
                 int res = 0;
                 for (size_t k = 0; k < kids[1]->getSizeY(); k++) {
-                    tmp2 = *(mat2[k]);
-                    if (Interpreter::suitForArithm(tmp1[k]) && Interpreter::suitForArithm(tmp2[j])) {
-                        res += tmp1[k]->execute() * tmp2[j]->execute();
+                    tmp2 = mat2[k];
+                    if (Interpreter::suitForArithm((*tmp1)[k]) && Interpreter::suitForArithm((*tmp2)[j])) {
+                        res += (*tmp1)[k]->execute() * (*tmp2)[j]->execute();
                     }
                     else throw "Type mismatch!";
+                    tmp2 = nullptr;
                 }
                 auto resNode = new Interpreter::IntegerNode(decimal, std::to_string(res));
                 newRow->addData(resNode);
             }
             this->addData(newRow);
+            tmp1 = nullptr;
         }
         break;
     }
@@ -221,24 +231,24 @@ int Interpreter::ContainerMatrixNode::execute() {
         kids[0]->getMatrix(mat1);
         std::vector<Interpreter::ContainerVectorNode*> mat2;
         kids[1]->getMatrix(mat2);
-        x = resX;
         y = resY;
 
-        Interpreter::ContainerVectorNode tmp1, tmp2;
         for (size_t i = 0; i < resX; i++) {
             Interpreter::ContainerVectorNode* newRow = new Interpreter::ContainerVectorNode();
-            tmp1 = *(mat1[i]);
-            tmp2 = *(mat2[i]);
+            Interpreter::ContainerVectorNode* tmp1 = mat1[i];
+            Interpreter::ContainerVectorNode* tmp2 = mat2[i];
             for (size_t j = 0; j < resY; j++) {
                 int res;
-                if (Interpreter::suitForArithm(tmp1[j]) && Interpreter::suitForArithm(tmp2[j])) {
-                    res = tmp1[j]->execute() * tmp2[j]->execute();
+                if (Interpreter::suitForArithm((*tmp1)[j]) && Interpreter::suitForArithm((*tmp2)[j])) {
+                    res = (*tmp1)[j]->execute() * (*tmp2)[j]->execute();
                 }
                 else throw "Type mismatch!";
                 auto resNode = new Interpreter::IntegerNode(decimal, std::to_string(res));
-                newRow->addData(resNode);
+                newRow->addData(resNode);   //newRow should content y elements before insert in this
             }
-            this->addData(newRow);
+            this->addData(newRow);  //x increments here
+            tmp1 = nullptr;
+            tmp2 = nullptr;
         }
         break;
     }
@@ -248,43 +258,67 @@ int Interpreter::ContainerMatrixNode::execute() {
         size_t resY = kids[0]->getSizeX();
         std::vector<Interpreter::ContainerVectorNode*> mat1;
         kids[0]->getMatrix(mat1);
-        x = resX;
         y = resY;
 
-        Interpreter::ContainerVectorNode tmp;
+        Interpreter::ContainerVectorNode* tmp;
         for (size_t j = 0; j < resX; j++) {
             Interpreter::ContainerVectorNode* newRow = new Interpreter::ContainerVectorNode();
             for (size_t i = 0; i < resY; i++) {
-                tmp = *(mat1[i]);
-                int res = tmp[j]->execute();
+                tmp = mat1[i];
+                int res = (*tmp)[j]->execute();
                 Interpreter::Node* resNode;
-                if (tmp[j]->nType == Interpreter::BOOLNODE) {
+                if ((*tmp)[j]->nType == Interpreter::BOOLNODE) {
                     resNode = new Interpreter::BoolNode(res ? "true" : "false");
                 }
-                else if (tmp[j]->nType == Interpreter::INTNODE) {
+                else if ((*tmp)[j]->nType == Interpreter::INTNODE) {
                     resNode = new Interpreter::IntegerNode(decimal, std::to_string(res));
                 }
                 else throw "Invalid node type!";
                 newRow->addData(resNode);
+                tmp = nullptr;
             }
             this->addData(newRow);
         }
         break;
     }
-    case mcycshiftright: {
+    case vtransposition: {
         kids[0]->execute();
-        size_t resX = kids[0]->getSizeX();
-        size_t resY = kids[0]->getSizeY();
+        ContainerVectorNode* omega = static_cast<ContainerVectorNode*>((Node*)(kids[0]));
+        size_t resX = omega->getSize();
+        std::vector<Interpreter::Node*> mat1;
+        omega->getVector(mat1);
+        y = 1;
+        Interpreter::ContainerVectorNode* tmp;
+        for (size_t j = 0; j < resX; j++) {
+            Interpreter::ContainerVectorNode* newRow = new Interpreter::ContainerVectorNode();
+            int res = mat1[j]->execute();
+            Interpreter::Node* resNode;
+            if (mat1[j]->nType == Interpreter::BOOLNODE) {
+                resNode = new Interpreter::BoolNode(res ? "true" : "false");
+            }
+            else if (mat1[j]->nType == Interpreter::INTNODE) {
+                resNode = new Interpreter::IntegerNode(decimal, std::to_string(res));
+            }
+            else throw "Invalid node type!";
+            newRow->addData(resNode);
+            tmp = nullptr;
+            this->addData(newRow);
+        }
+        break;
+    }
+    case mcycshiftright: {
+        kids[0]->execute(); //now for sure there are some elements in container
+        size_t resX = kids[0]->getSizeX();  //get x dimension
+        size_t resY = kids[0]->getSizeY();  //get y dimension
         std::vector<Interpreter::ContainerVectorNode*> mat1;
-        kids[0]->getMatrix(mat1);
-        x = resX;
-        y = resY;
-        for (size_t i = 0; i < x; i++) {
+        kids[0]->getMatrix(mat1);   //get vector of ContainerVectorNodes
+        y = resY;   //this y = kid y
+        for (size_t i = 0; i < resX; i++) {
             std::vector<Interpreter::ContainerVectorNode*> vkids;
             vkids.push_back(mat1[i]);
             auto newRow = new Interpreter::ContainerVectorNode(vkids, vcycshiftright);
             newRow->execute();
-            this->addData(newRow);
+            this->addData(newRow);//    this->x increments here
         }
         break;
     }
@@ -294,14 +328,13 @@ int Interpreter::ContainerMatrixNode::execute() {
         size_t resY = kids[0]->getSizeY();
         std::vector<Interpreter::ContainerVectorNode*> mat1;
         kids[0]->getMatrix(mat1);
-        x = resX;
-        y = resY;
-        for (size_t i = 0; i < x; i++) {
+        y = resY;   //it is necessary for correct vector addition 
+        for (size_t i = 0; i < resX; i++) {
             std::vector<Interpreter::ContainerVectorNode*> vkids;
             vkids.push_back(mat1[i]);
             auto newRow = new Interpreter::ContainerVectorNode(vkids, vcycshiftleft);
             newRow->execute();
-            this->addData(newRow);
+            this->addData(newRow);  //this->x increments here
         }
         break;
     }
@@ -311,10 +344,9 @@ int Interpreter::ContainerMatrixNode::execute() {
         size_t resY = kids[0]->getSizeY();
         std::vector<Interpreter::ContainerVectorNode*> mat1;
         kids[0]->getMatrix(mat1);
-        x = resX;
         y = resY;
         Interpreter::Node* tmp = kids[1];
-        for (size_t i = 0; i < x; i++) {
+        for (size_t i = 0; i < resX; i++) {
             std::vector<Interpreter::ContainerVectorNode*> vkids;
             vkids.push_back(mat1[i]);
             vkids.push_back(static_cast<Interpreter::ContainerVectorNode*>(tmp));
@@ -330,11 +362,10 @@ int Interpreter::ContainerMatrixNode::execute() {
         size_t resY = kids[0]->getSizeY();
         std::vector<Interpreter::ContainerVectorNode*> mat1;
         kids[0]->getMatrix(mat1);
-        x = resX;
         y = resY;
         Interpreter::ContainerVectorNode* tmp = static_cast<Interpreter::ContainerVectorNode*>((Node*)(kids[1]));
         if (tmp->getSize() != y) throw "Size mismatch!";
-        for (size_t i = 0; i < x; i++) {
+        for (size_t i = 0; i < resX; i++) {
             std::vector<Interpreter::ContainerVectorNode*> vkids;
             vkids.push_back(mat1[i]);
             vkids.push_back(static_cast<Interpreter::ContainerVectorNode*>(tmp));
@@ -419,6 +450,15 @@ int Interpreter::ContainerMatrixNode::execute() {
             this->addData(tmp);
         }
 
+        break;
+    }
+    case getmat: {
+        auto tmp = static_cast<AbstractMatrixNode*>(static_cast<Node*>(kids[0]));
+        auto ttmp = new ContainerMatrixNode(tmp->getData(), tmp->getSizeX(), tmp->getSizeY());
+        this->y = ttmp->getSizeY();
+        for (size_t i = 0; i < ttmp->getSizeX(); i++) {
+            this->addData((*ttmp)[i]);
+        }
         break;
     }
     default:
