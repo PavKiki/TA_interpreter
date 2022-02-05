@@ -1,8 +1,0 @@
-int b = 0
-for int a = 0:5
-begin[for]
-print(a)
-b <- b + 1
-end[for]
-
-print(b)

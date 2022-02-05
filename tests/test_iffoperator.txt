@@ -1,0 +1,17 @@
+int a = 120
+print(a)
+
+if true and true
+beginif
+a <- 10
+print(a)
+endif
+
+print(a)
+
+if !true
+begin
+a <- 99
+print(a)
+end
+

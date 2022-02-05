@@ -71,13 +71,13 @@ begin                   {yylloc.last_line = yylloc.first_line = yylineno; return
 
 end                     {yylloc.last_line = yylloc.first_line = yylineno; return E;}
 
-"begin[if]"             {yylloc.last_line = yylloc.first_line = yylineno; return BEGIF;}
+beginif                 {yylloc.last_line = yylloc.first_line = yylineno; return BEGIF;}
 
-"end[if]"               {yylloc.last_line = yylloc.first_line = yylineno; return ENDIF;}
+endif                   {yylloc.last_line = yylloc.first_line = yylineno; return ENDIF;}
 
-"begin[for]"            {yylloc.last_line = yylloc.first_line = yylineno; return BEGFOR;}
+beginfor                {yylloc.last_line = yylloc.first_line = yylineno; return BEGFOR;}
 
-"end[for]"              {yylloc.last_line = yylloc.first_line = yylineno; return ENDFOR;}
+endfor                  {yylloc.last_line = yylloc.first_line = yylineno; return ENDFOR;}
 
 move                    {yylloc.last_line = yylloc.first_line = yylineno; return MOVE;}
 

@@ -38,7 +38,7 @@ void yyerror(const char*);
 %token <intPtr> INTEGER
 %token <varName> VARIABLE VVARIABLE MVARIABLE VAR FVARIABLE
 %token <vtype> CINT VINT MINT INT CVINT CMINT BOOLEAN CBOOLEAN VBOOLEAN MBOOLEAN CVBOOLEAN CMBOOLEAN
-%token NEWLINE PRINT CONJUNCTION ELEMMULT '\'' LEFTSHIFT RIGHTSHIFT ',' IF FORR BEGIF ENDIF BEGFOR ENDFOR ER DOUBLEDOT B E FUNC MOVE RIGHT LEFT ROBEX WALL
+%token NEWLINE PRINT CONJUNCTION ELEMMULT '\'' LEFTSHIFT RIGHTSHIFT ',' IF FORR ER DOUBLEDOT B E FUNC MOVE RIGHT LEFT ROBEX WALL BEGFOR BEGIF ENDIF ENDFOR
 
 %left ASSIGN DECLARE
 %left '<' '>' 
@@ -162,7 +162,7 @@ robotexit:
 ;
 
 iff:
-    IF expr NEWLINE BEGIF stmts ENDIF       {
+    IF expr NEWLINE begif stmts endif       {
                                                 try {
                                                     std::vector<Interpreter::Node*> kids;
                                                     kids.push_back($2);
@@ -173,14 +173,33 @@ iff:
                                                     std::cerr << error << std::endl;
                                                 }
                                             }
-    | IF error ENDIF                        {
+    | IF error endif                        {
                                                 std::cerr << "Error at line " << @2.first_line << "-" << std::endl;
-                                                delete $$; 
                                             }
 ;
 
+begif:
+    B                           {}
+    | BEGIF                      {}
+;
+
+endif:
+    E                           {}
+    | ENDIF                      {}
+;
+
+begfor:
+    B                                       {}
+    | BEGFOR                                {}
+;
+
+endfor:
+    E                                       {}
+    | ENDFOR                                {}
+;
+
 forr:
-    FORR declaration DOUBLEDOT expr NEWLINE BEGFOR stmts ENDFOR {  try {
+    FORR declaration DOUBLEDOT expr NEWLINE begfor stmts endfor {  try {
                                                                         std::vector<Interpreter::Node*> kids;
                                                                         kids.push_back($2);
                                                                         kids.push_back($4);
@@ -191,9 +210,8 @@ forr:
                                                                         std::cerr << error << std::endl;
                                                                     }
                                                                 }
-    | FORR error ENDFOR                                         {
+    | FORR error endfor                                         {
                                                                     std::cerr << "Error at line " << @2.first_line << std::endl;
-                                                                    delete $$;
                                                                 }
 ;
 

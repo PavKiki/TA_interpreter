@@ -3,4 +3,12 @@ left
 move(wall)
 left
 move(wall)
+right
+move(wall)
+right
+move(wall)
+left
+move(wall)
+left
+move(wall)
 move(1)
