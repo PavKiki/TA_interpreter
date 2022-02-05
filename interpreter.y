@@ -8,6 +8,7 @@
 #include "classes/BoolNode.h"
 #include "classes/IntegerNode.h"
 #include "classes/OperationNode.h"
+#include "classes/FunctionNode.h"
 #include "AuxFunctions.h"
 
 extern FILE* yyin;
@@ -34,9 +35,9 @@ void yyerror(const char*);
 %nonassoc END
 %token <boolPtr> BOOL
 %token <intPtr> INTEGER
-%token <varName> VARIABLE VVARIABLE MVARIABLE VAR
+%token <varName> VARIABLE VVARIABLE MVARIABLE VAR FVARIABLE
 %token <vtype> CINT VINT MINT INT CVINT CMINT BOOLEAN CBOOLEAN VBOOLEAN MBOOLEAN CVBOOLEAN CMBOOLEAN
-%token NEWLINE PRINT CONJUNCTION ELEMMULT '\'' LEFTSHIFT RIGHTSHIFT ',' IF FORR BEGIF ENDIF BEGFOR ENDFOR ER DOUBLEDOT
+%token NEWLINE PRINT CONJUNCTION ELEMMULT '\'' LEFTSHIFT RIGHTSHIFT ',' IF FORR BEGIF ENDIF BEGFOR ENDFOR ER DOUBLEDOT B E FUNC
 
 %left ASSIGN DECLARE
 %left '<' '>' 
@@ -45,18 +46,18 @@ void yyerror(const char*);
 %right '!'
 %nonassoc UMINUS
 
-%type <ptr> expr const stmt stmts print exprs vector listexprs matrix vmdeclaration iff forr
+%type <ptr> expr const stmt stmts print exprs vector listexprs matrix vmdeclaration iff forr return_func args_func function callfunc_args callfunction
 %type <varOpPtr> declaration assignment
 %type <vtype> type
 
 %%
 
 program:
-    function                    {outputOut(); exit(0);}
+    func                    {outputOut(); exit(0);}
 ;
 
-function:
-    function stmts              {
+func:
+    func stmts              {
                                     try {
                                         $2->execute();
                                     }
@@ -91,6 +92,8 @@ stmt:
     | assignment NEWLINE        {$$ = $1;}
     | iff NEWLINE               {$$ = $1;}
     | forr NEWLINE              {$$ = $1;}
+    | function NEWLINE          {$$ = $1;}
+    | callfunction NEWLINE      {$$ = $1;}
     | '(' stmts ')'             {$$ = $2;}
 ;
 
@@ -111,6 +114,98 @@ forr:
                                                                     kids.push_back($7);
                                                                     $$ = new Interpreter::OperationNode(forr, kids);
                                                                 }
+;
+
+return_func:
+    type VAR                                                    {
+                                                                    if ($1 == Interpreter::INT) {
+                                                                        auto plug = new Interpreter::IntegerNode();
+                                                                        Interpreter::varStorage.insert_or_assign(*$2, plug);
+                                                                    }
+                                                                    else if ($1 == Interpreter::BOOL) {
+                                                                        auto plug = new Interpreter::BoolNode();
+                                                                        Interpreter::varStorage.insert_or_assign(*$2, plug);
+                                                                    }
+                                                                    else if ($1 == Interpreter::VINT) {
+                                                                        auto plug = new Interpreter::IntegerVectorNode();
+                                                                        Interpreter::varStorage.insert_or_assign(*$2, plug);
+                                                                    }
+                                                                    else if ($1 == Interpreter::VBOOL) {
+                                                                        auto plug = new Interpreter::BoolVectorNode();
+                                                                        Interpreter::varStorage.insert_or_assign(*$2, plug);
+                                                                    }
+                                                                    else if ($1 == Interpreter::MINT) {
+                                                                        auto plug = new Interpreter::IntegerMatrixNode();
+                                                                        Interpreter::varStorage.insert_or_assign(*$2, plug);
+                                                                    }
+                                                                    else if ($1 == Interpreter::MBOOL) {
+                                                                        auto plug = new Interpreter::BoolMatrixNode();
+                                                                        Interpreter::varStorage.insert_or_assign(*$2, plug);
+                                                                    }
+                                                                    else throw "Return parameters can not be const!";
+                                                                    auto search = Interpreter::varStorage.find(*$2);
+                                                                    $$ = new Interpreter::return_funcNode({$1, search->second});
+                                                                    dynamic_cast<Interpreter::return_funcNode*>($$)->retVarNames.push_back(*$2);
+                                                                }
+    | return_func ',' type VAR                                  {
+                                                                    if ($3 == Interpreter::INT) {
+                                                                        auto plug = new Interpreter::IntegerNode();
+                                                                        Interpreter::varStorage.insert_or_assign(*$4, plug);
+                                                                    }
+                                                                    else if ($3 == Interpreter::BOOL) {
+                                                                        auto plug = new Interpreter::BoolNode();
+                                                                        Interpreter::varStorage.insert_or_assign(*$4, plug);
+                                                                    }
+                                                                    else if ($3 == Interpreter::VINT) {
+                                                                        auto plug = new Interpreter::IntegerVectorNode();
+                                                                        Interpreter::varStorage.insert_or_assign(*$4, plug);
+                                                                    }
+                                                                    else if ($3 == Interpreter::VBOOL) {
+                                                                        auto plug = new Interpreter::BoolVectorNode();
+                                                                        Interpreter::varStorage.insert_or_assign(*$4, plug);
+                                                                    }
+                                                                    else if ($3 == Interpreter::MINT) {
+                                                                        auto plug = new Interpreter::IntegerMatrixNode();
+                                                                        Interpreter::varStorage.insert_or_assign(*$4, plug);
+                                                                    }
+                                                                    else if ($3 == Interpreter::MBOOL) {
+                                                                        auto plug = new Interpreter::BoolMatrixNode();
+                                                                        Interpreter::varStorage.insert_or_assign(*$4, plug);
+                                                                    }
+                                                                    else throw "Return parameters can not be const!";
+                                                                    auto search = Interpreter::varStorage.find(*$4);
+                                                                    dynamic_cast<Interpreter::return_funcNode*>($$)->container.push_back({$3, search->second});
+                                                                    dynamic_cast<Interpreter::return_funcNode*>($$)->retVarNames.push_back(*$4);
+                                                                }
+;
+
+args_func:
+    declaration                                                 {$$ = new Interpreter::args_func($1);}
+    | type VAR                                                  {$$ = new Interpreter::args_func($1, *$2);}
+    | ',' declaration                                           {dynamic_cast<Interpreter::args_func*>($$)->addByNode($2);}
+    | ',' type VAR                                              {dynamic_cast<Interpreter::args_func*>($$)->addByVTypeandName($2, *$3);}
+;
+
+function:
+    return_func DECLARE FUNC VAR '(' args_func ')' B NEWLINE stmts E    {
+                                                                            auto plug = new Interpreter::func_descript(dynamic_cast<Interpreter::args_func*>($6)->localStorage, dynamic_cast<Interpreter::args_func*>($6)->localisConst, 
+                                                                            dynamic_cast<Interpreter::return_funcNode*>($1)->container, dynamic_cast<Interpreter::return_funcNode*>($1)->retVarNames,
+                                                                            $10, *$4, dynamic_cast<Interpreter::args_func*>($6)->types, dynamic_cast<Interpreter::args_func*>($6)->names);
+                                                                            Interpreter::varStorage.insert_or_assign(*$4, plug);
+                                                                        }
+;
+
+callfunc_args:
+    expr                {$$ = new Interpreter::callfunc_args(expR, $1);}
+    | vector            {$$ = new Interpreter::callfunc_args(vectoR, $1);}
+    | matrix            {$$ = new Interpreter::callfunc_args(matriX, $1);}
+    | ',' expr          {dynamic_cast<Interpreter::callfunc_args*>($$)->addArg(expR, $2);}
+    | ',' vector        {dynamic_cast<Interpreter::callfunc_args*>($$)->addArg(vectoR, $2);}
+    | ',' matrix        {dynamic_cast<Interpreter::callfunc_args*>($$)->addArg(matriX, $2);}
+;
+
+callfunction:
+    FVARIABLE '[' callfunc_args ']'         {$$ = new Interpreter::callfunc(*$1, dynamic_cast<Interpreter::callfunc_args*>($3)->args);}
 ;
 
 matrix:

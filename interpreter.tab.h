@@ -56,35 +56,39 @@ extern int yydebug;
     VVARIABLE = 262,
     MVARIABLE = 263,
     VAR = 264,
-    CINT = 265,
-    VINT = 266,
-    MINT = 267,
-    INT = 268,
-    CVINT = 269,
-    CMINT = 270,
-    BOOLEAN = 271,
-    CBOOLEAN = 272,
-    VBOOLEAN = 273,
-    MBOOLEAN = 274,
-    CVBOOLEAN = 275,
-    CMBOOLEAN = 276,
-    NEWLINE = 277,
-    PRINT = 278,
-    CONJUNCTION = 279,
-    ELEMMULT = 280,
-    LEFTSHIFT = 281,
-    RIGHTSHIFT = 282,
-    IF = 283,
-    FORR = 284,
-    BEGIF = 285,
-    ENDIF = 286,
-    BEGFOR = 287,
-    ENDFOR = 288,
-    ER = 289,
-    DOUBLEDOT = 290,
-    ASSIGN = 291,
-    DECLARE = 292,
-    UMINUS = 293
+    FVARIABLE = 265,
+    CINT = 266,
+    VINT = 267,
+    MINT = 268,
+    INT = 269,
+    CVINT = 270,
+    CMINT = 271,
+    BOOLEAN = 272,
+    CBOOLEAN = 273,
+    VBOOLEAN = 274,
+    MBOOLEAN = 275,
+    CVBOOLEAN = 276,
+    CMBOOLEAN = 277,
+    NEWLINE = 278,
+    PRINT = 279,
+    CONJUNCTION = 280,
+    ELEMMULT = 281,
+    LEFTSHIFT = 282,
+    RIGHTSHIFT = 283,
+    IF = 284,
+    FORR = 285,
+    BEGIF = 286,
+    ENDIF = 287,
+    BEGFOR = 288,
+    ENDFOR = 289,
+    ER = 290,
+    DOUBLEDOT = 291,
+    B = 292,
+    E = 293,
+    FUNC = 294,
+    ASSIGN = 295,
+    DECLARE = 296,
+    UMINUS = 297
   };
 #endif
 
@@ -93,7 +97,7 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 25 "interpreter.y" /* yacc.c:1921  */
+#line 26 "interpreter.y" /* yacc.c:1921  */
 
     Interpreter::BoolNode* boolPtr;
     Interpreter::IntegerNode* intPtr;
@@ -102,7 +106,7 @@ union YYSTYPE
     Interpreter::VariableOperationNode* varOpPtr;
     Interpreter::varType vtype;
 
-#line 106 "interpreter.tab.h" /* yacc.c:1921  */
+#line 110 "interpreter.tab.h" /* yacc.c:1921  */
 };
 
 typedef union YYSTYPE YYSTYPE;

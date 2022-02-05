@@ -64,6 +64,8 @@ private:
     Node* scalarData;
     ContainerVectorNode* vectorData;
     ContainerMatrixNode* matrixData;
+    std::unordered_map<std::string, Node*> varSt;
+    std::unordered_map<std::string, bool> isCo;
 public:
     varType getVarType() {return vType;}
 
@@ -80,10 +82,15 @@ public:
     //constructor for scalar
     VariableOperationNode(varType vType, varOperName vopName, std::string name, Node* data);
     //constructor for vector 
-    VariableOperationNode(varType vType, varOperName vopName, std::string name, ContainerVectorNode* data): vType(vType), vopType(vopName), varName(name), vectorData(data) {};
+    VariableOperationNode(varType vType, varOperName vopName, std::string name, ContainerVectorNode* data): vType(vType), vopType(vopName), varName(name), vectorData(data), varSt(varStorage), isCo(isConst) {};
     //constructor for matrix
-    VariableOperationNode(varType vType, varOperName vopName, std::string name, ContainerMatrixNode* data): vType(vType), vopType(vopName), varName(name), matrixData(data) {};
-    //destructor
+    VariableOperationNode(varType vType, varOperName vopName, std::string name, ContainerMatrixNode* data): vType(vType), vopType(vopName), varName(name), matrixData(data), varSt(varStorage), isCo(isConst) {};
+    //constructor for scalar upd
+    VariableOperationNode(varType vType, varOperName vopName, std::string name, Node* data, std::unordered_map<std::string, Node*> raz, std::unordered_map<std::string, bool> dva): vType(vType), vopType(vopName), varName(name), varSt(raz), isCo(dva), scalarData(data) {};
+    //constructor for vector upd
+    VariableOperationNode(varType vType, varOperName vopName, std::string name, ContainerVectorNode* data, std::unordered_map<std::string, Node*> raz, std::unordered_map<std::string, bool> dva): vType(vType), vopType(vopName), varName(name), vectorData(data), varSt(raz), isCo(dva) {};
+    //constructor for matrix upd
+    VariableOperationNode(varType vType, varOperName vopName, std::string name, ContainerMatrixNode* data, std::unordered_map<std::string, Node*> raz, std::unordered_map<std::string, bool> dva): vType(vType), vopType(vopName), varName(name), matrixData(data), varSt(raz), isCo(dva) {};
     ~VariableOperationNode() {};
 };
 

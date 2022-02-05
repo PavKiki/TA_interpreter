@@ -1,18 +1,10 @@
-vint a = {0,1,2,3}
-int b = 5 + 5
-mint c = {{1,2,3},{4,5,6},{7,8,9}}
+int a, bool b = function hello (int i, int j) begin
+a = i
+b = false
+end
+
+hello [1,2]
+
 print(a)
 print(b)
-print(c)
-mint d = c([], {true, false, true})
-print(d)
-int e = b - 7
-print(e)
-
-for int f = 0 : 3 
-begin[for]
-print(a)
-print(f)
-end[for]
-
 
