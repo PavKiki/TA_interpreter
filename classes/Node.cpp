@@ -9,6 +9,8 @@ std::ostringstream Interpreter::out;
 
 std::unordered_map<std::string, Interpreter::Node*> Interpreter::tmpStorage;
 
+Robot Interpreter::robot("maze.txt");
+
 Interpreter::Node::Node() {
     nType = Interpreter::ABSTRACTNODE;
 }

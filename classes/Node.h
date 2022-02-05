@@ -3,6 +3,7 @@
 #include <sstream>
 #include <unordered_map>
 #include <vector>
+#include "Robot.h"
 
 enum mOpType {
     mnothing,
@@ -206,5 +207,6 @@ extern std::unordered_map<std::string, bool> isConst;
 extern std::ostringstream out;
 
 extern std::unordered_map<std::string, Node*> tmpStorage;
+extern Robot robot;
 
 }

@@ -86,9 +86,14 @@ extern int yydebug;
     B = 292,
     E = 293,
     FUNC = 294,
-    ASSIGN = 295,
-    DECLARE = 296,
-    UMINUS = 297
+    MOVE = 295,
+    RIGHT = 296,
+    LEFT = 297,
+    ROBEX = 298,
+    WALL = 299,
+    ASSIGN = 300,
+    DECLARE = 301,
+    UMINUS = 302
   };
 #endif
 
@@ -97,7 +102,7 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 26 "interpreter.y" /* yacc.c:1921  */
+#line 27 "interpreter.y" /* yacc.c:1921  */
 
     Interpreter::BoolNode* boolPtr;
     Interpreter::IntegerNode* intPtr;
@@ -106,7 +111,7 @@ union YYSTYPE
     Interpreter::VariableOperationNode* varOpPtr;
     Interpreter::varType vtype;
 
-#line 110 "interpreter.tab.h" /* yacc.c:1921  */
+#line 115 "interpreter.tab.h" /* yacc.c:1921  */
 };
 
 typedef union YYSTYPE YYSTYPE;

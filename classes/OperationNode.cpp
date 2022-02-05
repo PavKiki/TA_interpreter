@@ -12,7 +12,7 @@
             case Interpreter::OPNODE: {
                 operName tmp = dynamic_cast<Interpreter::OperationNode*>(node)->getOperation();
                 switch (tmp) {
-                    case plus: case minus: case divide: case vintgetexp: case mintgetexp: case uminus:
+                    case plus: case minus: case divide: case vintgetexp: case mintgetexp: case uminus: case wall:
                         return true;
                     case gscalar: {
                         auto nnode = dynamic_cast<Interpreter::OperationNode*>(node);
@@ -37,7 +37,7 @@
             case Interpreter::OPNODE: {
                 operName tmp = dynamic_cast<Interpreter::OperationNode*>(node)->getOperation();
                 switch (tmp) {
-                    case less: case greater: case denial: case conjunction: case vboolgetexp: case mboolgetexp:
+                    case less: case greater: case denial: case conjunction: case vboolgetexp: case mboolgetexp: case move: case exxit:
                         return true; 
                     case gscalar: {
                         auto nnode = dynamic_cast<Interpreter::OperationNode*>(node);
@@ -57,10 +57,10 @@
     void Interpreter::OperationNode::print(std::ostringstream& strm) {
         switch (operation)
         {
-        case plus: case minus: case divide: case vintgetexp: case mintgetexp:
+        case plus: case minus: case divide: case vintgetexp: case mintgetexp: case wall:
             strm << execute() << '\n';
             break;
-        case less: case greater: case denial: case conjunction: case vboolgetexp: case mboolgetexp:
+        case less: case greater: case denial: case conjunction: case vboolgetexp: case mboolgetexp: case move: case exxit:
             strm << (execute() ? "true" : "false") << '\n';
             break;
         case gscalar: {
@@ -233,6 +233,34 @@
             // Interpreter::varStorage.erase(varName);
             return 0;
         }
+        case move: {
+            if (suitForArithm(kids[0])) {
+                bool tmp = Interpreter::robot.move(kids[0]->execute());
+                Interpreter::robot.printMaze();
+                return tmp;
+            }
+            else throw "Incorrect amount of steps!";
+        }
+        case right: {
+            Interpreter::robot.right();
+            Interpreter::robot.printMaze();
+            return 0;
+        }
+        case left: {
+            Interpreter::robot.left();
+            Interpreter::robot.printMaze();
+            return 0;
+        }
+        case wall: {
+            int tmp = Interpreter::robot.wall();
+            Interpreter::robot.printMaze();
+            return tmp;
+        }
+        case exxit: {
+            bool tmp = Interpreter::robot.exit();
+            Interpreter::robot.printMaze();
+            return tmp;
+        }
 
         default:
             throw "Unknown operand type!";
@@ -311,7 +339,7 @@
                 Interpreter::OperationNode* tmp = dynamic_cast<Interpreter::OperationNode*>(scalarData);
                 switch (tmp->getOperation())
                 {
-                case plus: case minus: case divide: case vintgetexp: case mintgetexp: {
+                case plus: case minus: case divide: case vintgetexp: case mintgetexp: case wall: {
                     newNode = new Interpreter::IntegerNode(decimal, std::to_string(scalarData->execute()));
                     break;
                 }
@@ -340,7 +368,7 @@
                 Interpreter::OperationNode* tmp = dynamic_cast<Interpreter::OperationNode*>(scalarData);
                 switch (tmp->getOperation())
                 {
-                case less: case greater: case denial: case conjunction: case vboolgetexp: case mboolgetexp: { //and more and more and more
+                case less: case greater: case denial: case conjunction: case vboolgetexp: case mboolgetexp: case move: case exxit:{ //and more and more and more
                     newNode = new Interpreter::BoolNode(scalarData->execute() ? std::string("true") : std::string("false"));
                     break;
                 } 

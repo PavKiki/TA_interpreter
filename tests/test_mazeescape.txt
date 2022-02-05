@@ -1,0 +1,6 @@
+move(wall)
+left
+move(wall)
+left
+move(wall)
+move(1)

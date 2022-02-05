@@ -79,6 +79,16 @@ end                     {return E;}
 
 "end[for]"              {return ENDFOR;}
 
+move                    {return MOVE;}
+
+right                   {return RIGHT;}
+
+left                    {return LEFT;}
+
+exit                    {return ROBEX;}
+
+wall                    {return WALL;}
+
 [a-zA-Z][a-zA-Z0-9_]*   {
                             yylloc.last_line = yylloc.first_line = yylineno; yylval.varName = new std::string(yytext);
                             auto search = Interpreter::varStorage.find(*(yylval.varName));

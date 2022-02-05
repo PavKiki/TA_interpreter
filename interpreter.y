@@ -10,6 +10,7 @@
 #include "classes/OperationNode.h"
 #include "classes/FunctionNode.h"
 #include "AuxFunctions.h"
+#include "classes/Robot.h"
 
 extern FILE* yyin;
 extern std::unordered_map<std::string, bool> Interpreter::isConst;
@@ -37,7 +38,7 @@ void yyerror(const char*);
 %token <intPtr> INTEGER
 %token <varName> VARIABLE VVARIABLE MVARIABLE VAR FVARIABLE
 %token <vtype> CINT VINT MINT INT CVINT CMINT BOOLEAN CBOOLEAN VBOOLEAN MBOOLEAN CVBOOLEAN CMBOOLEAN
-%token NEWLINE PRINT CONJUNCTION ELEMMULT '\'' LEFTSHIFT RIGHTSHIFT ',' IF FORR BEGIF ENDIF BEGFOR ENDFOR ER DOUBLEDOT B E FUNC
+%token NEWLINE PRINT CONJUNCTION ELEMMULT '\'' LEFTSHIFT RIGHTSHIFT ',' IF FORR BEGIF ENDIF BEGFOR ENDFOR ER DOUBLEDOT B E FUNC MOVE RIGHT LEFT ROBEX WALL
 
 %left ASSIGN DECLARE
 %left '<' '>' 
@@ -46,7 +47,7 @@ void yyerror(const char*);
 %right '!'
 %nonassoc UMINUS
 
-%type <ptr> expr const stmt stmts print exprs vector listexprs matrix vmdeclaration iff forr return_func args_func function callfunc_args callfunction
+%type <ptr> expr const stmt stmts print exprs vector listexprs matrix vmdeclaration iff forr return_func args_func function callfunc_args callfunction robotmove robotright robotleft robotwall robotexit robotactions
 %type <varOpPtr> declaration assignment
 %type <vtype> type
 
@@ -94,7 +95,49 @@ stmt:
     | forr NEWLINE              {$$ = $1;}
     | function NEWLINE          {$$ = $1;}
     | callfunction NEWLINE      {$$ = $1;}
+    | robotactions NEWLINE      {$$ = $1;}
     | '(' stmts ')'             {$$ = $2;}
+;
+
+robotactions:
+    robotright        {$$ = $1;}
+    | robotleft         {$$ = $1;}
+;
+
+robotmove:
+    MOVE '(' expr ')'           {   
+                                    std::vector<Interpreter::Node*> kids;
+                                    kids.push_back($3);
+                                    $$ = new Interpreter::OperationNode(move, kids);
+                                }
+;
+
+robotright:
+    RIGHT                       {
+                                    std::vector<Interpreter::Node*> kids;
+                                    $$ = new Interpreter::OperationNode(right, kids);
+                                }
+;
+
+robotleft:
+    LEFT                        {
+                                    std::vector<Interpreter::Node*> kids;
+                                    $$ = new Interpreter::OperationNode(left, kids);
+                                }
+;
+
+robotwall:
+    WALL                        {
+                                    std::vector<Interpreter::Node*> kids;
+                                    $$ = new Interpreter::OperationNode(wall, kids);
+                                }
+;
+
+robotexit:
+    ROBEX                       {
+                                    std::vector<Interpreter::Node*> kids;
+                                    $$ = new Interpreter::OperationNode(exxit, kids);
+                                }
 ;
 
 iff:
@@ -531,6 +574,9 @@ print:
 
 expr:
     const                       {$$ = $1;}
+    | robotexit                 {$$ = $1;}
+    | robotmove                 {$$ = $1;}
+    | robotwall                 {$$ = $1;}
     | VARIABLE                  {
                                     $$ = new Interpreter::OperationNode(gscalar, *$1);
                                 }
