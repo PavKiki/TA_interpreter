@@ -173,9 +173,6 @@ iff:
                                                     std::cerr << error << std::endl;
                                                 }
                                             }
-    | IF error endif                        {
-                                                std::cerr << "Error at line " << @2.first_line << "-" << std::endl;
-                                            }
 ;
 
 begif:
@@ -209,9 +206,6 @@ forr:
                                                                     catch (const char* error) {
                                                                         std::cerr << error << std::endl;
                                                                     }
-                                                                }
-    | FORR error endfor                                         {
-                                                                    std::cerr << "Error at line " << @2.first_line << std::endl;
                                                                 }
 ;
 
@@ -330,6 +324,7 @@ callfunc_args:
     | callfunc_args error           {
                                         std::cerr << "Error at line " << @2.first_line << std::endl;
                                         delete $1;
+                                        if (!$$) delete $$; 
                                     }
     | error                         {
                                         std::cerr << "Error at line " << @1.first_line << std::endl;
@@ -347,89 +342,148 @@ callfunction:
 
 matrix:
     '{' listexprs '}'           {$$ = $2;}
-    | MVARIABLE '(' vector ',' '[' ']' ')'      {
-                                                    auto search = Interpreter::varStorage.find(*$1);
-                                                    std::vector<Interpreter::ContainerMatrixNode*> kids;
-                                                    kids.push_back((Interpreter::ContainerMatrixNode*)(search->second));
-                                                    kids.push_back((Interpreter::ContainerMatrixNode*)($3));
-                                                    $$ = new Interpreter::ContainerMatrixNode(kids, mveccolumnindex);
+    | MVARIABLE '(' vector ',' '[' ']' ')'      {   try {
+                                                        auto search = Interpreter::varStorage.find(*$1);
+                                                        std::vector<Interpreter::ContainerMatrixNode*> kids;
+                                                        kids.push_back((Interpreter::ContainerMatrixNode*)(search->second));
+                                                        kids.push_back((Interpreter::ContainerMatrixNode*)($3));
+                                                        $$ = new Interpreter::ContainerMatrixNode(kids, mveccolumnindex);
+                                                    }
+                                                    catch (const char* error) {
+                                                        std::cerr << error << std::endl;
+                                                    }
                                                 } 
     | MVARIABLE '(' '[' ']' ',' vector ')'      {
-                                                    auto search = Interpreter::varStorage.find(*$1);
-                                                    std::vector<Interpreter::ContainerMatrixNode*> kids;
-                                                    kids.push_back((Interpreter::ContainerMatrixNode*)(search->second));
-                                                    kids.push_back((Interpreter::ContainerMatrixNode*)($6));
-                                                    $$ = new Interpreter::ContainerMatrixNode(kids, mvecrowindex);
+                                                    try {
+                                                        auto search = Interpreter::varStorage.find(*$1);
+                                                        std::vector<Interpreter::ContainerMatrixNode*> kids;
+                                                        kids.push_back((Interpreter::ContainerMatrixNode*)(search->second));
+                                                        kids.push_back((Interpreter::ContainerMatrixNode*)($6));
+                                                        $$ = new Interpreter::ContainerMatrixNode(kids, mvecrowindex);
+                                                    }
+                                                    catch (const char* error) {
+                                                        std::cerr << error << std::endl;
+                                                    }
                                                 }
     | MVARIABLE '(' matrix ')'                  {
-                                                    auto search = Interpreter::varStorage.find(*$1);
-                                                    std::vector<Interpreter::ContainerMatrixNode*> kids;
-                                                    kids.push_back((Interpreter::ContainerMatrixNode*)(search->second));
-                                                    kids.push_back((Interpreter::ContainerMatrixNode*)($3));
-                                                    $$ = new Interpreter::ContainerMatrixNode(kids, mmatindex);
+                                                    try {
+                                                        auto search = Interpreter::varStorage.find(*$1);
+                                                        std::vector<Interpreter::ContainerMatrixNode*> kids;
+                                                        kids.push_back((Interpreter::ContainerMatrixNode*)(search->second));
+                                                        kids.push_back((Interpreter::ContainerMatrixNode*)($3));
+                                                        $$ = new Interpreter::ContainerMatrixNode(kids, mmatindex);
+                                                    }
+                                                    catch (const char* error) {
+                                                        std::cerr << error << std::endl;
+                                                    }
                                                 }
     | MVARIABLE                     {
-                                        auto search = Interpreter::varStorage.find(*$1);
-                                        std::vector<Interpreter::ContainerMatrixNode*> kids;
-                                        kids.push_back(static_cast<Interpreter::ContainerMatrixNode*>(search->second));
-                                        $$ = new Interpreter::ContainerMatrixNode(kids, getmat);
+                                        try {
+                                            auto search = Interpreter::varStorage.find(*$1);
+                                            std::vector<Interpreter::ContainerMatrixNode*> kids;
+                                            kids.push_back(static_cast<Interpreter::ContainerMatrixNode*>(search->second));
+                                            $$ = new Interpreter::ContainerMatrixNode(kids, getmat);
+                                        }
+                                        catch (const char* error) {
+                                            std::cerr << error << std::endl;
+                                        }
                                     }
     | matrix '*' matrix             {
-                                        std::vector<Interpreter::ContainerMatrixNode*> kids;
-                                        kids.push_back(static_cast<Interpreter::ContainerMatrixNode*>($1));
-                                        kids.push_back(static_cast<Interpreter::ContainerMatrixNode*>($3));
-                                        $$ = new Interpreter::ContainerMatrixNode(kids, mmultiply);
+                                        try {
+                                            std::vector<Interpreter::ContainerMatrixNode*> kids;
+                                            kids.push_back(static_cast<Interpreter::ContainerMatrixNode*>($1));
+                                            kids.push_back(static_cast<Interpreter::ContainerMatrixNode*>($3));
+                                            $$ = new Interpreter::ContainerMatrixNode(kids, mmultiply);
+                                        }
+                                        catch (const char* error) {
+                                            std::cerr << error << std::endl;
+                                        }
                                     }
     | matrix ELEMMULT matrix        {
-                                        std::vector<Interpreter::ContainerMatrixNode*> kids;
-                                        kids.push_back(static_cast<Interpreter::ContainerMatrixNode*>($1));
-                                        kids.push_back(static_cast<Interpreter::ContainerMatrixNode*>($3));
-                                        $$ = new Interpreter::ContainerMatrixNode(kids, melemmultiply);
+                                        try {
+                                            std::vector<Interpreter::ContainerMatrixNode*> kids;
+                                            kids.push_back(static_cast<Interpreter::ContainerMatrixNode*>($1));
+                                            kids.push_back(static_cast<Interpreter::ContainerMatrixNode*>($3));
+                                            $$ = new Interpreter::ContainerMatrixNode(kids, melemmultiply);
+                                        }
+                                        catch (const char* error) {
+                                            std::cerr << error << std::endl;
+                                        }
                                     }
     | matrix '\''                   {
-                                        std::vector<Interpreter::ContainerMatrixNode*> kids;
-                                        kids.push_back(static_cast<Interpreter::ContainerMatrixNode*>($1));
-                                        $$ = new Interpreter::ContainerMatrixNode(kids, mtransposition);
+                                        try {
+                                            std::vector<Interpreter::ContainerMatrixNode*> kids;
+                                            kids.push_back(static_cast<Interpreter::ContainerMatrixNode*>($1));
+                                            $$ = new Interpreter::ContainerMatrixNode(kids, mtransposition);
+                                        }
+                                        catch (const char* error) {
+                                            std::cerr << error << std::endl;
+                                        }
                                     }
     | matrix RIGHTSHIFT             {
-                                        std::vector<Interpreter::ContainerMatrixNode*> kids;
-                                        kids.push_back(static_cast<Interpreter::ContainerMatrixNode*>($1));
-                                        $$ = new Interpreter::ContainerMatrixNode(kids, mcycshiftright);
+                                        try {
+                                            std::vector<Interpreter::ContainerMatrixNode*> kids;
+                                            kids.push_back(static_cast<Interpreter::ContainerMatrixNode*>($1));
+                                            $$ = new Interpreter::ContainerMatrixNode(kids, mcycshiftright);
+                                        }
+                                        catch (const char* error) {
+                                            std::cerr << error << std::endl;
+                                        }
                                     }
     | matrix LEFTSHIFT              {
-                                        std::vector<Interpreter::ContainerMatrixNode*> kids;
-                                        kids.push_back(dynamic_cast<Interpreter::ContainerMatrixNode*>($1));
-                                        $$ = new Interpreter::ContainerMatrixNode(kids, mcycshiftleft);
+                                        try {
+                                            std::vector<Interpreter::ContainerMatrixNode*> kids;
+                                            kids.push_back(dynamic_cast<Interpreter::ContainerMatrixNode*>($1));
+                                            $$ = new Interpreter::ContainerMatrixNode(kids, mcycshiftleft);
+                                        }
+                                        catch (const char* error) {
+                                            std::cerr << error << std::endl;
+                                        }
                                     }
     | vector '\''                   {
-                                        std::vector<Interpreter::ContainerMatrixNode*> kids;
-                                        kids.push_back((Interpreter::ContainerMatrixNode*)($1));
-                                        $$ = new Interpreter::ContainerMatrixNode(kids, vtransposition);
+                                        try {
+                                            std::vector<Interpreter::ContainerMatrixNode*> kids;
+                                            kids.push_back((Interpreter::ContainerMatrixNode*)($1));
+                                            $$ = new Interpreter::ContainerMatrixNode(kids, vtransposition);
+                                        }
+                                        catch (const char* error) {
+                                            std::cerr << error << std::endl;
+                                        }
                                     }
     | matrix ELEMMULT vector        {
-                                        std::vector<Interpreter::ContainerMatrixNode*> kids;
-                                        kids.push_back(dynamic_cast<Interpreter::ContainerMatrixNode*>($1));
-                                        kids.push_back(static_cast<Interpreter::ContainerMatrixNode*>($3));
-                                        $$ = new Interpreter::ContainerMatrixNode(kids, MEMvec);
+                                        try {
+                                            std::vector<Interpreter::ContainerMatrixNode*> kids;
+                                            kids.push_back(dynamic_cast<Interpreter::ContainerMatrixNode*>($1));
+                                            kids.push_back(static_cast<Interpreter::ContainerMatrixNode*>($3));
+                                            $$ = new Interpreter::ContainerMatrixNode(kids, MEMvec);
+                                        }
+                                        catch (const char* error) {
+                                            std::cerr << error << std::endl;
+                                        }
                                     }
     | matrix ELEMMULT expr          {
-                                        std::vector<Interpreter::ContainerMatrixNode*> kids;
-                                        kids.push_back(dynamic_cast<Interpreter::ContainerMatrixNode*>($1));
-                                        kids.push_back(static_cast<Interpreter::ContainerMatrixNode*>($3));
-                                        $$ = new Interpreter::ContainerMatrixNode(kids, MEMexpr);
+                                        try {
+                                            std::vector<Interpreter::ContainerMatrixNode*> kids;
+                                            kids.push_back(dynamic_cast<Interpreter::ContainerMatrixNode*>($1));
+                                            kids.push_back(static_cast<Interpreter::ContainerMatrixNode*>($3));
+                                            $$ = new Interpreter::ContainerMatrixNode(kids, MEMexpr);
+                                        }
+                                        catch (const char* error) {
+                                            std::cerr << error << std::endl;
+                                        }
                                     }
     | error matrix                  {
-                                               std::cerr << "Error at line " << @1.first_line << std::endl;
-                                               delete $2;
-                                            }
+                                        std::cerr << "Error at line " << @1.first_line << std::endl;
+                                        delete $2;
+                                    }
     | error vector                  {
-                                               std::cerr << "Error at line " << @1.first_line << std::endl;
-                                               delete $2;
-                                            }
+                                        std::cerr << "Error at line " << @1.first_line << std::endl;
+                                        delete $2;
+                                    }
     | error expr                    {
-                                               std::cerr << "Error at line " << @1.first_line << std::endl;
-                                               delete $2;
-                                            }
+                                        std::cerr << "Error at line " << @1.first_line << std::endl;
+                                        delete $2;
+                                    }
 ;
 
 listexprs:
@@ -439,61 +493,101 @@ listexprs:
                                         }
     | listexprs ',' vector              {dynamic_cast<Interpreter::ContainerMatrixNode*>($$)->addData(dynamic_cast<Interpreter::ContainerVectorNode*>($3));}
     | listexprs error                   {
-                                               std::cerr << "Error at line " << @2.first_line << std::endl;
-                                               delete $1;
-                                            }
+                                            std::cerr << "Error at line " << @2.first_line << std::endl;
+                                            delete $1;
+                                        }
 ;
 
 vector:
     '{' exprs '}'                       {$$ = $2;}
     | VVARIABLE '(' vector ',' '[' ']' ')'      {
-                                                    auto search = Interpreter::varStorage.find(*$1);
-                                                    std::vector<Interpreter::ContainerVectorNode*> kids;
-                                                    kids.push_back((Interpreter::ContainerVectorNode*)(search->second));
-                                                    kids.push_back(static_cast<Interpreter::ContainerVectorNode*>($3));
-                                                    $$ = new Interpreter::ContainerVectorNode(kids, vvecindex);
+                                                    try {
+                                                        auto search = Interpreter::varStorage.find(*$1);
+                                                        std::vector<Interpreter::ContainerVectorNode*> kids;
+                                                        kids.push_back((Interpreter::ContainerVectorNode*)(search->second));
+                                                        kids.push_back(static_cast<Interpreter::ContainerVectorNode*>($3));
+                                                        $$ = new Interpreter::ContainerVectorNode(kids, vvecindex);
+                                                    }
+                                                    catch (const char* error) {
+                                                        std::cerr << error << std::endl;
+                                                    }
                                                 }
     | MVARIABLE '(' expr ',' '['']' ')'         {
-                                                    auto search = Interpreter::varStorage.find(*$1);
-                                                    std::vector<Interpreter::ContainerVectorNode*> kids;
-                                                    kids.push_back((Interpreter::ContainerVectorNode*)(search->second));
-                                                    kids.push_back(static_cast<Interpreter::ContainerVectorNode*>($3));
-                                                    $$ = new Interpreter::ContainerVectorNode(kids, mexprcolumnindex);
+                                                    try {
+                                                        auto search = Interpreter::varStorage.find(*$1);
+                                                        std::vector<Interpreter::ContainerVectorNode*> kids;
+                                                        kids.push_back((Interpreter::ContainerVectorNode*)(search->second));
+                                                        kids.push_back(static_cast<Interpreter::ContainerVectorNode*>($3));
+                                                        $$ = new Interpreter::ContainerVectorNode(kids, mexprcolumnindex);
+                                                    }
+                                                    catch (const char* error) {
+                                                        std::cerr << error << std::endl;
+                                                    }
                                                 }
     | MVARIABLE '(' '['']' ',' expr ')'         {
-                                                    auto search = Interpreter::varStorage.find(*$1);
-                                                    std::vector<Interpreter::ContainerVectorNode*> kids;
-                                                    kids.push_back((Interpreter::ContainerVectorNode*)(search->second));
-                                                    kids.push_back((Interpreter::ContainerVectorNode*)($6));
-                                                    $$ = new Interpreter::ContainerVectorNode(kids, mexprrowindex);
+                                                    try {
+                                                        auto search = Interpreter::varStorage.find(*$1);
+                                                        std::vector<Interpreter::ContainerVectorNode*> kids;
+                                                        kids.push_back((Interpreter::ContainerVectorNode*)(search->second));
+                                                        kids.push_back((Interpreter::ContainerVectorNode*)($6));
+                                                        $$ = new Interpreter::ContainerVectorNode(kids, mexprrowindex);
+                                                    }
+                                                    catch (const char* error) {
+                                                        std::cerr << error << std::endl;
+                                                    }
                                                 }
     | VVARIABLE                         {
-                                            auto search = Interpreter::varStorage.find(*$1);
-                                            std::vector<Interpreter::ContainerVectorNode*> kids;
-                                            kids.push_back((Interpreter::ContainerVectorNode*)(search->second));
-                                            $$ = new Interpreter::ContainerVectorNode(kids, getvec);
+                                            try {
+                                                auto search = Interpreter::varStorage.find(*$1);
+                                                std::vector<Interpreter::ContainerVectorNode*> kids;
+                                                kids.push_back((Interpreter::ContainerVectorNode*)(search->second));
+                                                $$ = new Interpreter::ContainerVectorNode(kids, getvec);
+                                            }
+                                            catch (const char* error) {
+                                                std::cerr << error << std::endl;
+                                            }
                                         }
-    | vector ELEMMULT vector            {
-                                            std::vector<Interpreter::ContainerVectorNode*> kids;
-                                            kids.push_back(dynamic_cast<Interpreter::ContainerVectorNode*>($1));
-                                            kids.push_back(dynamic_cast<Interpreter::ContainerVectorNode*>($3));
-                                            $$ = new Interpreter::ContainerVectorNode(kids, velemmultiply);
+    | vector ELEMMULT vector            {   
+                                            try {
+                                                std::vector<Interpreter::ContainerVectorNode*> kids;
+                                                kids.push_back(dynamic_cast<Interpreter::ContainerVectorNode*>($1));
+                                                kids.push_back(dynamic_cast<Interpreter::ContainerVectorNode*>($3));
+                                                $$ = new Interpreter::ContainerVectorNode(kids, velemmultiply);
+                                            }
+                                            catch (const char* error) {
+                                                std::cerr << error << std::endl;
+                                            }
                                         }
     | vector RIGHTSHIFT                 {
-                                            std::vector<Interpreter::ContainerVectorNode*> kids;
-                                            kids.push_back(dynamic_cast<Interpreter::ContainerVectorNode*>($1));
-                                            $$ = new Interpreter::ContainerVectorNode(kids, vcycshiftright);
+                                            try {
+                                                std::vector<Interpreter::ContainerVectorNode*> kids;
+                                                kids.push_back(dynamic_cast<Interpreter::ContainerVectorNode*>($1));
+                                                $$ = new Interpreter::ContainerVectorNode(kids, vcycshiftright);
+                                            }
+                                            catch (const char* error) {
+                                                std::cerr << error << std::endl;
+                                            }
                                         }
     | vector LEFTSHIFT                  {
-                                            std::vector<Interpreter::ContainerVectorNode*> kids;
-                                            kids.push_back(dynamic_cast<Interpreter::ContainerVectorNode*>($1));
-                                            $$ = new Interpreter::ContainerVectorNode(kids, vcycshiftleft);
+                                            try {
+                                                std::vector<Interpreter::ContainerVectorNode*> kids;
+                                                kids.push_back(dynamic_cast<Interpreter::ContainerVectorNode*>($1));
+                                                $$ = new Interpreter::ContainerVectorNode(kids, vcycshiftleft);
+                                            }
+                                            catch (const char* error) {
+                                                std::cerr << error << std::endl;
+                                            }
                                         }
     | vector ELEMMULT expr              {
-                                            std::vector<Interpreter::ContainerVectorNode*> kids;
-                                            kids.push_back(dynamic_cast<Interpreter::ContainerVectorNode*>($1));
-                                            kids.push_back(static_cast<Interpreter::ContainerVectorNode*>($3));
-                                            $$ = new Interpreter::ContainerVectorNode(kids, VEMexpr);
+                                            try {
+                                                std::vector<Interpreter::ContainerVectorNode*> kids;
+                                                kids.push_back(dynamic_cast<Interpreter::ContainerVectorNode*>($1));
+                                                kids.push_back(static_cast<Interpreter::ContainerVectorNode*>($3));
+                                                $$ = new Interpreter::ContainerVectorNode(kids, VEMexpr);
+                                            }
+                                            catch (const char* error) {
+                                                std::cerr << error << std::endl;
+                                            }
                                         }
     | error vector                      {
                                                std::cerr << "Error at line " << @1.first_line << std::endl;
@@ -520,16 +614,21 @@ exprs:
 
 vmdeclaration:
     VVARIABLE '(' expr ')' ASSIGN expr          {
-                                                    auto search = Interpreter::varStorage.find(*$1);
-                                                    if (!Interpreter::isConst[*$1]) {
-                                                        std::vector<Interpreter::Node*> kids;
-                                                        kids.push_back($3);
-                                                        kids.push_back($6);
-                                                        $$ = new Interpreter::VecMatVariableOperationNode(vexpr, search->second, kids);
+                                                    try {
+                                                        auto search = Interpreter::varStorage.find(*$1);
+                                                        if (!Interpreter::isConst[*$1]) {
+                                                            std::vector<Interpreter::Node*> kids;
+                                                            kids.push_back($3);
+                                                            kids.push_back($6);
+                                                            $$ = new Interpreter::VecMatVariableOperationNode(vexpr, search->second, kids);
+                                                        }
+                                                        else {
+                                                            std::string tmp = std::string("Variable ") + *$1 + " can not be changed!";
+                                                            yyerror(tmp.c_str());
+                                                        }
                                                     }
-                                                    else {
-                                                        std::string tmp = std::string("Variable ") + *$1 + " can not be changed!";
-                                                        yyerror(tmp.c_str());
+                                                    catch (const char* error) {
+                                                        std::cerr << error << std::endl;
                                                     }
                                                     
                                                 }

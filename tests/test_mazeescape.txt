@@ -1,14 +1,62 @@
-move(wall)
-left
-move(wall)
-left
-move(wall)
+[bool rwall] = function exRwall ([int tmp]) begin
+rwall <- false
 right
-move(wall)
-right
-move(wall)
+if !wall
+beginif
+rwall <- true
+endif
 left
-move(wall)
+end
+
+[bool fwall] = function exFwall ([int ttmp]) begin
+fwall <- false
+if !wall
+beginif
+fwall <- true
+endif
+end
+
+[int tmpp] = function go ([bool r], [bool f]) begin
+if r && f
+beginif
 left
-move(wall)
+endif
+
+if r && !f
+beginif
 move(1)
+endif
+
+if !r
+beginif
+right
+move(1)
+endif
+
+end
+
+bool flag = false
+
+for int i = 0:25
+beginfor
+
+if flag
+beginif
+endif
+
+if exit
+beginif
+move(wall)
+flag <- true
+endif
+
+if !exit
+beginif
+
+exRwall[1]
+exFwall[1]
+go[rwall, fwall]
+
+endif
+
+endfor
