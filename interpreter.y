@@ -47,7 +47,7 @@ void yyerror(const char*);
 %right '!'
 %nonassoc UMINUS
 
-%type <ptr> expr const stmt stmts print exprs vector listexprs matrix vmdeclaration iff forr return_func args_func function callfunc_args callfunction robotmove robotright robotleft robotwall robotexit robotactions
+%type <ptr> expr const stmt stmts print exprs vector listexprs matrix vmdeclaration iff forr return_func args_func function function_head function_body callfunc_args callfunction robotmove robotright robotleft robotwall robotexit robotactions
 %type <varOpPtr> declaration assignment
 %type <vtype> type
 
@@ -287,8 +287,8 @@ return_func:
 ;
 
 args_func:
-     '[' type VAR ']'                                                  {$$ = new Interpreter::args_func($2, *$3);}
-    | args_func ',' '[' type VAR ']'                                              {dynamic_cast<Interpreter::args_func*>($$)->addByVTypeandName($4, *$5);}
+     '[' type VAR ']'                                                   {$$ = new Interpreter::args_func($2, *$3);}
+    | args_func ',' '[' type VAR ']'                                    {dynamic_cast<Interpreter::args_func*>($$)->addByVTypeandName($4, *$5);}
     | args_func error                                                   {
                                                                             std::cerr << "Error at line " << @2.first_line << std::endl;
                                                                             delete $1; delete $$;
@@ -299,37 +299,43 @@ args_func:
                                                                         }
 ;
 
+function_head:
+    '[' return_func ']' DECLARE FUNC VAR '(' args_func ')'      {
+                                                                    auto plug = new Interpreter::func_descript(dynamic_cast<Interpreter::args_func*>($8)->localStorage, dynamic_cast<Interpreter::args_func*>($8)->localisConst, 
+                                                                    dynamic_cast<Interpreter::return_funcNode*>($2)->container, dynamic_cast<Interpreter::return_funcNode*>($2)->retVarNames,
+                                                                    nullptr, *$6, dynamic_cast<Interpreter::args_func*>($8)->types, dynamic_cast<Interpreter::args_func*>($8)->names);
+                                                                    Interpreter::funcStorage.insert_or_assign(*$6, plug);
+                                                                    $$ = plug;
+                                                                }
+;
+
+function_body:
+    B NEWLINE stmts E                                           {   
+                                                                    $$ = $3;
+                                                                    Interpreter::tmpStorage.clear();
+                                                                }
+;
+
 function:
-    '[' return_func ']' DECLARE FUNC VAR '(' args_func ')' B NEWLINE stmts E    {
-                                                                            auto plug = new Interpreter::func_descript(dynamic_cast<Interpreter::args_func*>($8)->localStorage, dynamic_cast<Interpreter::args_func*>($8)->localisConst, 
-                                                                            dynamic_cast<Interpreter::return_funcNode*>($2)->container, dynamic_cast<Interpreter::return_funcNode*>($2)->retVarNames,
-                                                                            $12, *$6, dynamic_cast<Interpreter::args_func*>($8)->types, dynamic_cast<Interpreter::args_func*>($8)->names);
-                                                                            Interpreter::varStorage.insert_or_assign(*$6, plug);
-                                                                            Interpreter::tmpStorage.clear();
-                                                                            $$ = plug;
-                                                                        }
-    | error E                                                           {
-                                                                            std::cerr << "Error at line " << @1.first_line << std::endl;
-                                                                            delete $$;
-                                                                        }
+    function_head function_body             {dynamic_cast<Interpreter::func_descript*>($1)->toExec = $2;}
 ;
 
 callfunc_args:
-    expr                {$$ = new Interpreter::callfunc_args(expR, $1);}
-    | vector            {$$ = new Interpreter::callfunc_args(vectoR, $1);}
-    | matrix            {$$ = new Interpreter::callfunc_args(matriX, $1);}
-    | callfunc_args ',' expr          {dynamic_cast<Interpreter::callfunc_args*>($$)->addArg(expR, $3);}
-    | callfunc_args ',' vector        {dynamic_cast<Interpreter::callfunc_args*>($$)->addArg(vectoR, $3);}
-    | callfunc_args ',' matrix        {dynamic_cast<Interpreter::callfunc_args*>($$)->addArg(matriX, $3);}
-    | callfunc_args error           {
-                                        std::cerr << "Error at line " << @2.first_line << std::endl;
-                                        delete $1;
-                                        if (!$$) delete $$; 
-                                    }
-    | error                         {
-                                        std::cerr << "Error at line " << @1.first_line << std::endl;
-                                        delete $$;
-                                    }
+    expr                                {$$ = new Interpreter::callfunc_args(expR, $1);}
+    | vector                            {$$ = new Interpreter::callfunc_args(vectoR, $1);}
+    | matrix                            {$$ = new Interpreter::callfunc_args(matriX, $1);}
+    | callfunc_args ',' expr            {dynamic_cast<Interpreter::callfunc_args*>($$)->addArg(expR, $3);}
+    | callfunc_args ',' vector          {dynamic_cast<Interpreter::callfunc_args*>($$)->addArg(vectoR, $3);}
+    | callfunc_args ',' matrix          {dynamic_cast<Interpreter::callfunc_args*>($$)->addArg(matriX, $3);}
+    | callfunc_args error               {
+                                            std::cerr << "Error at line " << @2.first_line << std::endl;
+                                            delete $1;
+                                            if (!$$) delete $$; 
+                                        }
+    | error                             {
+                                            std::cerr << "Error at line " << @1.first_line << std::endl;
+                                            delete $$;
+                                        }
 ;
 
 callfunction:

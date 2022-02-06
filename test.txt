@@ -1,62 +1,31 @@
-[bool rwall] = function exRwall ([int tmp]) begin
-rwall <- false
-right
-if !wall
-beginif
-rwall <- true
-endif
-left
-end
+[int tmp] = function fibo ([int n]) begin
 
-[bool fwall] = function exFwall ([int ttmp]) begin
-fwall <- false
-if !wall
+if !n
 beginif
-fwall <- true
-endif
-end
-
-[int tmpp] = function go ([bool r], [bool f]) begin
-if r && f
-beginif
-left
+tmp <- 0
 endif
 
-if r && !f
+if !(n-1)
 beginif
-move(1)
+tmp <- 1
 endif
 
-if !r
+if (!(!(n))) && (!(!(n-1)))
 beginif
-right
-move(1)
+fibo[(n-1)]
+int a = tmp
+fibo[(n-2)]
+int b = tmp
+tmp <- (a + b)
 endif
 
 end
 
-bool flag = false
 
-for int i = 0:25
+for int i = 0:3
 beginfor
 
-if flag
-beginif
-endif
-
-if exit
-beginif
-move(wall)
-flag <- true
-endif
-
-if !exit
-beginif
-
-exRwall[1]
-exFwall[1]
-go[rwall, fwall]
-
-endif
+fibo[i]
+print(tmp)
 
 endfor

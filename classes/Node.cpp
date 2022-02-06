@@ -9,6 +9,8 @@ std::ostringstream Interpreter::out;
 
 std::unordered_map<std::string, Interpreter::Node*> Interpreter::tmpStorage;
 
+std::unordered_map<std::string, Interpreter::Node*> Interpreter::funcStorage;
+
 Robot Interpreter::robot("maze.txt");
 
 Interpreter::Node::Node() {

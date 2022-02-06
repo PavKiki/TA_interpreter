@@ -37,29 +37,21 @@ void Interpreter::args_func::addByVTypeandName(Interpreter::varType vt, std::str
         auto plug = new Interpreter::IntegerNode();
         localStorage.insert_or_assign(name, plug);
         tmpStorage.insert_or_assign(name, plug);
-        // auto tmp = new Interpreter::VariableOperationNode(vt, declare, name, plug, localStorage, localisConst);
-        // tmp->execute();
     }
     else if (vt == BOOL || vt == CBOOL) {
         auto plug = new Interpreter::BoolNode();
         localStorage.insert_or_assign(name, plug);
         tmpStorage.insert_or_assign(name, plug);
-        // auto tmp = new Interpreter::VariableOperationNode(vt, declare, name, plug, localStorage, localisConst);
-        // tmp->execute();
     }
     else if (vt == VINT || vt == CVINT || vt == VBOOL || vt == CVBOOL) {
         auto plug = new Interpreter::AbstractVectorNode();
         localStorage.insert_or_assign(name, plug);
         tmpStorage.insert_or_assign(name, plug);
-        // auto tmp = new Interpreter::VariableOperationNode(vt, declare, name, dynamic_cast<Interpreter::ContainerVectorNode*>(plug), localStorage, localisConst);
-        // tmp->execute();
     }
     else if (vt == MBOOL || vt == CMBOOL || vt == MINT || vt == CMINT) {
         auto plug = new Interpreter::AbstractMatrixNode();
         localStorage.insert_or_assign(name, plug);
         tmpStorage.insert_or_assign(name, plug);
-        // auto tmp = new Interpreter::VariableOperationNode(vt, declare, name, dynamic_cast<Interpreter::ContainerMatrixNode*>(plug), localStorage, localisConst);
-        // tmp->execute();
     }
     names.push_back(name);
     types.push_back(vt);
@@ -69,24 +61,24 @@ Interpreter::func_descript::func_descript(std::unordered_map<std::string, Node*>
             Interpreter::Node(FUNCNODE), localStorage(raz), localisConst(dva), container(tri), retVarNames(rvn), toExec(toExec), funcName(name), types(types), argnames(nnames) {
     
     for (size_t i = 0; i < retVarNames.size(); i++) {
-        if (container[i].first == Interpreter::INT) {
-            localStorage.insert_or_assign(retVarNames[i], container[i].second);
-        }
-        else if (container[i].first == Interpreter::BOOL) {
-            localStorage.insert_or_assign(retVarNames[i], container[i].second);
-        }
-        else if (container[i].first == Interpreter::VINT) {
-            localStorage.insert_or_assign(retVarNames[i], container[i].second);
-        }
-        else if (container[i].first == Interpreter::VBOOL) {
-            localStorage.insert_or_assign(retVarNames[i], container[i].second);
-        }
-        else if (container[i].first == Interpreter::MINT) {
-            localStorage.insert_or_assign(retVarNames[i], container[i].second);
-        }
-        else if (container[i].first == Interpreter::MBOOL) {
-            localStorage.insert_or_assign(retVarNames[i], container[i].second);
-        }
+        localStorage.insert_or_assign(retVarNames[i], container[i].second);
+        // if (container[i].first == Interpreter::INT) {
+        // }
+        // else if (container[i].first == Interpreter::BOOL) {
+        //     localStorage.insert_or_assign(retVarNames[i], container[i].second);
+        // }
+        // else if (container[i].first == Interpreter::VINT) {
+        //     localStorage.insert_or_assign(retVarNames[i], container[i].second);
+        // }
+        // else if (container[i].first == Interpreter::VBOOL) {
+        //     localStorage.insert_or_assign(retVarNames[i], container[i].second);
+        // }
+        // else if (container[i].first == Interpreter::MINT) {
+        //     localStorage.insert_or_assign(retVarNames[i], container[i].second);
+        // }
+        // else if (container[i].first == Interpreter::MBOOL) {
+        //     localStorage.insert_or_assign(retVarNames[i], container[i].second);
+        // }
     }
 }
 
@@ -104,8 +96,8 @@ void Interpreter::func_descript::run() {
 }
 
 int Interpreter::callfunc::execute() {
-    if (Interpreter::varStorage.find(fname) == Interpreter::varStorage.end()) throw "No function with this name";
-    auto function = dynamic_cast<Interpreter::func_descript*>(Interpreter::varStorage.find(fname)->second);
+    if (Interpreter::funcStorage.find(fname) == Interpreter::funcStorage.end()) throw "No function with this name";
+    auto function = dynamic_cast<Interpreter::func_descript*>(Interpreter::funcStorage.find(fname)->second);
 
     if (function->types.size() != args.size()) throw "Incorrect amount of arguments";
 

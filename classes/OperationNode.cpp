@@ -18,16 +18,19 @@
                         auto nnode = dynamic_cast<Interpreter::OperationNode*>(node);
                         auto search = Interpreter::varStorage.find(nnode->getVN());
                         if (search->second->nType == Interpreter::INTNODE) return true;
+                        break;
                     }
                     case mgetexp: {
                         auto nnode = dynamic_cast<Interpreter::OperationNode*>(node);
                         auto search = Interpreter::varStorage.find(nnode->getVN());
                         if (search->second->nType == Interpreter::INTMATNODE) return true;
+                        break;
                     }
                     case vgetexp: {
                         auto nnode = dynamic_cast<Interpreter::OperationNode*>(node);
                         auto search = Interpreter::varStorage.find(nnode->getVN());
                         if (search->second->nType == Interpreter::INTVECNODE) return true;
+                        break;
                     }
                     default:
                         return false;
@@ -53,16 +56,19 @@
                         auto nnode = dynamic_cast<Interpreter::OperationNode*>(node);
                         auto search = Interpreter::varStorage.find(nnode->getVN());
                         if (search->second->nType == Interpreter::BOOLNODE) return true;
+                        break;
                     }
                     case mgetexp: {
                         auto nnode = dynamic_cast<Interpreter::OperationNode*>(node);
                         auto search = Interpreter::varStorage.find(nnode->getVN());
                         if (search->second->nType == Interpreter::BOOLMATNODE) return true;
+                        break;
                     }
                     case vgetexp: {
                         auto nnode = dynamic_cast<Interpreter::OperationNode*>(node);
                         auto search = Interpreter::varStorage.find(nnode->getVN());
                         if (search->second->nType == Interpreter::BOOLVECNODE) return true;
+                        break;
                     }
                     default:
                         return false;
