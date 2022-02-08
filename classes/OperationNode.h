@@ -68,6 +68,7 @@ private:
     Node* scalarData;
     ContainerVectorNode* vectorData;
     ContainerMatrixNode* matrixData;
+    
     std::unordered_map<std::string, Node*> varSt;
     std::unordered_map<std::string, bool> isCo;
 public:
@@ -103,16 +104,21 @@ private:
     std::vector<Node*> exprs;
     ContainerVectorNode* vecNode;
     ContainerMatrixNode* matNode;
-    Node* src;
     VMOpName oper;
+
+    std::string VN;
+    Node* SOURCE;
 public:
     int execute() override;
     void print(std::ostringstream& strm) {};
 
     VecMatVariableOperationNode(): Node(VMVAROPNODE), oper(vmnothing) {};
-    VecMatVariableOperationNode(VMOpName op, Node* src, std::vector<Node*> exps): oper(op), src(src), exprs(exps) {};
-    VecMatVariableOperationNode(VMOpName op, Node* src, ContainerVectorNode* vec, std::vector<Node*> exps): oper(op), src(src), vecNode(vec), exprs(exps) {};
-    VecMatVariableOperationNode(VMOpName op, Node* src, ContainerMatrixNode* mat, std::vector<Node*> exps): oper(op), src(src), matNode(mat), exprs(exps) {};
+    VecMatVariableOperationNode(VMOpName op, std::string VN, std::vector<Node*> exps): VN(VN), oper(op), exprs(exps), SOURCE(nullptr) {};
+    VecMatVariableOperationNode(VMOpName op, std::string VN, ContainerVectorNode* vec, std::vector<Node*> exps): VN(VN), oper(op), vecNode(vec), exprs(exps), SOURCE(nullptr) {};
+    VecMatVariableOperationNode(VMOpName op, std::string VN, ContainerMatrixNode* mat, std::vector<Node*> exps): VN(VN), oper(op), matNode(mat), exprs(exps), SOURCE(nullptr) {};
+    VecMatVariableOperationNode(VMOpName op, Node* s, std::vector<Node*> exps): SOURCE(s), oper(op), exprs(exps) {};
+    VecMatVariableOperationNode(VMOpName op, Node* s, ContainerVectorNode* vec, std::vector<Node*> exps): SOURCE(s), oper(op), vecNode(vec), exprs(exps) {};
+    VecMatVariableOperationNode(VMOpName op, Node* s, ContainerMatrixNode* mat, std::vector<Node*> exps): SOURCE(s), oper(op), matNode(mat), exprs(exps) {};
     ~VecMatVariableOperationNode() {for (auto& node: exprs) free(node); free(vecNode); free(matNode);}
 };
 

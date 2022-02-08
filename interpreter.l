@@ -92,22 +92,15 @@ wall                    {yylloc.last_line = yylloc.first_line = yylineno; return
 [a-zA-Z][a-zA-Z0-9_]*   {
                             yylloc.last_line = yylloc.first_line = yylineno; yylval.varName = new std::string(yytext);
                             auto search = Interpreter::varStorage.find(*(yylval.varName));
-                            auto searchfunc = Interpreter::funcStorage.find(*(yylval.varName));
                             if (search != Interpreter::varStorage.end()) {
                                 if (search->second->nType == Interpreter::INTMATNODE || search->second->nType == Interpreter::BOOLMATNODE || search->second->nType == Interpreter::ABSTRACTMATNODE) return MVARIABLE;
                                 else if (search->second->nType == Interpreter::INTVECNODE || search->second->nType == Interpreter::BOOLVECNODE || search->second->nType == Interpreter::ABSTRACTVECNODE) return VVARIABLE;
                                 else if (search->second->nType == Interpreter::INTNODE || search->second->nType == Interpreter::BOOLNODE) return VARIABLE;
                                 else return ER;
                             }
-                            else if (searchfunc != Interpreter::funcStorage.end()) return FVARIABLE;
-                            if (!Interpreter::tmpStorage.empty()) {
-                                search = Interpreter::tmpStorage.find(*(yylval.varName));
-                                if (search != Interpreter::tmpStorage.end()) {
-                                    if (search->second->nType == Interpreter::INTMATNODE || search->second->nType == Interpreter::BOOLMATNODE || search->second->nType == Interpreter::ABSTRACTMATNODE) return MVARIABLE;
-                                    else if (search->second->nType == Interpreter::INTVECNODE || search->second->nType == Interpreter::BOOLVECNODE || search->second->nType == Interpreter::ABSTRACTVECNODE) return VVARIABLE;
-                                    else if (search->second->nType == Interpreter::INTNODE || search->second->nType == Interpreter::BOOLNODE) return VARIABLE;
-                                    else return ER;
-                                }
+                            auto searchfunc = Interpreter::funcStorage.find(*(yylval.varName));
+                            if (searchfunc != Interpreter::funcStorage.end()) {
+                                if (searchfunc->second->nType == Interpreter::FUNCNODE) return FVARIABLE;
                             }
                             return VAR;
                         }

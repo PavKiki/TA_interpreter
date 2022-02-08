@@ -1,31 +1,9 @@
-[int tmp] = function fibo ([int n]) begin
-
-if !n
-beginif
-tmp <- 0
-endif
-
-if !(n-1)
-beginif
-tmp <- 1
-endif
-
-if (!(!(n))) && (!(!(n-1)))
-beginif
-fibo[(n-1)]
-int a = tmp
-fibo[(n-2)]
-int b = tmp
-tmp <- (a + b)
-endif
-
+[int a, int b] = function calculate([int c, int d]) begin
+a <- c + d
+b <- c - d
 end
 
-
-for int i = 0:3
-beginfor
-
-fibo[i]
-print(tmp)
-
-endfor
+int a = 5
+int b = a + 100
+print(a)
+print(b)

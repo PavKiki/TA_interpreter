@@ -1,128 +1,282 @@
 #include "FunctionNode.h"
 
-Interpreter::args_func::args_func(Interpreter::Node* dec): Interpreter::Node(Interpreter::ARGFUNCNODE) {
-    addByNode(dec);
+void Interpreter::args_func::addNonDefault(Interpreter::varType vt, std::string name) {
+    args.push_back({vt, name});
 }
 
-Interpreter::args_func::args_func(Interpreter::varType vt, std::string name): Interpreter::Node(Interpreter::ARGFUNCNODE) {
-    addByVTypeandName(vt, name);
+void Interpreter::args_func::addDefault(Interpreter::varType vt, std::string name, Interpreter::Node* dec) {
+    args.push_back({vt, name});
+    def_args.insert_or_assign(name, dec);
 }
 
-void Interpreter::args_func::addByNode(Interpreter::Node* dec) {
-    auto declar = dynamic_cast<VariableOperationNode*>(dec);
-    auto varType = declar->getVarType();
-    auto opName = declar->getVarOpName();
-    auto varName = declar->getVarName();
+Interpreter::func_descript::func_descript(std::vector<std::pair<varType, std::string>> rets, std::vector<std::pair<varType, std::string>> args,
+            std::unordered_map<std::string, Node*> def_args, std::string fname) {
+    this->rets = rets;
+    this->args = args;
+    this->def_args = def_args;
+    this->fname = fname;
 
-    if (varType == Interpreter::INT || varType == Interpreter::CINT || varType == Interpreter::BOOL || varType == Interpreter::CBOOL) {
-        auto tmp = new Interpreter::VariableOperationNode(varType, declare, varName, varStorage[varName], localStorage, localisConst);
-        tmp->execute();
-    }
-    else if (varType == Interpreter::VINT || varType == Interpreter::CVINT || varType == Interpreter::VBOOL || varType == Interpreter::CVBOOL) {
-        auto tmp = new Interpreter::VariableOperationNode(varType, declare, varName, dynamic_cast<Interpreter::ContainerVectorNode*>(varStorage[varName]), localStorage, localisConst);
-        tmp->execute();
-    }
-    else if (varType == Interpreter::MINT || varType == Interpreter::CMINT || varType == Interpreter::MBOOL || varType == Interpreter::CMBOOL) {
-        auto tmp = new Interpreter::VariableOperationNode(varType, declare, varName, dynamic_cast<Interpreter::ContainerMatrixNode*>(varStorage[varName]), localStorage, localisConst);
-        tmp->execute();
-    }
-
-    types.push_back(varType);
-    names.push_back(varName);
-    varStorage.erase(declar->getVarName());
-}
-        
-void Interpreter::args_func::addByVTypeandName(Interpreter::varType vt, std::string name) {
-    if (vt == INT || vt == CINT) {
-        auto plug = new Interpreter::IntegerNode();
-        localStorage.insert_or_assign(name, plug);
-        tmpStorage.insert_or_assign(name, plug);
-    }
-    else if (vt == BOOL || vt == CBOOL) {
-        auto plug = new Interpreter::BoolNode();
-        localStorage.insert_or_assign(name, plug);
-        tmpStorage.insert_or_assign(name, plug);
-    }
-    else if (vt == VINT || vt == CVINT || vt == VBOOL || vt == CVBOOL) {
-        auto plug = new Interpreter::AbstractVectorNode();
-        localStorage.insert_or_assign(name, plug);
-        tmpStorage.insert_or_assign(name, plug);
-    }
-    else if (vt == MBOOL || vt == CMBOOL || vt == MINT || vt == CMINT) {
-        auto plug = new Interpreter::AbstractMatrixNode();
-        localStorage.insert_or_assign(name, plug);
-        tmpStorage.insert_or_assign(name, plug);
-    }
-    names.push_back(name);
-    types.push_back(vt);
-}
-
-Interpreter::func_descript::func_descript(std::unordered_map<std::string, Node*> raz, std::unordered_map<std::string, bool> dva, std::vector<std::pair<varType, Node*>> tri, std::vector<std::string> rvn, Node* toExec, std::string name, std::vector<varType> types, std::vector<std::string> nnames):
-            Interpreter::Node(FUNCNODE), localStorage(raz), localisConst(dva), container(tri), retVarNames(rvn), toExec(toExec), funcName(name), types(types), argnames(nnames) {
-    
-    for (size_t i = 0; i < retVarNames.size(); i++) {
-        localStorage.insert_or_assign(retVarNames[i], container[i].second);
-        // if (container[i].first == Interpreter::INT) {
-        // }
-        // else if (container[i].first == Interpreter::BOOL) {
-        //     localStorage.insert_or_assign(retVarNames[i], container[i].second);
-        // }
-        // else if (container[i].first == Interpreter::VINT) {
-        //     localStorage.insert_or_assign(retVarNames[i], container[i].second);
-        // }
-        // else if (container[i].first == Interpreter::VBOOL) {
-        //     localStorage.insert_or_assign(retVarNames[i], container[i].second);
-        // }
-        // else if (container[i].first == Interpreter::MINT) {
-        //     localStorage.insert_or_assign(retVarNames[i], container[i].second);
-        // }
-        // else if (container[i].first == Interpreter::MBOOL) {
-        //     localStorage.insert_or_assign(retVarNames[i], container[i].second);
-        // }
-    }
-}
-
-void Interpreter::func_descript::run() {
-    std::unordered_map<std::string, Node*> originalStorage = Interpreter::varStorage;
-    std::unordered_map<std::string, bool> originalIsConst = Interpreter::isConst;
-
-    Interpreter::varStorage = this->localStorage;
-    Interpreter::isConst = this->localisConst;
-
-    toExec->execute();
-
-    Interpreter::varStorage = originalStorage;
-    Interpreter::isConst = originalIsConst; 
-}
-
-int Interpreter::callfunc::execute() {
-    if (Interpreter::funcStorage.find(fname) == Interpreter::funcStorage.end()) throw "No function with this name";
-    auto function = dynamic_cast<Interpreter::func_descript*>(Interpreter::funcStorage.find(fname)->second);
-
-    if (function->types.size() != args.size()) throw "Incorrect amount of arguments";
-
-    for (size_t i = 0; i < function->types.size(); i++) {
-        switch (function->types[i])
+    for (auto& retVariable: rets) {
+        switch (retVariable.first)
         {
-        case Interpreter::INT: case Interpreter::CINT: case Interpreter::BOOL: case Interpreter::CBOOL: {
-            auto tmp = new VariableOperationNode(function->types[i], declare, function->argnames[i], args[i].second, function->localStorage, function->localisConst);
-            tmp->execute();
+        case Interpreter::INT:{
+            auto plug = new Interpreter::IntegerNode();
+            this->localStorage.insert_or_assign(retVariable.second, plug);
+            this->localIsConst.insert_or_assign(retVariable.second, false);
             break;
         }
-        case Interpreter::VINT: case Interpreter::CVINT: case Interpreter::VBOOL: case Interpreter::CVBOOL: {
-            auto tmp = new VariableOperationNode(function->types[i], declare, function->argnames[i], dynamic_cast<Interpreter::ContainerVectorNode*>(args[i].second), function->localStorage, function->localisConst);
-            tmp->execute();
+        case Interpreter::CINT: {
+            auto plug = new Interpreter::IntegerNode();
+            this->localStorage.insert_or_assign(retVariable.second, plug);
+            this->localIsConst.insert_or_assign(retVariable.second, true);
             break;
         }
-        case Interpreter::MINT: case Interpreter::CMINT: case Interpreter::MBOOL: case Interpreter::CMBOOL: {
-            auto tmp = new VariableOperationNode(function->types[i], declare, function->argnames[i], dynamic_cast<Interpreter::ContainerMatrixNode*>(args[i].second), function->localStorage, function->localisConst);
-            tmp->execute();
+        case Interpreter::BOOL:{
+            auto plug = new Interpreter::BoolNode();
+            this->localStorage.insert_or_assign(retVariable.second, plug);
+            this->localIsConst.insert_or_assign(retVariable.second, false);
             break;
         }
+        case Interpreter::CBOOL: {
+            auto plug = new Interpreter::BoolNode();
+            this->localStorage.insert_or_assign(retVariable.second, plug);
+            this->localIsConst.insert_or_assign(retVariable.second, true);
+            break;
+        }
+        case Interpreter::VINT:{
+            auto plug = new Interpreter::IntegerVectorNode();
+            this->localStorage.insert_or_assign(retVariable.second, plug);
+            this->localIsConst.insert_or_assign(retVariable.second, false);
+            break;
+        }
+        case Interpreter::VBOOL: {
+            auto plug = new Interpreter::BoolVectorNode();
+            this->localStorage.insert_or_assign(retVariable.second, plug);
+            this->localIsConst.insert_or_assign(retVariable.second, false);
+            break;
+        }
+        case Interpreter::CVINT:{
+            auto plug = new Interpreter::IntegerVectorNode();
+            this->localStorage.insert_or_assign(retVariable.second, plug);
+            this->localIsConst.insert_or_assign(retVariable.second, true);
+            break;
+        }
+        case Interpreter::CVBOOL: {
+            auto plug = new Interpreter::BoolVectorNode();
+            this->localStorage.insert_or_assign(retVariable.second, plug);
+            this->localIsConst.insert_or_assign(retVariable.second, true);
+            break;
+        }
+        case Interpreter::MINT:{
+            auto plug = new Interpreter::IntegerMatrixNode();
+            this->localStorage.insert_or_assign(retVariable.second, plug);
+            this->localIsConst.insert_or_assign(retVariable.second, false);
+            break;
+        }
+        case Interpreter::MBOOL: {
+            auto plug = new Interpreter::BoolMatrixNode();
+            this->localStorage.insert_or_assign(retVariable.second, plug);
+            this->localIsConst.insert_or_assign(retVariable.second, false);
+            break;
+        }
+        case Interpreter::CMINT:{
+            auto plug = new Interpreter::IntegerMatrixNode();
+            this->localStorage.insert_or_assign(retVariable.second, plug);
+            this->localIsConst.insert_or_assign(retVariable.second, true);
+            break;
+        }
+        case Interpreter::CMBOOL: {
+            auto plug = new Interpreter::BoolMatrixNode();
+            this->localStorage.insert_or_assign(retVariable.second, plug);
+            this->localIsConst.insert_or_assign(retVariable.second, true);
+            break;
+        }
+        
         default:
             break;
         }
     }
-    function->run();
+    for (auto& argVariable: args) {
+        switch (argVariable.first)
+        {
+        case Interpreter::INT:{
+            auto plug = new Interpreter::IntegerNode();
+            this->localStorage.insert_or_assign(argVariable.second, plug);
+            this->localIsConst.insert_or_assign(argVariable.second, false);
+            if (localStorage.find(argVariable.second) != localStorage.end()) {
+                auto tmp = new VariableOperationNode(Interpreter::INT, declare, argVariable.second, localStorage[argVariable.second], this->localStorage, this->localIsConst);
+                defaultAssigns.push_back(tmp);
+            }
+            break;
+        }
+        case Interpreter::CINT: {
+            auto plug = new Interpreter::IntegerNode();
+            this->localStorage.insert_or_assign(argVariable.second, plug);
+            this->localIsConst.insert_or_assign(argVariable.second, true);
+            if (localStorage.find(argVariable.second) != localStorage.end()) {
+                auto tmp = new VariableOperationNode(Interpreter::CINT, declare, argVariable.second, localStorage[argVariable.second], this->localStorage, this->localIsConst);
+                defaultAssigns.push_back(tmp);
+            }
+            break;
+        }
+        case Interpreter::BOOL:{
+            auto plug = new Interpreter::BoolNode();
+            this->localStorage.insert_or_assign(argVariable.second, plug);
+            this->localIsConst.insert_or_assign(argVariable.second, false);
+            if (localStorage.find(argVariable.second) != localStorage.end()) {
+                auto tmp = new VariableOperationNode(Interpreter::BOOL, declare, argVariable.second, localStorage[argVariable.second], this->localStorage, this->localIsConst);
+                defaultAssigns.push_back(tmp);
+            }
+            break;
+        }
+        case Interpreter::CBOOL: {
+            auto plug = new Interpreter::BoolNode();
+            this->localStorage.insert_or_assign(argVariable.second, plug);
+            this->localIsConst.insert_or_assign(argVariable.second, true);
+            if (localStorage.find(argVariable.second) != localStorage.end()) {
+                auto tmp = new VariableOperationNode(Interpreter::CBOOL, declare, argVariable.second, localStorage[argVariable.second], this->localStorage, this->localIsConst);
+                defaultAssigns.push_back(tmp);
+            }
+            break;
+        }
+        case Interpreter::VINT:{
+            auto plug = new Interpreter::IntegerVectorNode();
+            this->localStorage.insert_or_assign(argVariable.second, plug);
+            this->localIsConst.insert_or_assign(argVariable.second, false);
+            if (localStorage.find(argVariable.second) != localStorage.end()) {
+                auto tmp = new VariableOperationNode(Interpreter::VINT, declare, argVariable.second, dynamic_cast<Interpreter::ContainerVectorNode*>(localStorage[argVariable.second]), this->localStorage, this->localIsConst);
+                defaultAssigns.push_back(tmp);
+            }
+            break;
+        }
+        case Interpreter::VBOOL: {
+            auto plug = new Interpreter::BoolVectorNode();
+            this->localStorage.insert_or_assign(argVariable.second, plug);
+            this->localIsConst.insert_or_assign(argVariable.second, false);
+            if (localStorage.find(argVariable.second) != localStorage.end()) {
+                auto tmp = new VariableOperationNode(Interpreter::VBOOL, declare, argVariable.second, dynamic_cast<Interpreter::ContainerVectorNode*>(localStorage[argVariable.second]), this->localStorage, this->localIsConst);
+                defaultAssigns.push_back(tmp);
+            }
+            break;
+        }
+        case Interpreter::CVINT:{
+            auto plug = new Interpreter::IntegerVectorNode();
+            this->localStorage.insert_or_assign(argVariable.second, plug);
+            this->localIsConst.insert_or_assign(argVariable.second, true);
+            if (localStorage.find(argVariable.second) != localStorage.end()) {
+                auto tmp = new VariableOperationNode(Interpreter::CVINT, declare, argVariable.second, dynamic_cast<Interpreter::ContainerVectorNode*>(localStorage[argVariable.second]), this->localStorage, this->localIsConst);
+                defaultAssigns.push_back(tmp);
+            }
+            break;
+        }
+        case Interpreter::CVBOOL: {
+            auto plug = new Interpreter::BoolVectorNode();
+            this->localStorage.insert_or_assign(argVariable.second, plug);
+            this->localIsConst.insert_or_assign(argVariable.second, true);
+            if (localStorage.find(argVariable.second) != localStorage.end()) {
+                auto tmp = new VariableOperationNode(Interpreter::CVBOOL, declare, argVariable.second, dynamic_cast<Interpreter::ContainerVectorNode*>(localStorage[argVariable.second]), this->localStorage, this->localIsConst);
+                defaultAssigns.push_back(tmp);
+            }
+            break;
+        }
+        case Interpreter::MINT:{
+            auto plug = new Interpreter::IntegerMatrixNode();
+            this->localStorage.insert_or_assign(argVariable.second, plug);
+            this->localIsConst.insert_or_assign(argVariable.second, false);
+            if (localStorage.find(argVariable.second) != localStorage.end()) {
+                auto tmp = new VariableOperationNode(Interpreter::MINT, declare, argVariable.second, dynamic_cast<Interpreter::ContainerMatrixNode*>(localStorage[argVariable.second]), this->localStorage, this->localIsConst);
+                defaultAssigns.push_back(tmp);
+            }
+            break;
+        }
+        case Interpreter::MBOOL: {
+            auto plug = new Interpreter::BoolMatrixNode();
+            this->localStorage.insert_or_assign(argVariable.second, plug);
+            this->localIsConst.insert_or_assign(argVariable.second, false);
+            if (localStorage.find(argVariable.second) != localStorage.end()) {
+                auto tmp = new VariableOperationNode(Interpreter::MBOOL, declare, argVariable.second, dynamic_cast<Interpreter::ContainerMatrixNode*>(localStorage[argVariable.second]), this->localStorage, this->localIsConst);
+                defaultAssigns.push_back(tmp);
+            }
+            break;
+        }
+        case Interpreter::CMINT:{
+            auto plug = new Interpreter::IntegerMatrixNode();
+            this->localStorage.insert_or_assign(argVariable.second, plug);
+            this->localIsConst.insert_or_assign(argVariable.second, true);
+            if (localStorage.find(argVariable.second) != localStorage.end()) {
+                auto tmp = new VariableOperationNode(Interpreter::CMINT, declare, argVariable.second, dynamic_cast<Interpreter::ContainerMatrixNode*>(localStorage[argVariable.second]), this->localStorage, this->localIsConst);
+                defaultAssigns.push_back(tmp);
+            }
+            break;
+        }
+        case Interpreter::CMBOOL: {
+            auto plug = new Interpreter::BoolMatrixNode();
+            this->localStorage.insert_or_assign(argVariable.second, plug);
+            this->localIsConst.insert_or_assign(argVariable.second, true);
+            if (localStorage.find(argVariable.second) != localStorage.end()) {
+                auto tmp = new VariableOperationNode(Interpreter::CMBOOL, declare, argVariable.second, dynamic_cast<Interpreter::ContainerMatrixNode*>(localStorage[argVariable.second]), this->localStorage, this->localIsConst);
+                defaultAssigns.push_back(tmp);
+            }
+            break;
+        }
+        
+        default:
+            break;
+        }
+    }
+
+
+}
+
+void Interpreter::func_descript::init() {
+    for (auto& assign: defaultAssigns) {
+        assign->execute();
+    }
+}
+
+void Interpreter::func_descript::run() {
+    
+    // std::unordered_map<std::string, Node*> originalStorage = Interpreter::varStorage;
+    // std::unordered_map<std::string, bool> originalIsConst = Interpreter::isConst;
+
+    // Interpreter::varStorage = this->localStorage;
+    // Interpreter::isConst = this->localIsConst;
+
+    // toExec->execute();
+
+    // Interpreter::varStorage = originalStorage;
+    // Interpreter::isConst = originalIsConst; 
+}
+
+int Interpreter::callfunc::execute() {
+    // if (Interpreter::varStorage.find(fname) == Interpreter::varStorage.end()) throw "No function with this name";
+    // auto function = dynamic_cast<Interpreter::func_descript*>(Interpreter::varStorage.find(fname)->second);
+
+    // if (function->types.size() != args.size()) throw "Incorrect amount of arguments";
+
+    // for (size_t i = 0; i < function->types.size(); i++) {
+    //     switch (function->types[i])
+    //     {
+    //     case Interpreter::INT: case Interpreter::CINT: case Interpreter::BOOL: case Interpreter::CBOOL: {
+    //         auto tmp = new VariableOperationNode(function->types[i], declare, function->argnames[i], args[i].second, function->localStorage, function->localisConst);
+    //         tmp->execute();
+    //         break;
+    //     }
+    //     case Interpreter::VINT: case Interpreter::CVINT: case Interpreter::VBOOL: case Interpreter::CVBOOL: {
+    //         auto tmp = new VariableOperationNode(function->types[i], declare, function->argnames[i], dynamic_cast<Interpreter::ContainerVectorNode*>(args[i].second), function->localStorage, function->localisConst);
+    //         tmp->execute();
+    //         break;
+    //     }
+    //     case Interpreter::MINT: case Interpreter::CMINT: case Interpreter::MBOOL: case Interpreter::CMBOOL: {
+    //         auto tmp = new VariableOperationNode(function->types[i], declare, function->argnames[i], dynamic_cast<Interpreter::ContainerMatrixNode*>(args[i].second), function->localStorage, function->localisConst);
+    //         tmp->execute();
+    //         break;
+    //     }
+    //     default:
+    //         break;
+    //     }
+    // }
+
+    // function->run();
     return 0;
 }

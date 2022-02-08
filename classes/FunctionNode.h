@@ -5,49 +5,51 @@
 
 namespace Interpreter {
 
-class return_funcNode: public Node {
+class return_func: public Node {
     public:
-        std::vector<std::pair<varType, Node*>> container;
-        std::vector<std::string> retVarNames;
+        std::vector<std::pair<varType, std::string>> rets;
 
         void print(std::ostringstream& strm) override {}; 
         int execute() override {return 0;}
 
-        return_funcNode(): Node(RETFUNCNODE) {};
-        return_funcNode(std::pair<varType, Node*> p): Node(RETFUNCNODE) {container.push_back(p);};
-        ~return_funcNode() {};
+        return_func(): Node(RETFUNCNODE) {};
+        return_func(std::pair<varType, std::string> p): Node(RETFUNCNODE) {rets.push_back(p);};
+        ~return_func() {};
 };
 
 class args_func: public Node {
     public:
-        std::unordered_map<std::string, Node*> localStorage;
-        std::unordered_map<std::string, bool> localisConst;
-
-        std::vector<varType> types;
-        std::vector<std::string> names;
+        std::vector<std::pair<varType, std::string>> args;
+        std::unordered_map<std::string, Node*> def_args;
+        bool isClosed;
 
         void print(std::ostringstream& strm) override {};
         int execute() override {return 0;}
 
-        void addByNode(Node* dec);
-        void addByVTypeandName(varType vt, std::string name);
+        void addNonDefault(varType vt, std::string name);
+        void addDefault(varType vt, std::string name, Node* dec);
 
-        args_func(): Node(ARGFUNCNODE) {};
-        args_func(Node* dec);
-        args_func(varType vt, std::string name);
+        args_func(): Node(ARGFUNCNODE), isClosed(true) {};
+        args_func(varType vt, std::string name, Node* dec): Node(ARGFUNCNODE), isClosed(false) {
+            addDefault(vt, name, dec);
+        };
+        args_func(varType vt, std::string name): Node(ARGFUNCNODE), isClosed(false) {
+            addNonDefault(vt, name);
+        };
         ~args_func() {}
 };
 
 class func_descript: public Node {
     public:
-        std::unordered_map<std::string, Node*> localStorage;
-        std::unordered_map<std::string, bool> localisConst;
-        std::vector<std::pair<varType, Node*>> container;
-        std::vector<std::string> retVarNames;
-        std::vector<varType> types;
-        std::vector<std::string> argnames;
+        std::vector<std::pair<varType, std::string>> rets;
+        std::vector<std::pair<varType, std::string>> args;
+        std::unordered_map<std::string, Node*> def_args;
+        std::string fname;
 
-        std::string funcName;
+        std::vector<Node*> defaultAssigns;
+
+        std::unordered_map<std::string, Node*> localStorage;
+        std::unordered_map<std::string, bool> localIsConst;
 
         Node* toExec;
 
@@ -55,10 +57,13 @@ class func_descript: public Node {
 
         int execute() override {return 0;};
 
+        void init();
+
         void run();
 
         func_descript(): Node(FUNCNODE) {};
-        func_descript(std::unordered_map<std::string, Node*> raz, std::unordered_map<std::string, bool> dva, std::vector<std::pair<varType, Node*>> tri, std::vector<std::string> rvn, Node* toExec, std::string name, std::vector<varType> types, std::vector<std::string> nnames);
+        func_descript(std::vector<std::pair<varType, std::string>> rets, std::vector<std::pair<varType, std::string>> args,
+                                                                            std::unordered_map<std::string, Node*> def_args, std::string fname);
         ~func_descript() {};
 };
 

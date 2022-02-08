@@ -18,19 +18,16 @@
                         auto nnode = dynamic_cast<Interpreter::OperationNode*>(node);
                         auto search = Interpreter::varStorage.find(nnode->getVN());
                         if (search->second->nType == Interpreter::INTNODE) return true;
-                        break;
                     }
                     case mgetexp: {
                         auto nnode = dynamic_cast<Interpreter::OperationNode*>(node);
                         auto search = Interpreter::varStorage.find(nnode->getVN());
                         if (search->second->nType == Interpreter::INTMATNODE) return true;
-                        break;
                     }
                     case vgetexp: {
                         auto nnode = dynamic_cast<Interpreter::OperationNode*>(node);
                         auto search = Interpreter::varStorage.find(nnode->getVN());
                         if (search->second->nType == Interpreter::INTVECNODE) return true;
-                        break;
                     }
                     default:
                         return false;
@@ -56,19 +53,16 @@
                         auto nnode = dynamic_cast<Interpreter::OperationNode*>(node);
                         auto search = Interpreter::varStorage.find(nnode->getVN());
                         if (search->second->nType == Interpreter::BOOLNODE) return true;
-                        break;
                     }
                     case mgetexp: {
                         auto nnode = dynamic_cast<Interpreter::OperationNode*>(node);
                         auto search = Interpreter::varStorage.find(nnode->getVN());
                         if (search->second->nType == Interpreter::BOOLMATNODE) return true;
-                        break;
                     }
                     case vgetexp: {
                         auto nnode = dynamic_cast<Interpreter::OperationNode*>(node);
                         auto search = Interpreter::varStorage.find(nnode->getVN());
                         if (search->second->nType == Interpreter::BOOLVECNODE) return true;
-                        break;
                     }
                     default:
                         return false;
@@ -115,7 +109,7 @@
     int Interpreter::OperationNode::execute() {
         switch (operation)
         {
-        case uminus:
+        case uminus: {
             if (!Interpreter::suitForArithm(kids[0])) {
                 throw "Semantic error! Wrong types of operands.";
             }
@@ -123,7 +117,8 @@
                 int tmp = kids[0]->execute();
                 return -tmp;
             }
-        case plus:
+        }
+        case plus: {
             if (!Interpreter::suitForArithm(kids[0]) || !Interpreter::suitForArithm(kids[1])) {
                 throw "Semantic error! Wrong types of operands.";
             }
@@ -131,57 +126,56 @@
                 int tmp = kids[0]->execute() + kids[1]->execute();
                 return tmp;
             }
-
-        case minus:
+        }
+        case minus: {
             if (!Interpreter::suitForArithm(kids[0]) || !Interpreter::suitForArithm(kids[1])) {
                 throw "Semantic error! Wrong types of operands.";
             }
             else {
                 return kids[0]->execute() - kids[1]->execute();
             }
-
-        case divide:
+        }
+        case divide: {
             if (!Interpreter::suitForArithm(kids[0]) || !Interpreter::suitForArithm(kids[1])) {
                 throw "Semantic error! Wrong types of operands.";
             }
             else {
                 return kids[0]->execute() / kids[1]->execute();
             }
-        
-        case less:
+        }        
+        case less: {
             if (!Interpreter::suitForArithm(kids[0]) || !Interpreter::suitForArithm(kids[1])) {
                 throw "Semantic error! Wrong types of operands.";
             }
             else {
                 return (kids[0]->execute() < kids[1]->execute());
             }
-
-        case greater:
+        }
+        case greater: {
             if (!Interpreter::suitForArithm(kids[0]) || !Interpreter::suitForArithm(kids[1])) {
                 throw "Semantic error! Wrong types of operands.";
             }
             else {
                 return (kids[0]->execute() > kids[1]->execute());
             }
-
-        case denial:
+        }
+        case denial: {
             return !kids[0]->execute();
-
-        case conjunction:
+        }
+        case conjunction:{
             if (!Interpreter::suitForLogic(kids[0]) || !Interpreter::suitForLogic(kids[1])) {
                 throw "Semantic error! Wrong types of operands.";
             }
             else {
                 return kids[0]->execute() * kids[1]->execute();
             }
-
+        }
         case newline: {
             for (auto& kid: kids) {
                 kid->execute();
             }
             return 0;
         }
-
         case pprint: {
             if (varname.empty()) {
                 kids[0]->print(Interpreter::out);
@@ -192,22 +186,27 @@
             }
             return 0;
         }
-
         case vgetexp: {
+            auto search = Interpreter::varStorage.find(varname);
+            if (search == Interpreter::varStorage.end()) throw (std::string("Some mistake occured, variable ") + varname + "doesn't exist...");
+
             if (!Interpreter::suitForArithm(kids[0])) {
                 throw "Incorrect index!";
             }
-            auto tmp = static_cast<Interpreter::AbstractVectorNode*>(kids[1]);
+            auto tmp = static_cast<Interpreter::AbstractVectorNode*>(search->second);
             auto index = kids[0]->execute();
             if (index >= tmp->getSize() || index < 0) throw "Incorrect index!";
             return tmp->getByIndex(index)->execute();
         }
         
         case mgetexp: {
+            auto search = Interpreter::varStorage.find(varname);
+            if (search == Interpreter::varStorage.end()) throw (std::string("Some mistake occured, variable ") + varname + "doesn't exist...");
+
             if (!Interpreter::suitForArithm(kids[0]) || !Interpreter::suitForArithm(kids[1])) {
                 throw "Incorrect index!";
             }
-            auto tmp = static_cast<Interpreter::AbstractMatrixNode*>(kids[2]);
+            auto tmp = static_cast<Interpreter::AbstractMatrixNode*>(search->second);
             auto index1 = kids[0]->execute();
             auto index2 = kids[1]->execute();
             if (index1 >= tmp->getSizeX() || index1 < 0) throw "Incorrect index!";
@@ -562,6 +561,16 @@
     int Interpreter::VecMatVariableOperationNode::execute() {
         switch(oper) {
             case vexpr: {
+                Node* src;
+                if (SOURCE == nullptr) {
+                    auto search = Interpreter::varStorage.find(VN);
+                    if (search == Interpreter::varStorage.end()) throw (std::string("Some mistake occured, variable ") + VN + "doesn't exist...");
+                    src = search->second;
+                }
+                else {
+                    src = SOURCE;
+                }
+
                 if (src->nType == INTVECNODE && suitForArithm(exprs[0]) && suitForArithm(exprs[1])) {
                     auto ssrc = static_cast<Interpreter::IntegerVectorNode*>(src);
                     if (exprs[0]->execute() < 0 || exprs[0]->execute() >= ssrc->getSize()) throw "Out of range!";
@@ -576,6 +585,16 @@
                 break;
             }
             case vvec: {
+                Node* src;
+                if (SOURCE == nullptr) {
+                    auto search = Interpreter::varStorage.find(VN);
+                    if (search == Interpreter::varStorage.end()) throw (std::string("Some mistake occured, variable ") + VN + "doesn't exist...");
+                    src = search->second;
+                }
+                else {
+                    src = SOURCE;
+                }
+
                 auto futureCondition = dynamic_cast<Interpreter::ContainerVectorNode*>(exprs[0]); 
                 nodeType typeCondition;
                 AbstractVectorNode* vecCondition = Interpreter::VECgetNode_checkType(futureCondition, typeCondition);
@@ -638,6 +657,16 @@
                 break;
             }
             case mexpr: {
+                Node* src;
+                if (SOURCE == nullptr) {
+                    auto search = Interpreter::varStorage.find(VN);
+                    if (search == Interpreter::varStorage.end()) throw (std::string("Some mistake occured, variable ") + VN + "doesn't exist...");
+                    src = search->second;
+                }
+                else {
+                    src = SOURCE;
+                }
+
                 if (suitForArithm(exprs[0])) {
                     auto ssrc = dynamic_cast<Interpreter::AbstractMatrixNode*>(src);
                     Interpreter::Node* srcvec = ssrc->getByIndex(exprs[0]->execute());
@@ -652,6 +681,16 @@
                 break;
             }        
             case mexprcolumn: {
+                Node* src;
+                if (SOURCE == nullptr) {
+                    auto search = Interpreter::varStorage.find(VN);
+                    if (search == Interpreter::varStorage.end()) throw (std::string("Some mistake occured, variable ") + VN + "doesn't exist...");
+                    src = search->second;
+                }
+                else {
+                    src = SOURCE;
+                }
+
                 auto ssrc = dynamic_cast<Interpreter::AbstractMatrixNode*>(src);
 
                 if (ssrc->getSizeX() != vecNode->getSize()) throw "Dimension mismatch!";
@@ -667,6 +706,16 @@
                 break;
             }
             case mexprrow: {
+                Node* src;
+                if (SOURCE == nullptr) {
+                    auto search = Interpreter::varStorage.find(VN);
+                    if (search == Interpreter::varStorage.end()) throw (std::string("Some mistake occured, variable ") + VN + "doesn't exist...");
+                    src = search->second;
+                }
+                else {
+                    src = SOURCE;
+                }
+
                 auto ssrc = dynamic_cast<Interpreter::AbstractMatrixNode*>(src);
 
                 if (ssrc->getSizeY() != vecNode->getSize()) throw "Dimension mismatch!";
@@ -683,6 +732,16 @@
                 break;
             }
             case mveccolumn: {
+                Node* src;
+                if (SOURCE == nullptr) {
+                    auto search = Interpreter::varStorage.find(VN);
+                    if (search == Interpreter::varStorage.end()) throw (std::string("Some mistake occured, variable ") + VN + "doesn't exist...");
+                    src = search->second;
+                }
+                else {
+                    src = SOURCE;
+                }
+
                 auto ssrc = dynamic_cast<Interpreter::AbstractMatrixNode*>(src);
                 
                 std::vector<Interpreter::Node*> kids;
@@ -699,6 +758,16 @@
                 break;
             }
             case mvecrow: {
+                Node* src;
+                if (SOURCE == nullptr) {
+                    auto search = Interpreter::varStorage.find(VN);
+                    if (search == Interpreter::varStorage.end()) throw (std::string("Some mistake occured, variable ") + VN + "doesn't exist...");
+                    src = search->second;
+                }
+                else {
+                    src = SOURCE;
+                }
+
                 auto ssrc = dynamic_cast<Interpreter::AbstractMatrixNode*>(src);
                 auto condVec = static_cast<Interpreter::ContainerVectorNode*>(exprs[0]);
                 if (ssrc->getSizeY() == matNode->getSizeY()) {
@@ -742,6 +811,16 @@
                 break;
             }
             case mmat: {
+                Node* src;
+                if (SOURCE == nullptr) {
+                    auto search = Interpreter::varStorage.find(VN);
+                    if (search == Interpreter::varStorage.end()) throw (std::string("Some mistake occured, variable ") + VN + "doesn't exist...");
+                    src = search->second;
+                }
+                else {
+                    src = SOURCE;
+                }
+
                 auto ssrc = dynamic_cast<Interpreter::AbstractMatrixNode*>(src);
                 auto condMat = static_cast<Interpreter::ContainerMatrixNode*>(exprs[0]);
 

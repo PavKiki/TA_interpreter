@@ -111,6 +111,8 @@ private:
 
     std::vector<ContainerVectorNode*> kids;
     vecOpType vecOperType;
+
+    std::string VN;
 public:
 
     int execute() override;
@@ -130,6 +132,7 @@ public:
     ContainerVectorNode(Node* d): Node(CONVECNODE), x(1), vecOperType(vnothing) {data.push_back(d);};
     ContainerVectorNode(std::vector<Node*> d, size_t x): Node(CONVECNODE), x(x), vecOperType(vnothing) {data = d;};
     ContainerVectorNode(std::vector<ContainerVectorNode*> kids, vecOpType t): x(0), vecOperType(t), kids(kids), Node(VECOPNODE) {}
+    ContainerVectorNode(std::vector<ContainerVectorNode*> kids, vecOpType t, std::string VN): x(0), vecOperType(t), kids(kids), Node(VECOPNODE), VN(VN) {}
     ~ContainerVectorNode() {for (auto& tmp: data) std::free(tmp);};
 };
 
@@ -146,8 +149,9 @@ public:
     Node*& getByIndex(const size_t index) {return data[index];};
 
     void setData(std::vector<Node*> dat) {data = dat; size = dat.size();}
-
+    
     AbstractVectorNode(): Node(ABSTRACTVECNODE), size(0){};
+    AbstractVectorNode(nodeType typ): size(0), Node(typ) {};
     AbstractVectorNode(nodeType typ, std::vector<Node*> dat, size_t siz): Node(typ), size(siz) {data = dat;};
     ~AbstractVectorNode() {for (auto& node: data) std::free(node);};
 };
@@ -160,6 +164,8 @@ private:
     
     std::vector<ContainerMatrixNode*> kids;
     mOpType matOperType;
+
+    std::string VN;
 public:
 
     int execute() override;
@@ -179,6 +185,7 @@ public:
     ContainerMatrixNode(): Node(CONMATNODE), x(0), y(0), matOperType(mnothing) {};
     ContainerMatrixNode(ContainerVectorNode* d): Node(CONMATNODE), x(1), y(d->getSize()), matOperType(mnothing) {data.push_back(d);};
     ContainerMatrixNode(std::vector<AbstractVectorNode*>& d, size_t xx, size_t yy);
+    ContainerMatrixNode(std::vector<ContainerMatrixNode*> kids, mOpType t, std::string VN): x(0), y(0), kids(kids), matOperType(t), Node(MATOPNODE), VN(VN) {};
     ContainerMatrixNode(std::vector<ContainerMatrixNode*> kids, mOpType t): x(0), y(0), kids(kids), matOperType(t), Node(MATOPNODE) {};
     ~ContainerMatrixNode() {for (auto& tmp: data) std::free(tmp);};
 };
@@ -200,6 +207,7 @@ public:
     void setData(std::vector<AbstractVectorNode*> dat) {data = dat; x = dat.size(); y = dat[0]->getSize();}
 
     AbstractMatrixNode(): Node(ABSTRACTMATNODE), x(0), y(0) {};
+    AbstractMatrixNode(nodeType typ): x(0), y(0), Node(typ) {};
     AbstractMatrixNode(nodeType typ, std::vector<AbstractVectorNode*> dat, size_t X, size_t Y): Node(typ), x(X), y(Y), data(dat) {};
     ~AbstractMatrixNode();
 };
@@ -208,8 +216,10 @@ extern std::unordered_map<std::string, Node*> varStorage;
 extern std::unordered_map<std::string, bool> isConst;
 extern std::ostringstream out;
 
-extern std::unordered_map<std::string, Node*> tmpStorage;
 extern std::unordered_map<std::string, Node*> funcStorage;
+extern std::unordered_map<std::string, Node*> tmpStorage;
+extern std::unordered_map<std::string, bool> tmpIsConst;
+
 extern Robot robot;
 
 }

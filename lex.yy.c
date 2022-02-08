@@ -1048,22 +1048,15 @@ YY_RULE_SETUP
 {
                             yylloc.last_line = yylloc.first_line = yylineno; yylval.varName = new std::string(yytext);
                             auto search = Interpreter::varStorage.find(*(yylval.varName));
-                            auto searchfunc = Interpreter::funcStorage.find(*(yylval.varName));
                             if (search != Interpreter::varStorage.end()) {
                                 if (search->second->nType == Interpreter::INTMATNODE || search->second->nType == Interpreter::BOOLMATNODE || search->second->nType == Interpreter::ABSTRACTMATNODE) return MVARIABLE;
                                 else if (search->second->nType == Interpreter::INTVECNODE || search->second->nType == Interpreter::BOOLVECNODE || search->second->nType == Interpreter::ABSTRACTVECNODE) return VVARIABLE;
                                 else if (search->second->nType == Interpreter::INTNODE || search->second->nType == Interpreter::BOOLNODE) return VARIABLE;
                                 else return ER;
                             }
-                            else if (searchfunc != Interpreter::funcStorage.end()) return FVARIABLE;
-                            if (!Interpreter::tmpStorage.empty()) {
-                                search = Interpreter::tmpStorage.find(*(yylval.varName));
-                                if (search != Interpreter::tmpStorage.end()) {
-                                    if (search->second->nType == Interpreter::INTMATNODE || search->second->nType == Interpreter::BOOLMATNODE || search->second->nType == Interpreter::ABSTRACTMATNODE) return MVARIABLE;
-                                    else if (search->second->nType == Interpreter::INTVECNODE || search->second->nType == Interpreter::BOOLVECNODE || search->second->nType == Interpreter::ABSTRACTVECNODE) return VVARIABLE;
-                                    else if (search->second->nType == Interpreter::INTNODE || search->second->nType == Interpreter::BOOLNODE) return VARIABLE;
-                                    else return ER;
-                                }
+                            auto searchfunc = Interpreter::funcStorage.find(*(yylval.varName));
+                            if (searchfunc != Interpreter::funcStorage.end()) {
+                                if (searchfunc->second->nType == Interpreter::FUNCNODE) return FVARIABLE;
                             }
                             return VAR;
                         }
@@ -1071,26 +1064,26 @@ YY_RULE_SETUP
 case 41:
 /* rule 41 can match eol */
 YY_RULE_SETUP
-#line 115 "interpreter.l"
+#line 108 "interpreter.l"
 ;
 	YY_BREAK
 case 42:
 /* rule 42 can match eol */
 YY_RULE_SETUP
-#line 117 "interpreter.l"
+#line 110 "interpreter.l"
 {yylloc.last_line = yylloc.first_line = yylineno;return NEWLINE;}
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 119 "interpreter.l"
+#line 112 "interpreter.l"
 {yylloc.last_line = yylloc.first_line = yylineno; yyerror("Unknown character!");}
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 121 "interpreter.l"
+#line 114 "interpreter.l"
 ECHO;
 	YY_BREAK
-#line 1094 "lex.yy.c"
+#line 1087 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2107,7 +2100,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 121 "interpreter.l"
+#line 114 "interpreter.l"
 
 
 int yywrap(void) {

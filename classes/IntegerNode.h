@@ -46,7 +46,7 @@ private:
 public:
     IntegerNode& operator[] (const size_t index) {return *(dynamic_cast<IntegerNode*>(getByIndex(index)));}
 
-    IntegerVectorNode(): AbstractVectorNode() {};
+    IntegerVectorNode(): AbstractVectorNode(Interpreter::INTVECNODE) {};
     IntegerVectorNode(std::vector<Node*> dat, size_t siz): AbstractVectorNode(Interpreter::INTVECNODE, dat, siz) {};
     ~IntegerVectorNode() {};
 };
@@ -57,7 +57,7 @@ private:
 public:
     IntegerVectorNode& operator[] (const size_t index) {return *(dynamic_cast<IntegerVectorNode*>(getByIndex(index)));}
 
-    IntegerMatrixNode(): AbstractMatrixNode() {};
+    IntegerMatrixNode(): AbstractMatrixNode(Interpreter::INTMATNODE) {};
     IntegerMatrixNode(std::vector<AbstractVectorNode*> dat, size_t xx, size_t yy): AbstractMatrixNode(Interpreter::INTMATNODE, dat, xx, yy) {};
     ~IntegerMatrixNode() {};
 };

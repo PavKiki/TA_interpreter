@@ -47,7 +47,7 @@ void yyerror(const char*);
 %right '!'
 %nonassoc UMINUS
 
-%type <ptr> expr const stmt stmts print exprs vector listexprs matrix vmdeclaration iff forr return_func args_func function function_head function_body callfunc_args callfunction robotmove robotright robotleft robotwall robotexit robotactions
+%type <ptr> expr const stmt stmts print exprs vector listexprs matrix vmdeclaration iff forr return_func args_func function function_head robotmove robotright robotleft robotwall robotexit robotactions
 %type <varOpPtr> declaration assignment
 %type <vtype> type
 
@@ -111,7 +111,7 @@ stmt:
     | iff NEWLINE               {$$ = $1;}
     | forr NEWLINE              {$$ = $1;}
     | function NEWLINE          {$$ = $1;}
-    | callfunction NEWLINE      {$$ = $1;}
+    /* | callfunction NEWLINE      {$$ = $1;} */
     | robotactions NEWLINE      {$$ = $1;}
     | '(' stmts ')'             {$$ = $2;}
     | error NEWLINE             {
@@ -211,87 +211,67 @@ forr:
 
 return_func:
     type VAR                                                    {
-                                                                    try {
-                                                                        if ($1 == Interpreter::INT) {
-                                                                            auto plug = new Interpreter::IntegerNode();
-                                                                            Interpreter::varStorage.insert_or_assign(*$2, plug);
-                                                                        }
-                                                                        else if ($1 == Interpreter::BOOL) {
-                                                                            auto plug = new Interpreter::BoolNode();
-                                                                            Interpreter::varStorage.insert_or_assign(*$2, plug);
-                                                                        }
-                                                                        else if ($1 == Interpreter::VINT) {
-                                                                            auto plug = new Interpreter::IntegerVectorNode();
-                                                                            Interpreter::varStorage.insert_or_assign(*$2, plug);
-                                                                        }
-                                                                        else if ($1 == Interpreter::VBOOL) {
-                                                                            auto plug = new Interpreter::BoolVectorNode();
-                                                                            Interpreter::varStorage.insert_or_assign(*$2, plug);
-                                                                        }
-                                                                        else if ($1 == Interpreter::MINT) {
-                                                                            auto plug = new Interpreter::IntegerMatrixNode();
-                                                                            Interpreter::varStorage.insert_or_assign(*$2, plug);
-                                                                        }
-                                                                        else if ($1 == Interpreter::MBOOL) {
-                                                                            auto plug = new Interpreter::BoolMatrixNode();
-                                                                            Interpreter::varStorage.insert_or_assign(*$2, plug);
-                                                                        }
-                                                                        else throw "Return parameters can not be const!";
-                                                                        auto search = Interpreter::varStorage.find(*$2);
-                                                                        $$ = new Interpreter::return_funcNode({$1, search->second});
-                                                                        dynamic_cast<Interpreter::return_funcNode*>($$)->retVarNames.push_back(*$2);
-                                                                    }
-                                                                    catch (const char* error) {
-                                                                        std::cerr << error << std::endl;
-                                                                    }
+                                                                    $$ = new Interpreter::return_func({$1, *$2});
                                                                 }
     | return_func ',' type VAR                                  {
-                                                                    try {
-                                                                        if ($3 == Interpreter::INT) {
-                                                                            auto plug = new Interpreter::IntegerNode();
-                                                                            Interpreter::varStorage.insert_or_assign(*$4, plug);
-                                                                        }
-                                                                        else if ($3 == Interpreter::BOOL) {
-                                                                            auto plug = new Interpreter::BoolNode();
-                                                                            Interpreter::varStorage.insert_or_assign(*$4, plug);
-                                                                        }
-                                                                        else if ($3 == Interpreter::VINT) {
-                                                                            auto plug = new Interpreter::IntegerVectorNode();
-                                                                            Interpreter::varStorage.insert_or_assign(*$4, plug);
-                                                                        }
-                                                                        else if ($3 == Interpreter::VBOOL) {
-                                                                            auto plug = new Interpreter::BoolVectorNode();
-                                                                            Interpreter::varStorage.insert_or_assign(*$4, plug);
-                                                                        }
-                                                                        else if ($3 == Interpreter::MINT) {
-                                                                            auto plug = new Interpreter::IntegerMatrixNode();
-                                                                            Interpreter::varStorage.insert_or_assign(*$4, plug);
-                                                                        }
-                                                                        else if ($3 == Interpreter::MBOOL) {
-                                                                            auto plug = new Interpreter::BoolMatrixNode();
-                                                                            Interpreter::varStorage.insert_or_assign(*$4, plug);
-                                                                        }
-                                                                        else throw "Return parameters can not be const!";
-                                                                        auto search = Interpreter::varStorage.find(*$4);
-                                                                        dynamic_cast<Interpreter::return_funcNode*>($$)->container.push_back({$3, search->second});
-                                                                        dynamic_cast<Interpreter::return_funcNode*>($$)->retVarNames.push_back(*$4);
-                                                                    }
-                                                                    catch (const char* error) {
-                                                                        std::cerr << error << std::endl;
-                                                                    }
+                                                                    dynamic_cast<Interpreter::return_func*>($$)->rets.push_back({$3, *$4});
                                                                 }
-    | return_func error                                     {
-                                                                std::cerr << "Error at line " << @2.first_line << std::endl;
-                                                                delete $1;
-                                                            }
+    | return_func error                                         {
+                                                                    std::cerr << "Error at line " << @2.first_line << std::endl;
+                                                                    delete $1;
+                                                                }
 ;
 
 args_func:
-     '[' type VAR ']'                                                   {$$ = new Interpreter::args_func($2, *$3);}
-    | args_func ',' '[' type VAR ']'                                    {dynamic_cast<Interpreter::args_func*>($$)->addByVTypeandName($4, *$5);}
+     '[' type VAR                                                       {$$ = new Interpreter::args_func($2, *$3);}
+    | '[' type VAR DECLARE expr                                         {$$ = new Interpreter::args_func($2, *$3, $5);}
+    | '[' type VAR DECLARE vector                                       {$$ = new Interpreter::args_func($2, *$3, $5);}
+    | '[' type VAR DECLARE matrix                                       {$$ = new Interpreter::args_func($2, *$3, $5);}
+    | args_func ',' type VAR                                            {
+                                                                            if (dynamic_cast<Interpreter::args_func*>($$)->isClosed) yyerror("Invalid arguments initialization!");
+                                                                            dynamic_cast<Interpreter::args_func*>($$)->addNonDefault($3, *$4);
+                                                                        }
+    | args_func ',' type VAR DECLARE expr                               {
+                                                                            if (dynamic_cast<Interpreter::args_func*>($$)->isClosed) yyerror("Invalid arguments initialization!");
+                                                                            dynamic_cast<Interpreter::args_func*>($$)->addDefault($3, *$4, $6);
+                                                                        }
+    | args_func ',' type VAR DECLARE vector                             {
+                                                                            if (dynamic_cast<Interpreter::args_func*>($$)->isClosed) yyerror("Invalid arguments initialization!");
+                                                                            dynamic_cast<Interpreter::args_func*>($$)->addDefault($3, *$4, $6);
+                                                                        }
+    | args_func ',' type VAR DECLARE matrix                             {
+                                                                            if (dynamic_cast<Interpreter::args_func*>($$)->isClosed) yyerror("Invalid arguments initialization!");
+                                                                            dynamic_cast<Interpreter::args_func*>($$)->addDefault($3, *$4, $6);
+                                                                        }
+    | args_func ']'                                                     {
+                                                                            dynamic_cast<Interpreter::args_func*>($1)->isClosed = true;
+                                                                            $$ = $1;
+                                                                        }
+
     | args_func error                                                   {
                                                                             std::cerr << "Error at line " << @2.first_line << std::endl;
-                                                                            delete $1; delete $$;
+                                                                            delete $1; 
+                                                                            if (!$$) delete $$;
+                                                                        }
+    | error                                                             {
+                                                                            std::cerr << "Error at line " << @1.first_line << std::endl;
+                                                                            if (!$$) delete $$;
+                                                                            delete $$;
+                                                                        }
+;
+
+function_head:
+    '[' return_func ']' DECLARE FUNC VAR '(' args_func ')'              {
+                                                                            auto plug = new Interpreter::func_descript(dynamic_cast<Interpreter::return_func*>($2)->rets,
+                                                                                dynamic_cast<Interpreter::args_func*>($8)->args,
+                                                                                dynamic_cast<Interpreter::args_func*>($8)->def_args, *$6);
+
+                                                                            Interpreter::funcStorage.insert_or_assign(*$6, plug);
+                                                                            Interpreter::tmpStorage = Interpreter::varStorage;
+                                                                            Interpreter::tmpIsConst = Interpreter::isConst;
+                                                                            Interpreter::varStorage = plug->localStorage;
+                                                                            Interpreter::isConst = plug->localIsConst;
+                                                                            $$ = plug;
                                                                         }
     | error                                                             {
                                                                             std::cerr << "Error at line " << @1.first_line << std::endl;
@@ -299,28 +279,16 @@ args_func:
                                                                         }
 ;
 
-function_head:
-    '[' return_func ']' DECLARE FUNC VAR '(' args_func ')'      {
-                                                                    auto plug = new Interpreter::func_descript(dynamic_cast<Interpreter::args_func*>($8)->localStorage, dynamic_cast<Interpreter::args_func*>($8)->localisConst, 
-                                                                    dynamic_cast<Interpreter::return_funcNode*>($2)->container, dynamic_cast<Interpreter::return_funcNode*>($2)->retVarNames,
-                                                                    nullptr, *$6, dynamic_cast<Interpreter::args_func*>($8)->types, dynamic_cast<Interpreter::args_func*>($8)->names);
-                                                                    Interpreter::funcStorage.insert_or_assign(*$6, plug);
-                                                                    $$ = plug;
-                                                                }
-;
-
-function_body:
-    B NEWLINE stmts E                                           {   
-                                                                    $$ = $3;
-                                                                    Interpreter::tmpStorage.clear();
-                                                                }
-;
-
 function:
-    function_head function_body             {dynamic_cast<Interpreter::func_descript*>($1)->toExec = $2;}
+    function_head B NEWLINE stmts E                                     {
+                                                                            dynamic_cast<Interpreter::func_descript*>($1)->toExec = $4;
+                                                                            Interpreter::varStorage = Interpreter::tmpStorage;
+                                                                            Interpreter::isConst = Interpreter::tmpIsConst;
+                                                                            $$ = $1;
+                                                                        }
 ;
 
-callfunc_args:
+/* callfunc_args:
     expr                                {$$ = new Interpreter::callfunc_args(expR, $1);}
     | vector                            {$$ = new Interpreter::callfunc_args(vectoR, $1);}
     | matrix                            {$$ = new Interpreter::callfunc_args(matriX, $1);}
@@ -344,16 +312,14 @@ callfunction:
                                                std::cerr << "Error at line " << @1.first_line << std::endl;
                                                delete $3; delete $$;
                                             }
-;
+; */
 
 matrix:
     '{' listexprs '}'           {$$ = $2;}
     | MVARIABLE '(' vector ',' '[' ']' ')'      {   try {
-                                                        auto search = Interpreter::varStorage.find(*$1);
                                                         std::vector<Interpreter::ContainerMatrixNode*> kids;
-                                                        kids.push_back((Interpreter::ContainerMatrixNode*)(search->second));
                                                         kids.push_back((Interpreter::ContainerMatrixNode*)($3));
-                                                        $$ = new Interpreter::ContainerMatrixNode(kids, mveccolumnindex);
+                                                        $$ = new Interpreter::ContainerMatrixNode(kids, mveccolumnindex, *$1);
                                                     }
                                                     catch (const char* error) {
                                                         std::cerr << error << std::endl;
@@ -361,11 +327,9 @@ matrix:
                                                 } 
     | MVARIABLE '(' '[' ']' ',' vector ')'      {
                                                     try {
-                                                        auto search = Interpreter::varStorage.find(*$1);
                                                         std::vector<Interpreter::ContainerMatrixNode*> kids;
-                                                        kids.push_back((Interpreter::ContainerMatrixNode*)(search->second));
                                                         kids.push_back((Interpreter::ContainerMatrixNode*)($6));
-                                                        $$ = new Interpreter::ContainerMatrixNode(kids, mvecrowindex);
+                                                        $$ = new Interpreter::ContainerMatrixNode(kids, mvecrowindex, *$1);
                                                     }
                                                     catch (const char* error) {
                                                         std::cerr << error << std::endl;
@@ -373,11 +337,9 @@ matrix:
                                                 }
     | MVARIABLE '(' matrix ')'                  {
                                                     try {
-                                                        auto search = Interpreter::varStorage.find(*$1);
                                                         std::vector<Interpreter::ContainerMatrixNode*> kids;
-                                                        kids.push_back((Interpreter::ContainerMatrixNode*)(search->second));
                                                         kids.push_back((Interpreter::ContainerMatrixNode*)($3));
-                                                        $$ = new Interpreter::ContainerMatrixNode(kids, mmatindex);
+                                                        $$ = new Interpreter::ContainerMatrixNode(kids, mmatindex, *$1);
                                                     }
                                                     catch (const char* error) {
                                                         std::cerr << error << std::endl;
@@ -385,10 +347,8 @@ matrix:
                                                 }
     | MVARIABLE                     {
                                         try {
-                                            auto search = Interpreter::varStorage.find(*$1);
                                             std::vector<Interpreter::ContainerMatrixNode*> kids;
-                                            kids.push_back(static_cast<Interpreter::ContainerMatrixNode*>(search->second));
-                                            $$ = new Interpreter::ContainerMatrixNode(kids, getmat);
+                                            $$ = new Interpreter::ContainerMatrixNode(kids, getmat, *$1);
                                         }
                                         catch (const char* error) {
                                             std::cerr << error << std::endl;
@@ -508,11 +468,9 @@ vector:
     '{' exprs '}'                       {$$ = $2;}
     | VVARIABLE '(' vector ',' '[' ']' ')'      {
                                                     try {
-                                                        auto search = Interpreter::varStorage.find(*$1);
                                                         std::vector<Interpreter::ContainerVectorNode*> kids;
-                                                        kids.push_back((Interpreter::ContainerVectorNode*)(search->second));
                                                         kids.push_back(static_cast<Interpreter::ContainerVectorNode*>($3));
-                                                        $$ = new Interpreter::ContainerVectorNode(kids, vvecindex);
+                                                        $$ = new Interpreter::ContainerVectorNode(kids, vvecindex, *$1);
                                                     }
                                                     catch (const char* error) {
                                                         std::cerr << error << std::endl;
@@ -520,11 +478,9 @@ vector:
                                                 }
     | MVARIABLE '(' expr ',' '['']' ')'         {
                                                     try {
-                                                        auto search = Interpreter::varStorage.find(*$1);
                                                         std::vector<Interpreter::ContainerVectorNode*> kids;
-                                                        kids.push_back((Interpreter::ContainerVectorNode*)(search->second));
                                                         kids.push_back(static_cast<Interpreter::ContainerVectorNode*>($3));
-                                                        $$ = new Interpreter::ContainerVectorNode(kids, mexprcolumnindex);
+                                                        $$ = new Interpreter::ContainerVectorNode(kids, mexprcolumnindex, *$1);
                                                     }
                                                     catch (const char* error) {
                                                         std::cerr << error << std::endl;
@@ -532,11 +488,9 @@ vector:
                                                 }
     | MVARIABLE '(' '['']' ',' expr ')'         {
                                                     try {
-                                                        auto search = Interpreter::varStorage.find(*$1);
                                                         std::vector<Interpreter::ContainerVectorNode*> kids;
-                                                        kids.push_back((Interpreter::ContainerVectorNode*)(search->second));
                                                         kids.push_back((Interpreter::ContainerVectorNode*)($6));
-                                                        $$ = new Interpreter::ContainerVectorNode(kids, mexprrowindex);
+                                                        $$ = new Interpreter::ContainerVectorNode(kids, mexprrowindex, *$1);
                                                     }
                                                     catch (const char* error) {
                                                         std::cerr << error << std::endl;
@@ -544,10 +498,8 @@ vector:
                                                 }
     | VVARIABLE                         {
                                             try {
-                                                auto search = Interpreter::varStorage.find(*$1);
                                                 std::vector<Interpreter::ContainerVectorNode*> kids;
-                                                kids.push_back((Interpreter::ContainerVectorNode*)(search->second));
-                                                $$ = new Interpreter::ContainerVectorNode(kids, getvec);
+                                                $$ = new Interpreter::ContainerVectorNode(kids, getvec, *$1);
                                             }
                                             catch (const char* error) {
                                                 std::cerr << error << std::endl;
@@ -621,12 +573,11 @@ exprs:
 vmdeclaration:
     VVARIABLE '(' expr ')' ASSIGN expr          {
                                                     try {
-                                                        auto search = Interpreter::varStorage.find(*$1);
                                                         if (!Interpreter::isConst[*$1]) {
                                                             std::vector<Interpreter::Node*> kids;
                                                             kids.push_back($3);
                                                             kids.push_back($6);
-                                                            $$ = new Interpreter::VecMatVariableOperationNode(vexpr, search->second, kids);
+                                                            $$ = new Interpreter::VecMatVariableOperationNode(vexpr, *$1, kids);
                                                         }
                                                         else {
                                                             std::string tmp = std::string("Variable ") + *$1 + " can not be changed!";
@@ -639,11 +590,10 @@ vmdeclaration:
                                                     
                                                 }
     | VVARIABLE '(' vector ',' '[' ']' ')' ASSIGN vector    {
-                                                                auto search = Interpreter::varStorage.find(*$1);
                                                                 if (!Interpreter::isConst[*$1]) {
                                                                     std::vector<Interpreter::Node*> kids;
                                                                     kids.push_back($3);
-                                                                    $$ = new Interpreter::VecMatVariableOperationNode(vvec, search->second, dynamic_cast<Interpreter::ContainerVectorNode*>($9), kids);
+                                                                    $$ = new Interpreter::VecMatVariableOperationNode(vvec, *$1, dynamic_cast<Interpreter::ContainerVectorNode*>($9), kids);
                                                                 }
                                                                 else {
                                                                     std::string tmp = std::string("Variable ") + *$1 + " can not be changed!";
@@ -651,13 +601,12 @@ vmdeclaration:
                                                                 }
                                                             }
     | MVARIABLE '(' expr ',' expr ')' ASSIGN expr           {
-                                                                auto search = Interpreter::varStorage.find(*$1);
                                                                 if (!Interpreter::isConst[*$1]) {
                                                                     std::vector<Interpreter::Node*> kids;
                                                                     kids.push_back($3);
                                                                     kids.push_back($5);
                                                                     kids.push_back($8);
-                                                                    $$ = new Interpreter::VecMatVariableOperationNode(mexpr, search->second, kids);
+                                                                    $$ = new Interpreter::VecMatVariableOperationNode(mexpr, *$1, kids);
                                                                 }
                                                                 else {
                                                                     std::string tmp = std::string("Variable ") + *$1 + " can not be changed!";
@@ -665,11 +614,10 @@ vmdeclaration:
                                                                 }
                                                             }
     | MVARIABLE '(' expr ',' '[' ']' ')' ASSIGN vector      {
-                                                                auto search = Interpreter::varStorage.find(*$1);
                                                                 if (!Interpreter::isConst[*$1]) {
                                                                     std::vector<Interpreter::Node*> kids;
                                                                     kids.push_back($3);
-                                                                    $$ = new Interpreter::VecMatVariableOperationNode(mexprcolumn, search->second, dynamic_cast<Interpreter::ContainerVectorNode*>($9), kids);
+                                                                    $$ = new Interpreter::VecMatVariableOperationNode(mexprcolumn, *$1, dynamic_cast<Interpreter::ContainerVectorNode*>($9), kids);
                                                                 }
                                                                 else {
                                                                     std::string tmp = std::string("Variable ") + *$1 + " can not be changed!";
@@ -677,11 +625,10 @@ vmdeclaration:
                                                                 }
                                                             }
     | MVARIABLE '(' '[' ']' ',' expr ')' ASSIGN vector      {
-                                                                auto search = Interpreter::varStorage.find(*$1);
                                                                 if (!Interpreter::isConst[*$1]) {
                                                                     std::vector<Interpreter::Node*> kids;
                                                                     kids.push_back($6);
-                                                                    $$ = new Interpreter::VecMatVariableOperationNode(mexprrow, search->second, dynamic_cast<Interpreter::ContainerVectorNode*>($9), kids);
+                                                                    $$ = new Interpreter::VecMatVariableOperationNode(mexprrow, *$1, dynamic_cast<Interpreter::ContainerVectorNode*>($9), kids);
                                                                 }
                                                                 else {
                                                                     std::string tmp = std::string("Variable ") + *$1 + " can not be changed!";
@@ -689,11 +636,10 @@ vmdeclaration:
                                                                 }
                                                             }
     | MVARIABLE '(' vector ',' '[' ']' ')' ASSIGN matrix    {
-                                                                auto search = Interpreter::varStorage.find(*$1);
                                                                 if (!Interpreter::isConst[*$1]) {
                                                                     std::vector<Interpreter::Node*> kids;
                                                                     kids.push_back($3);
-                                                                    $$ = new Interpreter::VecMatVariableOperationNode(mveccolumn, search->second, dynamic_cast<Interpreter::ContainerMatrixNode*>($9), kids);
+                                                                    $$ = new Interpreter::VecMatVariableOperationNode(mveccolumn, *$1, dynamic_cast<Interpreter::ContainerMatrixNode*>($9), kids);
                                                                 }
                                                                 else {
                                                                     std::string tmp = std::string("Variable ") + *$1 + " can not be changed!";
@@ -701,11 +647,10 @@ vmdeclaration:
                                                                 }
                                                             }
     | MVARIABLE '(' '[' ']' ',' vector ')' ASSIGN matrix    {
-                                                                auto search = Interpreter::varStorage.find(*$1);
                                                                 if (!Interpreter::isConst[*$1]) {
                                                                     std::vector<Interpreter::Node*> kids;
                                                                     kids.push_back($6);
-                                                                    $$ = new Interpreter::VecMatVariableOperationNode(mvecrow, search->second, dynamic_cast<Interpreter::ContainerMatrixNode*>($9), kids);
+                                                                    $$ = new Interpreter::VecMatVariableOperationNode(mvecrow, *$1, dynamic_cast<Interpreter::ContainerMatrixNode*>($9), kids);
                                                                 }
                                                                 else {
                                                                     std::string tmp = std::string("Variable ") + *$1 + " can not be changed!";
@@ -713,11 +658,10 @@ vmdeclaration:
                                                                 }
                                                             }
     | MVARIABLE '(' matrix ')' ASSIGN matrix                {
-                                                                auto search = Interpreter::varStorage.find(*$1);
                                                                 if (!Interpreter::isConst[*$1]) {
                                                                     std::vector<Interpreter::Node*> kids;
                                                                     kids.push_back($3);
-                                                                    $$ = new Interpreter::VecMatVariableOperationNode(mmat, search->second, dynamic_cast<Interpreter::ContainerMatrixNode*>($6), kids);
+                                                                    $$ = new Interpreter::VecMatVariableOperationNode(mmat, *$1, dynamic_cast<Interpreter::ContainerMatrixNode*>($6), kids);
                                                                 }
                                                                 else {
                                                                     std::string tmp = std::string("Variable ") + *$1 + " can not be changed!";
@@ -861,18 +805,14 @@ expr:
                                 }
     | '(' expr ')'              {$$ = $2;}
     | VVARIABLE '(' expr ')'    {
-                                    auto search = Interpreter::varStorage.find(*$1);
                                     std::vector<Interpreter::Node*> kids;
                                     kids.push_back($3);
-                                    kids.push_back(search->second);
                                     $$ = new Interpreter::OperationNode(vgetexp, *$1, kids);
                                 }
     | MVARIABLE '(' expr ',' expr ')'   {
-                                            auto search = Interpreter::varStorage.find(*$1);
                                             std::vector<Interpreter::Node*> kids;
                                             kids.push_back($3);
                                             kids.push_back($5);
-                                            kids.push_back(search->second);
                                             $$ = new Interpreter::OperationNode(mgetexp, *$1, kids);
                                         }
     | error expr                        {
