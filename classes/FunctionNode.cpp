@@ -104,7 +104,7 @@ Interpreter::func_descript::func_descript(std::vector<std::pair<varType, std::st
             auto plug = new Interpreter::IntegerNode();
             this->localStorage.insert_or_assign(argVariable.second, plug);
             this->localIsConst.insert_or_assign(argVariable.second, false);
-            if (localStorage.find(argVariable.second) != localStorage.end()) {
+            if (def_args.find(argVariable.second) != def_args.end()) {
                 auto tmp = new VariableOperationNode(Interpreter::INT, declare, argVariable.second, def_args[argVariable.second]);
                 defaultAssigns.push_back(tmp);
             }
@@ -114,7 +114,7 @@ Interpreter::func_descript::func_descript(std::vector<std::pair<varType, std::st
             auto plug = new Interpreter::IntegerNode();
             this->localStorage.insert_or_assign(argVariable.second, plug);
             this->localIsConst.insert_or_assign(argVariable.second, true);
-            if (localStorage.find(argVariable.second) != localStorage.end()) {
+            if (def_args.find(argVariable.second) != def_args.end()) {
                 auto tmp = new VariableOperationNode(Interpreter::CINT, declare, argVariable.second, def_args[argVariable.second]);
                 defaultAssigns.push_back(tmp);
             }
@@ -124,7 +124,7 @@ Interpreter::func_descript::func_descript(std::vector<std::pair<varType, std::st
             auto plug = new Interpreter::BoolNode();
             this->localStorage.insert_or_assign(argVariable.second, plug);
             this->localIsConst.insert_or_assign(argVariable.second, false);
-            if (localStorage.find(argVariable.second) != localStorage.end()) {
+            if (def_args.find(argVariable.second) != def_args.end()) {
                 auto tmp = new VariableOperationNode(Interpreter::BOOL, declare, argVariable.second, def_args[argVariable.second]);
                 defaultAssigns.push_back(tmp);
             }
@@ -134,7 +134,7 @@ Interpreter::func_descript::func_descript(std::vector<std::pair<varType, std::st
             auto plug = new Interpreter::BoolNode();
             this->localStorage.insert_or_assign(argVariable.second, plug);
             this->localIsConst.insert_or_assign(argVariable.second, true);
-            if (localStorage.find(argVariable.second) != localStorage.end()) {
+            if (def_args.find(argVariable.second) != def_args.end()) {
                 auto tmp = new VariableOperationNode(Interpreter::CBOOL, declare, argVariable.second, def_args[argVariable.second]);
                 defaultAssigns.push_back(tmp);
             }
@@ -144,7 +144,7 @@ Interpreter::func_descript::func_descript(std::vector<std::pair<varType, std::st
             auto plug = new Interpreter::IntegerVectorNode();
             this->localStorage.insert_or_assign(argVariable.second, plug);
             this->localIsConst.insert_or_assign(argVariable.second, false);
-            if (localStorage.find(argVariable.second) != localStorage.end()) {
+            if (def_args.find(argVariable.second) != def_args.end()) {
                 auto tmp = new VariableOperationNode(Interpreter::VINT, declare, argVariable.second, dynamic_cast<Interpreter::ContainerVectorNode*>(def_args[argVariable.second]));
                 defaultAssigns.push_back(tmp);
             }
@@ -154,7 +154,7 @@ Interpreter::func_descript::func_descript(std::vector<std::pair<varType, std::st
             auto plug = new Interpreter::BoolVectorNode();
             this->localStorage.insert_or_assign(argVariable.second, plug);
             this->localIsConst.insert_or_assign(argVariable.second, false);
-            if (localStorage.find(argVariable.second) != localStorage.end()) {
+            if (def_args.find(argVariable.second) != def_args.end()) {
                 auto tmp = new VariableOperationNode(Interpreter::VBOOL, declare, argVariable.second, dynamic_cast<Interpreter::ContainerVectorNode*>(def_args[argVariable.second]));
                 defaultAssigns.push_back(tmp);
             }
@@ -164,7 +164,7 @@ Interpreter::func_descript::func_descript(std::vector<std::pair<varType, std::st
             auto plug = new Interpreter::IntegerVectorNode();
             this->localStorage.insert_or_assign(argVariable.second, plug);
             this->localIsConst.insert_or_assign(argVariable.second, true);
-            if (localStorage.find(argVariable.second) != localStorage.end()) {
+            if (def_args.find(argVariable.second) != def_args.end()) {
                 auto tmp = new VariableOperationNode(Interpreter::CVINT, declare, argVariable.second, dynamic_cast<Interpreter::ContainerVectorNode*>(def_args[argVariable.second]));
                 defaultAssigns.push_back(tmp);
             }
@@ -174,7 +174,7 @@ Interpreter::func_descript::func_descript(std::vector<std::pair<varType, std::st
             auto plug = new Interpreter::BoolVectorNode();
             this->localStorage.insert_or_assign(argVariable.second, plug);
             this->localIsConst.insert_or_assign(argVariable.second, true);
-            if (localStorage.find(argVariable.second) != localStorage.end()) {
+            if (def_args.find(argVariable.second) != def_args.end()) {
                 auto tmp = new VariableOperationNode(Interpreter::CVBOOL, declare, argVariable.second, dynamic_cast<Interpreter::ContainerVectorNode*>(def_args[argVariable.second]));
                 defaultAssigns.push_back(tmp);
             }
@@ -184,7 +184,7 @@ Interpreter::func_descript::func_descript(std::vector<std::pair<varType, std::st
             auto plug = new Interpreter::IntegerMatrixNode();
             this->localStorage.insert_or_assign(argVariable.second, plug);
             this->localIsConst.insert_or_assign(argVariable.second, false);
-            if (localStorage.find(argVariable.second) != localStorage.end()) {
+            if (def_args.find(argVariable.second) != def_args.end()) {
                 auto tmp = new VariableOperationNode(Interpreter::MINT, declare, argVariable.second, dynamic_cast<Interpreter::ContainerMatrixNode*>(def_args[argVariable.second]));
                 defaultAssigns.push_back(tmp);
             }
@@ -194,7 +194,7 @@ Interpreter::func_descript::func_descript(std::vector<std::pair<varType, std::st
             auto plug = new Interpreter::BoolMatrixNode();
             this->localStorage.insert_or_assign(argVariable.second, plug);
             this->localIsConst.insert_or_assign(argVariable.second, false);
-            if (localStorage.find(argVariable.second) != localStorage.end()) {
+            if (def_args.find(argVariable.second) != def_args.end()) {
                 auto tmp = new VariableOperationNode(Interpreter::MBOOL, declare, argVariable.second, dynamic_cast<Interpreter::ContainerMatrixNode*>(def_args[argVariable.second]));
                 defaultAssigns.push_back(tmp);
             }
@@ -204,7 +204,7 @@ Interpreter::func_descript::func_descript(std::vector<std::pair<varType, std::st
             auto plug = new Interpreter::IntegerMatrixNode();
             this->localStorage.insert_or_assign(argVariable.second, plug);
             this->localIsConst.insert_or_assign(argVariable.second, true);
-            if (localStorage.find(argVariable.second) != localStorage.end()) {
+            if (def_args.find(argVariable.second) != def_args.end()) {
                 auto tmp = new VariableOperationNode(Interpreter::CMINT, declare, argVariable.second, dynamic_cast<Interpreter::ContainerMatrixNode*>(def_args[argVariable.second]));
                 defaultAssigns.push_back(tmp);
             }
@@ -214,7 +214,7 @@ Interpreter::func_descript::func_descript(std::vector<std::pair<varType, std::st
             auto plug = new Interpreter::BoolMatrixNode();
             this->localStorage.insert_or_assign(argVariable.second, plug);
             this->localIsConst.insert_or_assign(argVariable.second, true);
-            if (localStorage.find(argVariable.second) != localStorage.end()) {
+            if (def_args.find(argVariable.second) != def_args.end()) {
                 auto tmp = new VariableOperationNode(Interpreter::CMBOOL, declare, argVariable.second, dynamic_cast<Interpreter::ContainerMatrixNode*>(def_args[argVariable.second]));
                 defaultAssigns.push_back(tmp);
             }
@@ -225,6 +225,12 @@ Interpreter::func_descript::func_descript(std::vector<std::pair<varType, std::st
             break;
         }
     }
+
+    Interpreter::tmpStorage = &Interpreter::varStorage;
+    Interpreter::tmpIsConst = &Interpreter::isConst;
+
+    Interpreter::varStorage = *(&(this->localStorage));
+    Interpreter::isConst = *(&(this->localIsConst));
 }
 
 Interpreter::func_descript::func_descript(func_descript* ptr) {
@@ -274,8 +280,8 @@ void Interpreter::func_descript::init() {
 
 void Interpreter::func_descript::run() {
     
-    std::unordered_map<std::string, Node*> originalStorage = Interpreter::varStorage;
-    std::unordered_map<std::string, bool> originalIsConst = Interpreter::isConst;
+    std::unordered_map<std::string, Node*>* originalStorage = &Interpreter::varStorage;
+    std::unordered_map<std::string, bool>* originalIsConst = &Interpreter::isConst;
 
     Interpreter::varStorage = this->localStorage;
     Interpreter::isConst = this->localIsConst;
@@ -283,11 +289,11 @@ void Interpreter::func_descript::run() {
     init();
     toExec->execute();
 
-    Interpreter::varStorage = originalStorage;
-    Interpreter::isConst = originalIsConst; 
+    Interpreter::varStorage = *originalStorage;
+    Interpreter::isConst = *originalIsConst; 
 }
 
-Interpreter::callfunc::callfunc(std::string fname, std::vector<std::pair<varType, std::string>> rets, std::vector<std::pair<dataType, Node*>> args): fname(fname), rets(rets), args(args) {
+Interpreter::callfunc::callfunc(std::string fname, std::vector<std::pair<varType, std::string>> rets, std::vector<std::pair<dataType, Node*>> args): Node(CALLFUNCNODE), fname(fname), rets(rets), args(args) {
     this->function = new Interpreter::func_descript(dynamic_cast<Interpreter::func_descript*>(Interpreter::funcStorage[fname]));
 
     if (rets.size() != function->rets.size()) throw "Invalid amount of return values!";
@@ -301,7 +307,10 @@ Interpreter::callfunc::callfunc(std::string fname, std::vector<std::pair<varType
         if (args[i].first == expR) {
             auto tmp = new Interpreter::VariableOperationNode(function->args[i].first, assign, function->args[i].second, args[i].second);
             function->defaultAssigns.push_back(tmp);
-            std::cout << args[i].second->execute();
+            //#DELETE_LATER
+            std::ostringstream s;
+            args[i].second->print(s);
+            std::cout << s.str();
         }
         else if (args[i].first == vectoR) {
             auto tmp = new Interpreter::VariableOperationNode(function->args[i].first, assign, function->args[i].second, dynamic_cast<Interpreter::ContainerVectorNode*>(args[i].second));
@@ -315,7 +324,7 @@ Interpreter::callfunc::callfunc(std::string fname, std::vector<std::pair<varType
             continue;
         }
     }
-    //for each return value created a plug in global storage and pointer to this plug assigns with return value inside the function
+    //for each return value create a plug in global storage and pointer to this plug assigns with return value inside the function
     for (size_t i = 0; i < rets.size(); i++) {
         switch (rets[i].first)
         {
@@ -395,7 +404,7 @@ Interpreter::callfunc::callfunc(std::string fname, std::vector<std::pair<varType
         default:
             break;
         }
-        function->localStorage[rets[i].second] = Interpreter::varStorage[rets[i].second];
+        function->localStorage[function->rets[i].second] = Interpreter::varStorage[rets[i].second];
     }
 };
 

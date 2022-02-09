@@ -218,8 +218,8 @@ extern std::unordered_map<std::string, bool> isConst;
 extern std::ostringstream out;
 
 extern std::unordered_map<std::string, Node*> funcStorage;
-extern std::unordered_map<std::string, Node*> tmpStorage;
-extern std::unordered_map<std::string, bool> tmpIsConst;
+extern std::unordered_map<std::string, Node*>* tmpStorage;
+extern std::unordered_map<std::string, bool>* tmpIsConst;
 
 extern Robot robot;
 

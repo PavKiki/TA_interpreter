@@ -8,8 +8,8 @@ std::unordered_map<std::string, bool> Interpreter::isConst;
 std::ostringstream Interpreter::out;
 
 std::unordered_map<std::string, Interpreter::Node*> Interpreter::funcStorage;
-std::unordered_map<std::string, Interpreter::Node*> Interpreter::tmpStorage;
-std::unordered_map<std::string, bool> Interpreter::tmpIsConst;
+std::unordered_map<std::string, Interpreter::Node*>* Interpreter::tmpStorage;
+std::unordered_map<std::string, bool>* Interpreter::tmpIsConst;
 
 Robot Interpreter::robot("maze.txt");
 

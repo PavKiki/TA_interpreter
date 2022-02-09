@@ -3,10 +3,6 @@ a <- c + d
 b <- c - d
 end
 
-int a = 5
-int b = a + 100
 int e, int f = calculate[1, 2]
-print(a)
-print(b)
 print(e)
 print(f)

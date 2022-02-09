@@ -267,12 +267,7 @@ function_head:
                                                                             auto plug = new Interpreter::func_descript(dynamic_cast<Interpreter::return_func*>($2)->rets,
                                                                                 dynamic_cast<Interpreter::args_func*>($8)->args,
                                                                                 dynamic_cast<Interpreter::args_func*>($8)->def_args, *$6);
-
                                                                             Interpreter::funcStorage.insert_or_assign(*$6, plug);
-                                                                            Interpreter::tmpStorage = Interpreter::varStorage;
-                                                                            Interpreter::tmpIsConst = Interpreter::isConst;
-                                                                            Interpreter::varStorage = plug->localStorage;
-                                                                            Interpreter::isConst = plug->localIsConst;
                                                                             $$ = plug;
                                                                         }
     | error                                                             {
@@ -284,8 +279,8 @@ function_head:
 function:
     function_head B NEWLINE stmts E                                     {
                                                                             dynamic_cast<Interpreter::func_descript*>($1)->toExec = $4;
-                                                                            Interpreter::varStorage = Interpreter::tmpStorage;
-                                                                            Interpreter::isConst = Interpreter::tmpIsConst;
+                                                                            Interpreter::varStorage = *Interpreter::tmpStorage;
+                                                                            Interpreter::isConst = *Interpreter::tmpIsConst;
                                                                             $$ = $1;
                                                                         }
 ;
@@ -826,7 +821,8 @@ expr:
                                         }
     | error expr                        {
                                             std::cerr << "Error at line " << @1.first_line << std::endl;
-                                            delete $2;
+                                            if (!$2) delete $2;
+                                            if (!$$) delete $$;
                                         }
 ;
 

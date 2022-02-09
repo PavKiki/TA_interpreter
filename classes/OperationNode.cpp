@@ -84,6 +84,7 @@
             strm << (execute() ? "true" : "false") << '\n';
             break;
         case gscalar: {
+            std::cout << Interpreter::out.str() << std::endl;
             auto search = Interpreter::varStorage.find(varname);
             if (search->second->nType == Interpreter::INTNODE) strm << execute() << '\n';
             else if (search->second->nType == Interpreter::BOOLNODE) strm << (execute() ? "true" : "false") << '\n';
@@ -291,6 +292,7 @@
 
     Interpreter::VariableOperationNode::VariableOperationNode(varType vType, varOperName vopName, std::string name, Interpreter::Node* data): vType(vType), vopType(vopName), varName(name), varSt(Interpreter::varStorage), isCo(Interpreter::isConst) {
         scalarData = data;
+        declareVariableSpace(Interpreter::varStorage, Interpreter::isConst);
     }
 
     std::vector<Interpreter::AbstractVectorNode*> Interpreter::getMatrixExprResult(Interpreter::varType type, Interpreter::ContainerMatrixNode*& src) {
