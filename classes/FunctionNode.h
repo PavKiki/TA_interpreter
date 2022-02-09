@@ -30,40 +30,39 @@ class args_func: public Node {
         void addDefault(varType vt, std::string name, Node* dec);
 
         args_func(): Node(ARGFUNCNODE), isClosed(true) {};
-        args_func(varType vt, std::string name, Node* dec): Node(ARGFUNCNODE), isClosed(false) {
-            addDefault(vt, name, dec);
-        };
-        args_func(varType vt, std::string name): Node(ARGFUNCNODE), isClosed(false) {
-            addNonDefault(vt, name);
-        };
+        args_func(varType vt, std::string name, Node* dec): Node(ARGFUNCNODE), isClosed(false) {addDefault(vt, name, dec);};
+        args_func(varType vt, std::string name): Node(ARGFUNCNODE), isClosed(false) {addNonDefault(vt, name);};
         ~args_func() {}
 };
 
 class func_descript: public Node {
     public:
-        std::vector<std::pair<varType, std::string>> rets;
-        std::vector<std::pair<varType, std::string>> args;
-        std::unordered_map<std::string, Node*> def_args;
-        std::string fname;
+        std::vector<std::pair<varType, std::string>> rets;  //type and name of variables which are returning
+        std::vector<std::pair<varType, std::string>> args;  //type and name of variables in parameters
+        std::unordered_map<std::string, Node*> def_args;    //map containing default values of certain variables
+        std::string fname;  //name of the function
 
-        std::vector<Node*> defaultAssigns;
+        std::vector<Node*> defaultAssigns;      //vector of VariableOperationNode's, assigning launches via init() function
 
-        std::unordered_map<std::string, Node*> localStorage;
-        std::unordered_map<std::string, bool> localIsConst;
+        std::unordered_map<std::string, Node*> localStorage;    //local visibility area for variables
+        std::unordered_map<std::string, bool> localIsConst;     //local visibility area for understanding constant variable or not
 
-        Node* toExec;
+        Node* toExec;   //statements to do are stored here
 
         void print(std::ostringstream& strm) override {};
 
         int execute() override {return 0;};
 
-        void init();
+        void init();    //assign default values
 
-        void run();
+        void run();     //run function
 
         func_descript(): Node(FUNCNODE) {};
         func_descript(std::vector<std::pair<varType, std::string>> rets, std::vector<std::pair<varType, std::string>> args,
                                                                             std::unordered_map<std::string, Node*> def_args, std::string fname);
+        
+        func_descript(func_descript* ptr);  //self-made copy constructor
+        
         ~func_descript() {};
 };
 
@@ -84,6 +83,7 @@ class callfunc_args: public Node {
 
 class callfunc: public Node {
     public:
+        std::vector<std::pair<varType, std::string>> rets;
         std::vector<std::pair<dataType, Node*>> args;
         func_descript* function;
         std::string fname;
@@ -93,7 +93,7 @@ class callfunc: public Node {
         int execute() override;
 
         callfunc(): Node(CALLFUNCNODE) {};
-        callfunc(std::string fname, std::vector<std::pair<dataType, Node*>> args): fname(fname), args(args), function(nullptr) {};
+        callfunc(std::string fname, std::vector<std::pair<varType, std::string>> rets, std::vector<std::pair<dataType, Node*>> args);
         ~callfunc() {};
 };
 

@@ -38,7 +38,7 @@ void yyerror(const char*);
 %token <intPtr> INTEGER
 %token <varName> VARIABLE VVARIABLE MVARIABLE VAR FVARIABLE
 %token <vtype> CINT VINT MINT INT CVINT CMINT BOOLEAN CBOOLEAN VBOOLEAN MBOOLEAN CVBOOLEAN CMBOOLEAN
-%token NEWLINE PRINT CONJUNCTION ELEMMULT '\'' LEFTSHIFT RIGHTSHIFT ',' IF FORR ER DOUBLEDOT B E FUNC MOVE RIGHT LEFT ROBEX WALL BEGFOR BEGIF ENDIF ENDFOR
+%token NEWLINE PRINT CONJUNCTION ELEMMULT '\'' LEFTSHIFT RIGHTSHIFT ',' IF FORR ER DOUBLEDOT B E FUNC MOVE RIGHT LEFT ROBEX WALL BEGFOR BEGIF ENDIF ENDFOR DFLT
 
 %left ASSIGN DECLARE
 %left '<' '>' 
@@ -47,7 +47,7 @@ void yyerror(const char*);
 %right '!'
 %nonassoc UMINUS
 
-%type <ptr> expr const stmt stmts print exprs vector listexprs matrix vmdeclaration iff forr return_func args_func function function_head robotmove robotright robotleft robotwall robotexit robotactions
+%type <ptr> expr const stmt stmts print exprs vector listexprs matrix vmdeclaration iff forr return_func args_func function function_head callfunc_args callfunction robotmove robotright robotleft robotwall robotexit robotactions
 %type <varOpPtr> declaration assignment
 %type <vtype> type
 
@@ -111,7 +111,7 @@ stmt:
     | iff NEWLINE               {$$ = $1;}
     | forr NEWLINE              {$$ = $1;}
     | function NEWLINE          {$$ = $1;}
-    /* | callfunction NEWLINE      {$$ = $1;} */
+    | callfunction NEWLINE      {$$ = $1;}
     | robotactions NEWLINE      {$$ = $1;}
     | '(' stmts ')'             {$$ = $2;}
     | error NEWLINE             {
@@ -214,11 +214,13 @@ return_func:
                                                                     $$ = new Interpreter::return_func({$1, *$2});
                                                                 }
     | return_func ',' type VAR                                  {
-                                                                    dynamic_cast<Interpreter::return_func*>($$)->rets.push_back({$3, *$4});
+                                                                    dynamic_cast<Interpreter::return_func*>($1)->rets.push_back({$3, *$4});
+                                                                    $$ = $1;
                                                                 }
     | return_func error                                         {
                                                                     std::cerr << "Error at line " << @2.first_line << std::endl;
-                                                                    delete $1;
+                                                                    if (!$1) delete $1;
+                                                                    if (!$$) delete $$;
                                                                 }
 ;
 
@@ -288,13 +290,15 @@ function:
                                                                         }
 ;
 
-/* callfunc_args:
+callfunc_args:
     expr                                {$$ = new Interpreter::callfunc_args(expR, $1);}
     | vector                            {$$ = new Interpreter::callfunc_args(vectoR, $1);}
     | matrix                            {$$ = new Interpreter::callfunc_args(matriX, $1);}
-    | callfunc_args ',' expr            {dynamic_cast<Interpreter::callfunc_args*>($$)->addArg(expR, $3);}
-    | callfunc_args ',' vector          {dynamic_cast<Interpreter::callfunc_args*>($$)->addArg(vectoR, $3);}
-    | callfunc_args ',' matrix          {dynamic_cast<Interpreter::callfunc_args*>($$)->addArg(matriX, $3);}
+    | DFLT                              {$$ = new Interpreter::callfunc_args(defaulT, nullptr);}
+    | callfunc_args ',' expr            {dynamic_cast<Interpreter::callfunc_args*>($1)->addArg(expR, $3); $$ = $1;}
+    | callfunc_args ',' vector          {dynamic_cast<Interpreter::callfunc_args*>($1)->addArg(vectoR, $3); $$ = $1;}
+    | callfunc_args ',' matrix          {dynamic_cast<Interpreter::callfunc_args*>($1)->addArg(matriX, $3); $$ = $1;}
+    | callfunc_args ',' DFLT            {dynamic_cast<Interpreter::callfunc_args*>($1)->addArg(defaulT, nullptr); $$ = $1;}
     | callfunc_args error               {
                                             std::cerr << "Error at line " << @2.first_line << std::endl;
                                             delete $1;
@@ -302,17 +306,19 @@ function:
                                         }
     | error                             {
                                             std::cerr << "Error at line " << @1.first_line << std::endl;
-                                            delete $$;
+                                            if (!$$) delete $$;
                                         }
 ;
 
 callfunction:
-    FVARIABLE '[' callfunc_args ']'         {$$ = new Interpreter::callfunc(*$1, dynamic_cast<Interpreter::callfunc_args*>($3)->args);}
-    | error '[' callfunc_args ']'           {
-                                               std::cerr << "Error at line " << @1.first_line << std::endl;
-                                               delete $3; delete $$;
-                                            }
-; */
+    return_func DECLARE FVARIABLE '[' callfunc_args ']'     {$$ = new Interpreter::callfunc(*$3, dynamic_cast<Interpreter::return_func*>($1)->rets, 
+                                                                                                        dynamic_cast<Interpreter::callfunc_args*>($5)->args);}    
+    | error '[' callfunc_args ']'                           {
+                                                                std::cerr << "Error at line " << @1.first_line << std::endl;
+                                                                delete $3;
+                                                                if (!$$) delete $$;
+                                                            }
+;
 
 matrix:
     '{' listexprs '}'           {$$ = $2;}
@@ -440,15 +446,18 @@ matrix:
                                     }
     | error matrix                  {
                                         std::cerr << "Error at line " << @1.first_line << std::endl;
-                                        delete $2;
+                                        if (!$2) delete $2;
+                                        if (!$$) delete $$;
                                     }
     | error vector                  {
                                         std::cerr << "Error at line " << @1.first_line << std::endl;
-                                        delete $2;
+                                        if (!$2) delete $2;
+                                        if (!$$) delete $$;
                                     }
     | error expr                    {
                                         std::cerr << "Error at line " << @1.first_line << std::endl;
-                                        delete $2;
+                                        if (!$2) delete $2;
+                                        if (!$$) delete $$;
                                     }
 ;
 

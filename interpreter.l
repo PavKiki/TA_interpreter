@@ -89,6 +89,8 @@ exit                    {yylloc.last_line = yylloc.first_line = yylineno; return
 
 wall                    {yylloc.last_line = yylloc.first_line = yylineno; return WALL;}
 
+dflt                    {yylloc.last_line = yylloc.first_line = yylineno; return DFLT;}
+
 [a-zA-Z][a-zA-Z0-9_]*   {
                             yylloc.last_line = yylloc.first_line = yylineno; yylval.varName = new std::string(yytext);
                             auto search = Interpreter::varStorage.find(*(yylval.varName));
@@ -107,7 +109,7 @@ wall                    {yylloc.last_line = yylloc.first_line = yylineno; return
 
 \.\.\.\n                ;
 
-[\n]                    {yylloc.last_line = yylloc.first_line = yylineno;return NEWLINE;}
+[\n]                    {yylloc.last_line = yylloc.first_line = yylineno; return NEWLINE;}
 
 .                       {yylloc.last_line = yylloc.first_line = yylineno; yyerror("Unknown character!");}
 

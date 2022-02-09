@@ -48,7 +48,8 @@ enum VMOpName {
 enum dataType {
     vectoR,
     expR,
-    matriX
+    matriX,
+    defaulT
 };
 
 namespace Interpreter {
