@@ -279,8 +279,8 @@ function_head:
 function:
     function_head B NEWLINE stmts E                                     {
                                                                             dynamic_cast<Interpreter::func_descript*>($1)->toExec = $4;
-                                                                            Interpreter::varStorage = *Interpreter::tmpStorage;
-                                                                            Interpreter::isConst = *Interpreter::tmpIsConst;
+                                                                            Interpreter::storagePtr = &Interpreter::varStorage;
+                                                                            Interpreter::isConstPtr = &Interpreter::isConst;
                                                                             $$ = $1;
                                                                         }
 ;
@@ -577,7 +577,7 @@ exprs:
 vmdeclaration:
     VVARIABLE '(' expr ')' ASSIGN expr          {
                                                     try {
-                                                        if (!Interpreter::isConst[*$1]) {
+                                                        if (!(*Interpreter::isConstPtr)[*$1]) {
                                                             std::vector<Interpreter::Node*> kids;
                                                             kids.push_back($3);
                                                             kids.push_back($6);
@@ -594,7 +594,7 @@ vmdeclaration:
                                                     
                                                 }
     | VVARIABLE '(' vector ',' '[' ']' ')' ASSIGN vector    {
-                                                                if (!Interpreter::isConst[*$1]) {
+                                                                if (!(*Interpreter::isConstPtr)[*$1]) {
                                                                     std::vector<Interpreter::Node*> kids;
                                                                     kids.push_back($3);
                                                                     $$ = new Interpreter::VecMatVariableOperationNode(vvec, *$1, dynamic_cast<Interpreter::ContainerVectorNode*>($9), kids);
@@ -605,7 +605,7 @@ vmdeclaration:
                                                                 }
                                                             }
     | MVARIABLE '(' expr ',' expr ')' ASSIGN expr           {
-                                                                if (!Interpreter::isConst[*$1]) {
+                                                                if (!(*Interpreter::isConstPtr)[*$1]) {
                                                                     std::vector<Interpreter::Node*> kids;
                                                                     kids.push_back($3);
                                                                     kids.push_back($5);
@@ -618,7 +618,7 @@ vmdeclaration:
                                                                 }
                                                             }
     | MVARIABLE '(' expr ',' '[' ']' ')' ASSIGN vector      {
-                                                                if (!Interpreter::isConst[*$1]) {
+                                                                if (!(*Interpreter::isConstPtr)[*$1]) {
                                                                     std::vector<Interpreter::Node*> kids;
                                                                     kids.push_back($3);
                                                                     $$ = new Interpreter::VecMatVariableOperationNode(mexprcolumn, *$1, dynamic_cast<Interpreter::ContainerVectorNode*>($9), kids);
@@ -629,7 +629,7 @@ vmdeclaration:
                                                                 }
                                                             }
     | MVARIABLE '(' '[' ']' ',' expr ')' ASSIGN vector      {
-                                                                if (!Interpreter::isConst[*$1]) {
+                                                                if (!(*Interpreter::isConstPtr)[*$1]) {
                                                                     std::vector<Interpreter::Node*> kids;
                                                                     kids.push_back($6);
                                                                     $$ = new Interpreter::VecMatVariableOperationNode(mexprrow, *$1, dynamic_cast<Interpreter::ContainerVectorNode*>($9), kids);
@@ -640,7 +640,7 @@ vmdeclaration:
                                                                 }
                                                             }
     | MVARIABLE '(' vector ',' '[' ']' ')' ASSIGN matrix    {
-                                                                if (!Interpreter::isConst[*$1]) {
+                                                                if (!(*Interpreter::isConstPtr)[*$1]) {
                                                                     std::vector<Interpreter::Node*> kids;
                                                                     kids.push_back($3);
                                                                     $$ = new Interpreter::VecMatVariableOperationNode(mveccolumn, *$1, dynamic_cast<Interpreter::ContainerMatrixNode*>($9), kids);
@@ -651,7 +651,7 @@ vmdeclaration:
                                                                 }
                                                             }
     | MVARIABLE '(' '[' ']' ',' vector ')' ASSIGN matrix    {
-                                                                if (!Interpreter::isConst[*$1]) {
+                                                                if (!(*Interpreter::isConstPtr)[*$1]) {
                                                                     std::vector<Interpreter::Node*> kids;
                                                                     kids.push_back($6);
                                                                     $$ = new Interpreter::VecMatVariableOperationNode(mvecrow, *$1, dynamic_cast<Interpreter::ContainerMatrixNode*>($9), kids);
@@ -662,7 +662,7 @@ vmdeclaration:
                                                                 }
                                                             }
     | MVARIABLE '(' matrix ')' ASSIGN matrix                {
-                                                                if (!Interpreter::isConst[*$1]) {
+                                                                if (!(*Interpreter::isConstPtr)[*$1]) {
                                                                     std::vector<Interpreter::Node*> kids;
                                                                     kids.push_back($3);
                                                                     $$ = new Interpreter::VecMatVariableOperationNode(mmat, *$1, dynamic_cast<Interpreter::ContainerMatrixNode*>($6), kids);
@@ -678,14 +678,14 @@ declaration:
     type VAR DECLARE expr                  {        
                                                     if ($1 == Interpreter::INT || $1 == Interpreter::CINT) {
                                                         auto plug = new Interpreter::IntegerNode();
-                                                        Interpreter::varStorage.insert_or_assign(*$2, plug);
-                                                        if ($1 == Interpreter::CINT) Interpreter::isConst.insert_or_assign(*$2, true);
+                                                        Interpreter::storagePtr->insert_or_assign(*$2, plug);
+                                                        if ($1 == Interpreter::CINT) Interpreter::isConstPtr->insert_or_assign(*$2, true);
                                                         $$ = new Interpreter::VariableOperationNode($1, declare, *$2, $4);
                                                     }
                                                     else if ($1 == Interpreter::BOOL || $1 == Interpreter::CBOOL) {
                                                         auto plug = new Interpreter::BoolNode();
-                                                        Interpreter::varStorage.insert_or_assign(*$2, plug);
-                                                        if ($1 == Interpreter::CBOOL) Interpreter::isConst.insert_or_assign(*$2, true);
+                                                        Interpreter::storagePtr->insert_or_assign(*$2, plug);
+                                                        if ($1 == Interpreter::CBOOL) Interpreter::isConstPtr->insert_or_assign(*$2, true);
                                                         $$ = new Interpreter::VariableOperationNode($1, declare, *$2, $4);
                                                     }
                                                     else yyerror("Type mismatch!");
@@ -693,8 +693,8 @@ declaration:
     | type VAR DECLARE vector              {
                                                     if ($1 == Interpreter::VINT || $1 == Interpreter::CVINT || $1 == Interpreter::VBOOL || $1 == Interpreter::CVBOOL) {
                                                         auto plug = new Interpreter::AbstractVectorNode();
-                                                        Interpreter::varStorage.insert_or_assign(*$2, plug);
-                                                        if ($1 == Interpreter::CVBOOL || $1 == Interpreter::CVINT) Interpreter::isConst.insert_or_assign(*$2, true);
+                                                        Interpreter::storagePtr->insert_or_assign(*$2, plug);
+                                                        if ($1 == Interpreter::CVBOOL || $1 == Interpreter::CVINT) Interpreter::isConstPtr->insert_or_assign(*$2, true);
                                                         $$ = new Interpreter::VariableOperationNode($1, declare, *$2, dynamic_cast<Interpreter::ContainerVectorNode*>($4));
                                                     }
                                                     else yyerror("Type mismatch!");
@@ -702,8 +702,8 @@ declaration:
     | type VAR DECLARE matrix              {
                                                     if ($1 == Interpreter::MINT || $1 == Interpreter::CMINT || $1 == Interpreter::MBOOL || $1 == Interpreter::CMBOOL) {
                                                         auto plug = new Interpreter::AbstractMatrixNode();
-                                                        Interpreter::varStorage.insert_or_assign(*$2, plug);
-                                                        if ($1 == Interpreter::CMBOOL || $1 == Interpreter::CMINT) Interpreter::isConst.insert_or_assign(*$2, true);
+                                                        Interpreter::storagePtr->insert_or_assign(*$2, plug);
+                                                        if ($1 == Interpreter::CMBOOL || $1 == Interpreter::CMINT) Interpreter::isConstPtr->insert_or_assign(*$2, true);
                                                         $$ = new Interpreter::VariableOperationNode($1, declare, *$2, dynamic_cast<Interpreter::ContainerMatrixNode*>($4));
                                                     }
                                                     else yyerror("Type mismatch!");
@@ -712,14 +712,14 @@ declaration:
 
 assignment:
     VARIABLE ASSIGN expr                    {
-                                                if (!Interpreter::isConst[*$1]) $$ = new Interpreter::VariableOperationNode(Interpreter::ABSTRACT, assign, *$1, $3);
+                                                if (!(*Interpreter::isConstPtr)[*$1]) $$ = new Interpreter::VariableOperationNode(Interpreter::ABSTRACT, assign, *$1, $3);
                                                 else {
                                                     std::string tmp = std::string("Variable ") + *$1 + " doesn't exist or can not be changed!";
                                                     yyerror(tmp.c_str());
                                                 }
                                             }
     | VVARIABLE ASSIGN vector               {
-                                                if (!Interpreter::isConst[*$1]) {
+                                                if (!(*Interpreter::isConstPtr)[*$1]) {
                                                     $$ = new Interpreter::VariableOperationNode(Interpreter::ABSTRACT, assign, *$1, dynamic_cast<Interpreter::ContainerVectorNode*>($3));
                                                 }
                                                 else {
@@ -728,7 +728,7 @@ assignment:
                                                 }
                                             }
     | MVARIABLE ASSIGN matrix               {
-                                                if (!Interpreter::isConst[*$1]) {
+                                                if (!(*Interpreter::isConstPtr)[*$1]) {
                                                     $$ = new Interpreter::VariableOperationNode(Interpreter::ABSTRACT, assign, *$1, dynamic_cast<Interpreter::ContainerMatrixNode*>($3));
                                                 }
                                                 else {

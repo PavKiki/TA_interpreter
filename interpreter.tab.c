@@ -2458,8 +2458,8 @@ yyreduce:
 #line 280 "interpreter.y" /* yacc.c:1652  */
     {
                                                                             dynamic_cast<Interpreter::func_descript*>((yyvsp[-4].ptr))->toExec = (yyvsp[-1].ptr);
-                                                                            Interpreter::varStorage = *Interpreter::tmpStorage;
-                                                                            Interpreter::isConst = *Interpreter::tmpIsConst;
+                                                                            Interpreter::storagePtr = &Interpreter::varStorage;
+                                                                            Interpreter::isConstPtr = &Interpreter::isConst;
                                                                             (yyval.ptr) = (yyvsp[-4].ptr);
                                                                         }
 #line 2466 "interpreter.tab.c" /* yacc.c:1652  */
@@ -2964,7 +2964,7 @@ yyreduce:
 #line 578 "interpreter.y" /* yacc.c:1652  */
     {
                                                     try {
-                                                        if (!Interpreter::isConst[*(yyvsp[-5].varName)]) {
+                                                        if (!(*Interpreter::isConstPtr)[*(yyvsp[-5].varName)]) {
                                                             std::vector<Interpreter::Node*> kids;
                                                             kids.push_back((yyvsp[-3].ptr));
                                                             kids.push_back((yyvsp[0].ptr));
@@ -2986,7 +2986,7 @@ yyreduce:
   case 105:
 #line 596 "interpreter.y" /* yacc.c:1652  */
     {
-                                                                if (!Interpreter::isConst[*(yyvsp[-8].varName)]) {
+                                                                if (!(*Interpreter::isConstPtr)[*(yyvsp[-8].varName)]) {
                                                                     std::vector<Interpreter::Node*> kids;
                                                                     kids.push_back((yyvsp[-6].ptr));
                                                                     (yyval.ptr) = new Interpreter::VecMatVariableOperationNode(vvec, *(yyvsp[-8].varName), dynamic_cast<Interpreter::ContainerVectorNode*>((yyvsp[0].ptr)), kids);
@@ -3002,7 +3002,7 @@ yyreduce:
   case 106:
 #line 607 "interpreter.y" /* yacc.c:1652  */
     {
-                                                                if (!Interpreter::isConst[*(yyvsp[-7].varName)]) {
+                                                                if (!(*Interpreter::isConstPtr)[*(yyvsp[-7].varName)]) {
                                                                     std::vector<Interpreter::Node*> kids;
                                                                     kids.push_back((yyvsp[-5].ptr));
                                                                     kids.push_back((yyvsp[-3].ptr));
@@ -3020,7 +3020,7 @@ yyreduce:
   case 107:
 #line 620 "interpreter.y" /* yacc.c:1652  */
     {
-                                                                if (!Interpreter::isConst[*(yyvsp[-8].varName)]) {
+                                                                if (!(*Interpreter::isConstPtr)[*(yyvsp[-8].varName)]) {
                                                                     std::vector<Interpreter::Node*> kids;
                                                                     kids.push_back((yyvsp[-6].ptr));
                                                                     (yyval.ptr) = new Interpreter::VecMatVariableOperationNode(mexprcolumn, *(yyvsp[-8].varName), dynamic_cast<Interpreter::ContainerVectorNode*>((yyvsp[0].ptr)), kids);
@@ -3036,7 +3036,7 @@ yyreduce:
   case 108:
 #line 631 "interpreter.y" /* yacc.c:1652  */
     {
-                                                                if (!Interpreter::isConst[*(yyvsp[-8].varName)]) {
+                                                                if (!(*Interpreter::isConstPtr)[*(yyvsp[-8].varName)]) {
                                                                     std::vector<Interpreter::Node*> kids;
                                                                     kids.push_back((yyvsp[-3].ptr));
                                                                     (yyval.ptr) = new Interpreter::VecMatVariableOperationNode(mexprrow, *(yyvsp[-8].varName), dynamic_cast<Interpreter::ContainerVectorNode*>((yyvsp[0].ptr)), kids);
@@ -3052,7 +3052,7 @@ yyreduce:
   case 109:
 #line 642 "interpreter.y" /* yacc.c:1652  */
     {
-                                                                if (!Interpreter::isConst[*(yyvsp[-8].varName)]) {
+                                                                if (!(*Interpreter::isConstPtr)[*(yyvsp[-8].varName)]) {
                                                                     std::vector<Interpreter::Node*> kids;
                                                                     kids.push_back((yyvsp[-6].ptr));
                                                                     (yyval.ptr) = new Interpreter::VecMatVariableOperationNode(mveccolumn, *(yyvsp[-8].varName), dynamic_cast<Interpreter::ContainerMatrixNode*>((yyvsp[0].ptr)), kids);
@@ -3068,7 +3068,7 @@ yyreduce:
   case 110:
 #line 653 "interpreter.y" /* yacc.c:1652  */
     {
-                                                                if (!Interpreter::isConst[*(yyvsp[-8].varName)]) {
+                                                                if (!(*Interpreter::isConstPtr)[*(yyvsp[-8].varName)]) {
                                                                     std::vector<Interpreter::Node*> kids;
                                                                     kids.push_back((yyvsp[-3].ptr));
                                                                     (yyval.ptr) = new Interpreter::VecMatVariableOperationNode(mvecrow, *(yyvsp[-8].varName), dynamic_cast<Interpreter::ContainerMatrixNode*>((yyvsp[0].ptr)), kids);
@@ -3084,7 +3084,7 @@ yyreduce:
   case 111:
 #line 664 "interpreter.y" /* yacc.c:1652  */
     {
-                                                                if (!Interpreter::isConst[*(yyvsp[-5].varName)]) {
+                                                                if (!(*Interpreter::isConstPtr)[*(yyvsp[-5].varName)]) {
                                                                     std::vector<Interpreter::Node*> kids;
                                                                     kids.push_back((yyvsp[-3].ptr));
                                                                     (yyval.ptr) = new Interpreter::VecMatVariableOperationNode(mmat, *(yyvsp[-5].varName), dynamic_cast<Interpreter::ContainerMatrixNode*>((yyvsp[0].ptr)), kids);
@@ -3102,14 +3102,14 @@ yyreduce:
     {        
                                                     if ((yyvsp[-3].vtype) == Interpreter::INT || (yyvsp[-3].vtype) == Interpreter::CINT) {
                                                         auto plug = new Interpreter::IntegerNode();
-                                                        Interpreter::varStorage.insert_or_assign(*(yyvsp[-2].varName), plug);
-                                                        if ((yyvsp[-3].vtype) == Interpreter::CINT) Interpreter::isConst.insert_or_assign(*(yyvsp[-2].varName), true);
+                                                        Interpreter::storagePtr->insert_or_assign(*(yyvsp[-2].varName), plug);
+                                                        if ((yyvsp[-3].vtype) == Interpreter::CINT) Interpreter::isConstPtr->insert_or_assign(*(yyvsp[-2].varName), true);
                                                         (yyval.varOpPtr) = new Interpreter::VariableOperationNode((yyvsp[-3].vtype), declare, *(yyvsp[-2].varName), (yyvsp[0].ptr));
                                                     }
                                                     else if ((yyvsp[-3].vtype) == Interpreter::BOOL || (yyvsp[-3].vtype) == Interpreter::CBOOL) {
                                                         auto plug = new Interpreter::BoolNode();
-                                                        Interpreter::varStorage.insert_or_assign(*(yyvsp[-2].varName), plug);
-                                                        if ((yyvsp[-3].vtype) == Interpreter::CBOOL) Interpreter::isConst.insert_or_assign(*(yyvsp[-2].varName), true);
+                                                        Interpreter::storagePtr->insert_or_assign(*(yyvsp[-2].varName), plug);
+                                                        if ((yyvsp[-3].vtype) == Interpreter::CBOOL) Interpreter::isConstPtr->insert_or_assign(*(yyvsp[-2].varName), true);
                                                         (yyval.varOpPtr) = new Interpreter::VariableOperationNode((yyvsp[-3].vtype), declare, *(yyvsp[-2].varName), (yyvsp[0].ptr));
                                                     }
                                                     else yyerror("Type mismatch!");
@@ -3122,8 +3122,8 @@ yyreduce:
     {
                                                     if ((yyvsp[-3].vtype) == Interpreter::VINT || (yyvsp[-3].vtype) == Interpreter::CVINT || (yyvsp[-3].vtype) == Interpreter::VBOOL || (yyvsp[-3].vtype) == Interpreter::CVBOOL) {
                                                         auto plug = new Interpreter::AbstractVectorNode();
-                                                        Interpreter::varStorage.insert_or_assign(*(yyvsp[-2].varName), plug);
-                                                        if ((yyvsp[-3].vtype) == Interpreter::CVBOOL || (yyvsp[-3].vtype) == Interpreter::CVINT) Interpreter::isConst.insert_or_assign(*(yyvsp[-2].varName), true);
+                                                        Interpreter::storagePtr->insert_or_assign(*(yyvsp[-2].varName), plug);
+                                                        if ((yyvsp[-3].vtype) == Interpreter::CVBOOL || (yyvsp[-3].vtype) == Interpreter::CVINT) Interpreter::isConstPtr->insert_or_assign(*(yyvsp[-2].varName), true);
                                                         (yyval.varOpPtr) = new Interpreter::VariableOperationNode((yyvsp[-3].vtype), declare, *(yyvsp[-2].varName), dynamic_cast<Interpreter::ContainerVectorNode*>((yyvsp[0].ptr)));
                                                     }
                                                     else yyerror("Type mismatch!");
@@ -3136,8 +3136,8 @@ yyreduce:
     {
                                                     if ((yyvsp[-3].vtype) == Interpreter::MINT || (yyvsp[-3].vtype) == Interpreter::CMINT || (yyvsp[-3].vtype) == Interpreter::MBOOL || (yyvsp[-3].vtype) == Interpreter::CMBOOL) {
                                                         auto plug = new Interpreter::AbstractMatrixNode();
-                                                        Interpreter::varStorage.insert_or_assign(*(yyvsp[-2].varName), plug);
-                                                        if ((yyvsp[-3].vtype) == Interpreter::CMBOOL || (yyvsp[-3].vtype) == Interpreter::CMINT) Interpreter::isConst.insert_or_assign(*(yyvsp[-2].varName), true);
+                                                        Interpreter::storagePtr->insert_or_assign(*(yyvsp[-2].varName), plug);
+                                                        if ((yyvsp[-3].vtype) == Interpreter::CMBOOL || (yyvsp[-3].vtype) == Interpreter::CMINT) Interpreter::isConstPtr->insert_or_assign(*(yyvsp[-2].varName), true);
                                                         (yyval.varOpPtr) = new Interpreter::VariableOperationNode((yyvsp[-3].vtype), declare, *(yyvsp[-2].varName), dynamic_cast<Interpreter::ContainerMatrixNode*>((yyvsp[0].ptr)));
                                                     }
                                                     else yyerror("Type mismatch!");
@@ -3148,7 +3148,7 @@ yyreduce:
   case 115:
 #line 714 "interpreter.y" /* yacc.c:1652  */
     {
-                                                if (!Interpreter::isConst[*(yyvsp[-2].varName)]) (yyval.varOpPtr) = new Interpreter::VariableOperationNode(Interpreter::ABSTRACT, assign, *(yyvsp[-2].varName), (yyvsp[0].ptr));
+                                                if (!(*Interpreter::isConstPtr)[*(yyvsp[-2].varName)]) (yyval.varOpPtr) = new Interpreter::VariableOperationNode(Interpreter::ABSTRACT, assign, *(yyvsp[-2].varName), (yyvsp[0].ptr));
                                                 else {
                                                     std::string tmp = std::string("Variable ") + *(yyvsp[-2].varName) + " doesn't exist or can not be changed!";
                                                     yyerror(tmp.c_str());
@@ -3160,7 +3160,7 @@ yyreduce:
   case 116:
 #line 721 "interpreter.y" /* yacc.c:1652  */
     {
-                                                if (!Interpreter::isConst[*(yyvsp[-2].varName)]) {
+                                                if (!(*Interpreter::isConstPtr)[*(yyvsp[-2].varName)]) {
                                                     (yyval.varOpPtr) = new Interpreter::VariableOperationNode(Interpreter::ABSTRACT, assign, *(yyvsp[-2].varName), dynamic_cast<Interpreter::ContainerVectorNode*>((yyvsp[0].ptr)));
                                                 }
                                                 else {
@@ -3174,7 +3174,7 @@ yyreduce:
   case 117:
 #line 730 "interpreter.y" /* yacc.c:1652  */
     {
-                                                if (!Interpreter::isConst[*(yyvsp[-2].varName)]) {
+                                                if (!(*Interpreter::isConstPtr)[*(yyvsp[-2].varName)]) {
                                                     (yyval.varOpPtr) = new Interpreter::VariableOperationNode(Interpreter::ABSTRACT, assign, *(yyvsp[-2].varName), dynamic_cast<Interpreter::ContainerMatrixNode*>((yyvsp[0].ptr)));
                                                 }
                                                 else {

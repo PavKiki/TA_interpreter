@@ -8,8 +8,9 @@ std::unordered_map<std::string, bool> Interpreter::isConst;
 std::ostringstream Interpreter::out;
 
 std::unordered_map<std::string, Interpreter::Node*> Interpreter::funcStorage;
-std::unordered_map<std::string, Interpreter::Node*>* Interpreter::tmpStorage;
-std::unordered_map<std::string, bool>* Interpreter::tmpIsConst;
+
+std::unordered_map<std::string, Interpreter::Node*>* Interpreter::storagePtr = &Interpreter::varStorage;
+std::unordered_map<std::string, bool>* Interpreter::isConstPtr = &Interpreter::isConst;
 
 Robot Interpreter::robot("maze.txt");
 
@@ -86,8 +87,8 @@ int Interpreter::ContainerVectorNode::execute() {
             break;
         }
         case vvecindex: {
-            auto search = Interpreter::varStorage.find(VN);
-            if (search == Interpreter::varStorage.end()) throw (std::string("Some mistake occured, variable ") + VN + "doesn't exist...");
+            auto search = Interpreter::storagePtr->find(VN);
+            if (search == Interpreter::storagePtr->end()) throw (std::string("Some mistake occured, variable ") + VN + "doesn't exist...");
 
             kids[0]->execute();
             auto futureCondition = kids[0]; 
@@ -120,8 +121,8 @@ int Interpreter::ContainerVectorNode::execute() {
             break;
         }
         case mexprcolumnindex: {
-            auto search = Interpreter::varStorage.find(VN);
-            if (search == Interpreter::varStorage.end()) throw (std::string("Some mistake occured, variable ") + VN + "doesn't exist...");
+            auto search = Interpreter::storagePtr->find(VN);
+            if (search == Interpreter::storagePtr->end()) throw (std::string("Some mistake occured, variable ") + VN + "doesn't exist...");
 
             auto ssrc = dynamic_cast<Interpreter::AbstractMatrixNode*>(search->second);
             if (kids[0]->execute() < 0 || kids[0]->execute() >= ssrc->getSizeY()) throw "Out of range!";
@@ -131,8 +132,8 @@ int Interpreter::ContainerVectorNode::execute() {
             break;
         }
         case mexprrowindex: {
-            auto search = Interpreter::varStorage.find(VN);
-            if (search == Interpreter::varStorage.end()) throw (std::string("Some mistake occured, variable ") + VN + "doesn't exist...");
+            auto search = Interpreter::storagePtr->find(VN);
+            if (search == Interpreter::storagePtr->end()) throw (std::string("Some mistake occured, variable ") + VN + "doesn't exist...");
 
             auto ssrc = dynamic_cast<Interpreter::AbstractMatrixNode*>(search->second);
             if (kids[0]->execute() < 0 || kids[0]->execute() >= ssrc->getSizeX()) throw "Out of range!";
@@ -142,8 +143,8 @@ int Interpreter::ContainerVectorNode::execute() {
             break;
         }
         case getvec: {
-            auto search = Interpreter::varStorage.find(VN);
-            if (search == Interpreter::varStorage.end()) throw (std::string("Some mistake occured, variable ") + VN + "doesn't exist...");
+            auto search = Interpreter::storagePtr->find(VN);
+            if (search == Interpreter::storagePtr->end()) throw (std::string("Some mistake occured, variable ") + VN + "doesn't exist...");
 
             auto tmp = static_cast<AbstractVectorNode*>(search->second);
             auto ttmp = new ContainerVectorNode(tmp->getData(), tmp->getSize());
@@ -390,8 +391,8 @@ int Interpreter::ContainerMatrixNode::execute() {
         break;
     }
     case mveccolumnindex: {
-        auto search = Interpreter::varStorage.find(VN);
-        if (search == Interpreter::varStorage.end()) throw (std::string("Some mistake occured, variable ") + VN + "doesn't exist...");
+        auto search = Interpreter::storagePtr->find(VN);
+        if (search == Interpreter::storagePtr->end()) throw (std::string("Some mistake occured, variable ") + VN + "doesn't exist...");
 
         auto ssrc = dynamic_cast<Interpreter::AbstractMatrixNode*>(search->second);
         auto vecCond = dynamic_cast<Interpreter::ContainerVectorNode*>((Node*)(kids[0]));
@@ -409,8 +410,8 @@ int Interpreter::ContainerMatrixNode::execute() {
         break;
     }
     case mvecrowindex: {
-        auto search = Interpreter::varStorage.find(VN);
-        if (search == Interpreter::varStorage.end()) throw (std::string("Some mistake occured, variable ") + VN + "doesn't exist...");
+        auto search = Interpreter::storagePtr->find(VN);
+        if (search == Interpreter::storagePtr->end()) throw (std::string("Some mistake occured, variable ") + VN + "doesn't exist...");
 
         auto ssrc = dynamic_cast<Interpreter::AbstractMatrixNode*>(search->second);
         auto vecCond = dynamic_cast<Interpreter::ContainerVectorNode*>((Node*)(kids[0]));
@@ -448,8 +449,8 @@ int Interpreter::ContainerMatrixNode::execute() {
         break;
     }
     case mmatindex: {
-        auto search = Interpreter::varStorage.find(VN);
-        if (search == Interpreter::varStorage.end()) throw (std::string("Some mistake occured, variable ") + VN + "doesn't exist...");
+        auto search = Interpreter::storagePtr->find(VN);
+        if (search == Interpreter::storagePtr->end()) throw (std::string("Some mistake occured, variable ") + VN + "doesn't exist...");
 
         auto ssrc = dynamic_cast<Interpreter::AbstractMatrixNode*>(search->second);
         auto matCond = kids[0];
@@ -476,8 +477,8 @@ int Interpreter::ContainerMatrixNode::execute() {
         break;
     }
     case getmat: {
-        auto search = Interpreter::varStorage.find(VN);
-        if (search == Interpreter::varStorage.end()) throw (std::string("Some mistake occured, variable ") + VN + "doesn't exist...");
+        auto search = Interpreter::storagePtr->find(VN);
+        if (search == Interpreter::storagePtr->end()) throw (std::string("Some mistake occured, variable ") + VN + "doesn't exist...");
 
         auto tmp = static_cast<AbstractMatrixNode*>(search->second);
         auto ttmp = new ContainerMatrixNode(tmp->getData(), tmp->getSizeX(), tmp->getSizeY());

@@ -93,8 +93,8 @@ dflt                    {yylloc.last_line = yylloc.first_line = yylineno; return
 
 [a-zA-Z][a-zA-Z0-9_]*   {
                             yylloc.last_line = yylloc.first_line = yylineno; yylval.varName = new std::string(yytext);
-                            auto search = Interpreter::varStorage.find(*(yylval.varName));
-                            if (search != Interpreter::varStorage.end()) {
+                            auto search = Interpreter::storagePtr->find(*(yylval.varName));
+                            if (search != Interpreter::storagePtr->end()) {
                                 if (search->second->nType == Interpreter::INTMATNODE || search->second->nType == Interpreter::BOOLMATNODE || search->second->nType == Interpreter::ABSTRACTMATNODE) return MVARIABLE;
                                 else if (search->second->nType == Interpreter::INTVECNODE || search->second->nType == Interpreter::BOOLVECNODE || search->second->nType == Interpreter::ABSTRACTVECNODE) return VVARIABLE;
                                 else if (search->second->nType == Interpreter::INTNODE || search->second->nType == Interpreter::BOOLNODE) return VARIABLE;

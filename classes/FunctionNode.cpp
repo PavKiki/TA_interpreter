@@ -226,11 +226,8 @@ Interpreter::func_descript::func_descript(std::vector<std::pair<varType, std::st
         }
     }
 
-    Interpreter::tmpStorage = &Interpreter::varStorage;
-    Interpreter::tmpIsConst = &Interpreter::isConst;
-
-    Interpreter::varStorage = *(&(this->localStorage));
-    Interpreter::isConst = *(&(this->localIsConst));
+    Interpreter::storagePtr = &this->localStorage;
+    Interpreter::isConstPtr = &this->localIsConst;
 }
 
 Interpreter::func_descript::func_descript(func_descript* ptr) {
@@ -274,23 +271,24 @@ Interpreter::func_descript::func_descript(func_descript* ptr) {
 
 void Interpreter::func_descript::init() {
     for (auto& assign: defaultAssigns) {
+        // auto tmp = dynamic_cast<Interpreter::VariableOperationNode*>(assign);
+        // std::ostringstream s;
+        // tmp->print(s);
+        // std::cout << s.str() << std::endl;
         assign->execute();
     }
 }
 
 void Interpreter::func_descript::run() {
     
-    std::unordered_map<std::string, Node*>* originalStorage = &Interpreter::varStorage;
-    std::unordered_map<std::string, bool>* originalIsConst = &Interpreter::isConst;
-
-    Interpreter::varStorage = this->localStorage;
-    Interpreter::isConst = this->localIsConst;
+    Interpreter::storagePtr = &this->localStorage;
+    Interpreter::isConstPtr = &this->localIsConst;
 
     init();
     toExec->execute();
 
-    Interpreter::varStorage = *originalStorage;
-    Interpreter::isConst = *originalIsConst; 
+    Interpreter::storagePtr = &Interpreter::varStorage;
+    Interpreter::isConstPtr = &Interpreter::isConst; 
 }
 
 Interpreter::callfunc::callfunc(std::string fname, std::vector<std::pair<varType, std::string>> rets, std::vector<std::pair<dataType, Node*>> args): Node(CALLFUNCNODE), fname(fname), rets(rets), args(args) {
@@ -305,19 +303,19 @@ Interpreter::callfunc::callfunc(std::string fname, std::vector<std::pair<varType
     //passed parameter values assigns to function
     for (size_t i = 0; i < args.size(); i++) {
         if (args[i].first == expR) {
-            auto tmp = new Interpreter::VariableOperationNode(function->args[i].first, assign, function->args[i].second, args[i].second);
+            auto tmp = new Interpreter::VariableOperationNode(function->args[i].first, declare, function->args[i].second, args[i].second, &function->localStorage, &function->localIsConst);
             function->defaultAssigns.push_back(tmp);
             //#DELETE_LATER
-            std::ostringstream s;
-            args[i].second->print(s);
-            std::cout << s.str();
+            // std::ostringstream s;
+            // args[i].second->print(s);
+            // std::cout << s.str();
         }
         else if (args[i].first == vectoR) {
-            auto tmp = new Interpreter::VariableOperationNode(function->args[i].first, assign, function->args[i].second, dynamic_cast<Interpreter::ContainerVectorNode*>(args[i].second));
+            auto tmp = new Interpreter::VariableOperationNode(function->args[i].first, declare, function->args[i].second, dynamic_cast<Interpreter::ContainerVectorNode*>(args[i].second), &function->localStorage, &function->localIsConst);
             function->defaultAssigns.push_back(tmp);
         }
         else if (args[i].first == matriX) {
-            auto tmp = new Interpreter::VariableOperationNode(function->args[i].first, assign, function->args[i].second, dynamic_cast<Interpreter::ContainerMatrixNode*>(args[i].second));
+            auto tmp = new Interpreter::VariableOperationNode(function->args[i].first, declare, function->args[i].second, dynamic_cast<Interpreter::ContainerMatrixNode*>(args[i].second), &function->localStorage, &function->localIsConst);
             function->defaultAssigns.push_back(tmp);
         }
         else if (args[i].first == defaulT) {
@@ -330,81 +328,81 @@ Interpreter::callfunc::callfunc(std::string fname, std::vector<std::pair<varType
         {
         case Interpreter::INT:{
             auto plug = new Interpreter::IntegerNode();
-            Interpreter::varStorage.insert_or_assign(rets[i].second, plug);
-            Interpreter::isConst.insert_or_assign(rets[i].second, false);
+            Interpreter::storagePtr->insert_or_assign(rets[i].second, plug);
+            Interpreter::isConstPtr->insert_or_assign(rets[i].second, false);
             break;
         }
         case Interpreter::CINT: {
             auto plug = new Interpreter::IntegerNode();
-            Interpreter::varStorage.insert_or_assign(rets[i].second, plug);
-            Interpreter::isConst.insert_or_assign(rets[i].second, true);
+            Interpreter::storagePtr->insert_or_assign(rets[i].second, plug);
+            Interpreter::isConstPtr->insert_or_assign(rets[i].second, true);
             break;
         }
         case Interpreter::BOOL:{
             auto plug = new Interpreter::BoolNode();
-            Interpreter::varStorage.insert_or_assign(rets[i].second, plug);
-            Interpreter::isConst.insert_or_assign(rets[i].second, false);
+            Interpreter::storagePtr->insert_or_assign(rets[i].second, plug);
+            Interpreter::isConstPtr->insert_or_assign(rets[i].second, false);
             break;
         }
         case Interpreter::CBOOL: {
             auto plug = new Interpreter::BoolNode();
-            Interpreter::varStorage.insert_or_assign(rets[i].second, plug);
-            Interpreter::isConst.insert_or_assign(rets[i].second, true);
+            Interpreter::storagePtr->insert_or_assign(rets[i].second, plug);
+            Interpreter::isConstPtr->insert_or_assign(rets[i].second, true);
             break;
         }
         case Interpreter::VINT:{
             auto plug = new Interpreter::IntegerVectorNode();
-            Interpreter::varStorage.insert_or_assign(rets[i].second, plug);
-            Interpreter::isConst.insert_or_assign(rets[i].second, false);
+            Interpreter::storagePtr->insert_or_assign(rets[i].second, plug);
+            Interpreter::isConstPtr->insert_or_assign(rets[i].second, false);
             break;
         }
         case Interpreter::VBOOL: {
             auto plug = new Interpreter::BoolVectorNode();
-            Interpreter::varStorage.insert_or_assign(rets[i].second, plug);
-            Interpreter::isConst.insert_or_assign(rets[i].second, false);
+            Interpreter::storagePtr->insert_or_assign(rets[i].second, plug);
+            Interpreter::isConstPtr->insert_or_assign(rets[i].second, false);
             break;
         }
         case Interpreter::CVINT:{
             auto plug = new Interpreter::IntegerVectorNode();
-            Interpreter::varStorage.insert_or_assign(rets[i].second, plug);
-            Interpreter::isConst.insert_or_assign(rets[i].second, true);
+            Interpreter::storagePtr->insert_or_assign(rets[i].second, plug);
+            Interpreter::isConstPtr->insert_or_assign(rets[i].second, true);
             break;
         }
         case Interpreter::CVBOOL: {
             auto plug = new Interpreter::BoolVectorNode();
-            Interpreter::varStorage.insert_or_assign(rets[i].second, plug);
-            Interpreter::isConst.insert_or_assign(rets[i].second, true);
+            Interpreter::storagePtr->insert_or_assign(rets[i].second, plug);
+            Interpreter::isConstPtr->insert_or_assign(rets[i].second, true);
             break;
         }
         case Interpreter::MINT:{
             auto plug = new Interpreter::IntegerMatrixNode();
-            Interpreter::varStorage.insert_or_assign(rets[i].second, plug);
-            Interpreter::isConst.insert_or_assign(rets[i].second, false);
+            Interpreter::storagePtr->insert_or_assign(rets[i].second, plug);
+            Interpreter::isConstPtr->insert_or_assign(rets[i].second, false);
             break;
         }
         case Interpreter::MBOOL: {
             auto plug = new Interpreter::BoolMatrixNode();
-            Interpreter::varStorage.insert_or_assign(rets[i].second, plug);
-            Interpreter::isConst.insert_or_assign(rets[i].second, false);
+            Interpreter::storagePtr->insert_or_assign(rets[i].second, plug);
+            Interpreter::isConstPtr->insert_or_assign(rets[i].second, false);
             break;
         }
         case Interpreter::CMINT:{
             auto plug = new Interpreter::IntegerMatrixNode();
-            Interpreter::varStorage.insert_or_assign(rets[i].second, plug);
-            Interpreter::isConst.insert_or_assign(rets[i].second, true);
+            Interpreter::storagePtr->insert_or_assign(rets[i].second, plug);
+            Interpreter::isConstPtr->insert_or_assign(rets[i].second, true);
             break;
         }
         case Interpreter::CMBOOL: {
             auto plug = new Interpreter::BoolMatrixNode();
-            Interpreter::varStorage.insert_or_assign(rets[i].second, plug);
-            Interpreter::isConst.insert_or_assign(rets[i].second, true);
+            Interpreter::storagePtr->insert_or_assign(rets[i].second, plug);
+            Interpreter::isConstPtr->insert_or_assign(rets[i].second, true);
             break;
         }
         
         default:
             break;
         }
-        function->localStorage[function->rets[i].second] = Interpreter::varStorage[rets[i].second];
+        function->localStorage[function->rets[i].second] = (*Interpreter::storagePtr)[rets[i].second];
     }
 };
 
