@@ -84,7 +84,6 @@
             strm << (execute() ? "true" : "false") << '\n';
             break;
         case gscalar: {
-            std::cout << Interpreter::out.str() << std::endl;
             auto search = Interpreter::storagePtr->find(varname);
             if (search->second->nType == Interpreter::INTNODE) strm << execute() << '\n';
             else if (search->second->nType == Interpreter::BOOLNODE) strm << (execute() ? "true" : "false") << '\n';
@@ -291,8 +290,8 @@
 
     Interpreter::VariableOperationNode::VariableOperationNode(varType vType, varOperName vopName, std::string name, Interpreter::Node* data): vType(vType), vopType(vopName), varName(name), varSt(&Interpreter::varStorage), isCo(&Interpreter::isConst) {
         scalarData = data;
-        varSt = Interpreter::storagePtr;
-        isCo = Interpreter::isConstPtr;
+        varSt = nullptr;
+        isCo = nullptr;
     }
 
     std::vector<Interpreter::AbstractVectorNode*> Interpreter::getMatrixExprResult(Interpreter::varType type, Interpreter::ContainerMatrixNode*& src) {
@@ -442,121 +441,133 @@
     void Interpreter::VariableOperationNode::print(std::ostringstream& strm) {}
 
     int Interpreter::VariableOperationNode::execute() {
+        if (!isCo) isCo = Interpreter::isConstPtr;
+        if (!varSt) varSt = Interpreter::storagePtr;
         if (vopType == declare) {
             Node* newNode = nullptr;
-            auto isCon = *isCo;
-            auto varStor = *varSt;
+            auto isCon = isCo;
+            auto varStor = varSt;
             switch (vType)
             {
-            case Interpreter::INT:
+            case Interpreter::INT: {
                 newNode = getScalarExprResult(vType, scalarData);
-                isCon.insert_or_assign(varName, false);
-                dynamic_cast<Interpreter::IntegerNode*>(varStor[varName])->setDecData(dynamic_cast<Interpreter::IntegerNode*>(newNode)->getDecData());
+                (*isCon).insert_or_assign(varName, false);
+                dynamic_cast<Interpreter::IntegerNode*>((*varStor)[varName])->setDecData(dynamic_cast<Interpreter::IntegerNode*>(newNode)->getDecData());
+                auto sec = dynamic_cast<Interpreter::IntegerNode*>((*varStor)[varName]);
                 break;
-            case Interpreter::BOOL:
+            }
+            case Interpreter::BOOL: {
                 newNode = getScalarExprResult(vType, scalarData);
-                isCon.insert_or_assign(varName, false);
-                dynamic_cast<Interpreter::BoolNode*>(varStor[varName])->writeData(dynamic_cast<Interpreter::BoolNode*>(newNode)->getData());
+                (*isCon).insert_or_assign(varName, false);
+                dynamic_cast<Interpreter::BoolNode*>((*varStor)[varName])->writeData(dynamic_cast<Interpreter::BoolNode*>(newNode)->getData());
                 break;
-            case Interpreter::CINT: 
+            }
+            case Interpreter::CINT: { 
                 newNode = getScalarExprResult(vType, scalarData);
-                isCon.insert_or_assign(varName, true);
-                dynamic_cast<Interpreter::IntegerNode*>(varStor[varName])->setDecData(dynamic_cast<Interpreter::IntegerNode*>(newNode)->getDecData());
+                (*isCon).insert_or_assign(varName, true);
+                dynamic_cast<Interpreter::IntegerNode*>((*varStor)[varName])->setDecData(dynamic_cast<Interpreter::IntegerNode*>(newNode)->getDecData());
                 break;
-            case Interpreter::CBOOL:
+            }
+            case Interpreter::CBOOL: {
                 newNode = getScalarExprResult(vType, scalarData);
-                isCon.insert_or_assign(varName, true);
-                dynamic_cast<Interpreter::BoolNode*>(varStor[varName])->writeData(dynamic_cast<Interpreter::BoolNode*>(newNode)->getData());
+                (*isCon).insert_or_assign(varName, true);
+                dynamic_cast<Interpreter::BoolNode*>((*varStor)[varName])->writeData(dynamic_cast<Interpreter::BoolNode*>(newNode)->getData());
                 break;
-            case Interpreter::VINT:
+            }
+            case Interpreter::VINT: {
                 newNode = new Interpreter::IntegerVectorNode(getVectorExprResult(vType, vectorData), vectorData->getSize());
-                isCon.insert_or_assign(varName, false);
-                dynamic_cast<Interpreter::AbstractVectorNode*>(varStor[varName])->setData(dynamic_cast<Interpreter::AbstractVectorNode*>(newNode)->getData());
-                dynamic_cast<Interpreter::AbstractVectorNode*>(varStor[varName])->nType = Interpreter::INTVECNODE;
+                (*isCon).insert_or_assign(varName, false);
+                dynamic_cast<Interpreter::AbstractVectorNode*>((*varStor)[varName])->setData(dynamic_cast<Interpreter::AbstractVectorNode*>(newNode)->getData());
+                dynamic_cast<Interpreter::AbstractVectorNode*>((*varStor)[varName])->nType = Interpreter::INTVECNODE;
                 break;
-
-            case Interpreter::VBOOL:
+            }
+            case Interpreter::VBOOL: {
                 newNode = new Interpreter::BoolVectorNode(getVectorExprResult(vType, vectorData), vectorData->getSize());
-                isCon.insert_or_assign(varName, false);
-                dynamic_cast<Interpreter::AbstractVectorNode*>(varStor[varName])->setData(dynamic_cast<Interpreter::AbstractVectorNode*>(newNode)->getData());
-                dynamic_cast<Interpreter::AbstractVectorNode*>(varStor[varName])->nType = Interpreter::BOOLVECNODE;
+                (*isCon).insert_or_assign(varName, false);
+                dynamic_cast<Interpreter::AbstractVectorNode*>((*varStor)[varName])->setData(dynamic_cast<Interpreter::AbstractVectorNode*>(newNode)->getData());
+                dynamic_cast<Interpreter::AbstractVectorNode*>((*varStor)[varName])->nType = Interpreter::BOOLVECNODE;
                 break;
-
-            case Interpreter::CVBOOL:
+            }
+            case Interpreter::CVBOOL: {
                 newNode = new Interpreter::BoolVectorNode(getVectorExprResult(vType, vectorData), vectorData->getSize());
-                isCon.insert_or_assign(varName, true);
-                dynamic_cast<Interpreter::AbstractVectorNode*>(varStor[varName])->setData(dynamic_cast<Interpreter::AbstractVectorNode*>(newNode)->getData());
-                dynamic_cast<Interpreter::AbstractVectorNode*>(varStor[varName])->nType = Interpreter::BOOLVECNODE;
+                (*isCon).insert_or_assign(varName, true);
+                dynamic_cast<Interpreter::AbstractVectorNode*>((*varStor)[varName])->setData(dynamic_cast<Interpreter::AbstractVectorNode*>(newNode)->getData());
+                dynamic_cast<Interpreter::AbstractVectorNode*>((*varStor)[varName])->nType = Interpreter::BOOLVECNODE;
                 break;
-
-            case Interpreter::CVINT: 
+            }
+            case Interpreter::CVINT: {
                 newNode = new Interpreter::IntegerVectorNode(getVectorExprResult(vType, vectorData), vectorData->getSize());
-                isCon.insert_or_assign(varName, true);
-                dynamic_cast<Interpreter::AbstractVectorNode*>(varStor[varName])->setData(dynamic_cast<Interpreter::AbstractVectorNode*>(newNode)->getData());
-                dynamic_cast<Interpreter::AbstractVectorNode*>(varStor[varName])->nType = Interpreter::INTVECNODE;
+                (*isCon).insert_or_assign(varName, true);
+                dynamic_cast<Interpreter::AbstractVectorNode*>((*varStor)[varName])->setData(dynamic_cast<Interpreter::AbstractVectorNode*>(newNode)->getData());
+                dynamic_cast<Interpreter::AbstractVectorNode*>((*varStor)[varName])->nType = Interpreter::INTVECNODE;
                 break;
-            
-            case Interpreter::MINT:
+            }
+            case Interpreter::MINT: {
                 newNode = new Interpreter::IntegerMatrixNode(getMatrixExprResult(vType, matrixData), matrixData->getSizeX(), matrixData->getSizeY());
-                isCon.insert_or_assign(varName, false);
-                dynamic_cast<Interpreter::AbstractMatrixNode*>(varStor[varName])->setData(dynamic_cast<Interpreter::AbstractMatrixNode*>(newNode)->getData());
-                dynamic_cast<Interpreter::AbstractMatrixNode*>(varStor[varName])->nType = Interpreter::INTMATNODE;
+                (*isCon).insert_or_assign(varName, false);
+                dynamic_cast<Interpreter::AbstractMatrixNode*>((*varStor)[varName])->setData(dynamic_cast<Interpreter::AbstractMatrixNode*>(newNode)->getData());
+                dynamic_cast<Interpreter::AbstractMatrixNode*>((*varStor)[varName])->nType = Interpreter::INTMATNODE;
                 break;
-            
-            case Interpreter::MBOOL: 
+            }
+            case Interpreter::MBOOL: {
                 newNode = new Interpreter::IntegerMatrixNode(getMatrixExprResult(vType, matrixData), matrixData->getSizeX(), matrixData->getSizeY());
-                isCon.insert_or_assign(varName, false);
-                dynamic_cast<Interpreter::AbstractMatrixNode*>(varStor[varName])->setData(dynamic_cast<Interpreter::AbstractMatrixNode*>(newNode)->getData());
-                dynamic_cast<Interpreter::AbstractMatrixNode*>(varStor[varName])->nType = Interpreter::BOOLMATNODE;
+                (*isCon).insert_or_assign(varName, false);
+                dynamic_cast<Interpreter::AbstractMatrixNode*>((*varStor)[varName])->setData(dynamic_cast<Interpreter::AbstractMatrixNode*>(newNode)->getData());
+                dynamic_cast<Interpreter::AbstractMatrixNode*>((*varStor)[varName])->nType = Interpreter::BOOLMATNODE;
                 break;
-            
-            case Interpreter::CMINT: 
+            }
+            case Interpreter::CMINT: {
                 newNode = new Interpreter::IntegerMatrixNode(getMatrixExprResult(vType, matrixData), matrixData->getSizeX(), matrixData->getSizeY());
-                isCon.insert_or_assign(varName, true);
-                dynamic_cast<Interpreter::AbstractMatrixNode*>(varStor[varName])->setData(dynamic_cast<Interpreter::AbstractMatrixNode*>(newNode)->getData());
-                dynamic_cast<Interpreter::AbstractMatrixNode*>(varStor[varName])->nType = Interpreter::INTMATNODE;
+                (*isCon).insert_or_assign(varName, true);
+                dynamic_cast<Interpreter::AbstractMatrixNode*>((*varStor)[varName])->setData(dynamic_cast<Interpreter::AbstractMatrixNode*>(newNode)->getData());
+                dynamic_cast<Interpreter::AbstractMatrixNode*>((*varStor)[varName])->nType = Interpreter::INTMATNODE;
                 break;
-            
-            case Interpreter::CMBOOL:
+            }
+            case Interpreter::CMBOOL: {
                 newNode = new Interpreter::IntegerMatrixNode(getMatrixExprResult(vType, matrixData), matrixData->getSizeX(), matrixData->getSizeY());
-                isCon.insert_or_assign(varName, true);
-                dynamic_cast<Interpreter::AbstractMatrixNode*>(varStor[varName])->setData(dynamic_cast<Interpreter::AbstractMatrixNode*>(newNode)->getData());
-                dynamic_cast<Interpreter::AbstractMatrixNode*>(varStor[varName])->nType = Interpreter::BOOLMATNODE;
+                (*isCon).insert_or_assign(varName, true);
+                dynamic_cast<Interpreter::AbstractMatrixNode*>((*varStor)[varName])->setData(dynamic_cast<Interpreter::AbstractMatrixNode*>(newNode)->getData());
+                dynamic_cast<Interpreter::AbstractMatrixNode*>((*varStor)[varName])->nType = Interpreter::BOOLMATNODE;
                 break;
-
+            }
             default:
                 throw "Invalid variable type!";
             }
         }
         else if (vopType == assign) {
-            auto isCon = *isCo;
-            auto varStor = *varSt;
-            auto search = varStor.find(varName);
-            if (isCon[varName] == true) throw "Can not change constant variable!";
+            auto isCon = isCo;
+            auto varStor = varSt;
+            auto search = varStor->find(varName);
+            if ((*isCon)[varName] == true) throw "Can not change constant variable!";
             Node* newNode = nullptr;
             if (search->second->nType == Interpreter::INTNODE) {
                 newNode = getScalarExprResult(Interpreter::INT, scalarData);
-                dynamic_cast<Interpreter::IntegerNode*>(varStor[varName])->setDecData(dynamic_cast<Interpreter::IntegerNode*>(newNode)->getDecData());
+                dynamic_cast<Interpreter::IntegerNode*>((*varStor)[varName])->setDecData(dynamic_cast<Interpreter::IntegerNode*>(newNode)->getDecData());
+
+                // std::ostringstream s;
+                // std::cout << varName << " ";
+                // (*varStor)[varName]->print(s);
+                // std::cout << s.str();
             }
             else if (search->second->nType == Interpreter::BOOLNODE) {
                 newNode = getScalarExprResult(Interpreter::BOOL, scalarData);
-                dynamic_cast<Interpreter::BoolNode*>(varStor[varName])->writeData(dynamic_cast<Interpreter::BoolNode*>(newNode)->getData());
+                dynamic_cast<Interpreter::BoolNode*>((*varStor)[varName])->writeData(dynamic_cast<Interpreter::BoolNode*>(newNode)->getData());
             }
             else if (search->second->nType == Interpreter::INTVECNODE) {
                 newNode = new Interpreter::IntegerVectorNode(getVectorExprResult(Interpreter::VINT, vectorData), vectorData->getSize());
-                dynamic_cast<Interpreter::AbstractVectorNode*>(varStor[varName])->setData(dynamic_cast<Interpreter::AbstractVectorNode*>(newNode)->getData());
+                dynamic_cast<Interpreter::AbstractVectorNode*>((*varStor)[varName])->setData(dynamic_cast<Interpreter::AbstractVectorNode*>(newNode)->getData());
             }
             else if (search->second->nType == Interpreter::BOOLVECNODE) {
                 newNode = new Interpreter::IntegerVectorNode(getVectorExprResult(Interpreter::VBOOL, vectorData), vectorData->getSize());
-                dynamic_cast<Interpreter::AbstractVectorNode*>(varStor[varName])->setData(dynamic_cast<Interpreter::AbstractVectorNode*>(newNode)->getData());
+                dynamic_cast<Interpreter::AbstractVectorNode*>((*varStor)[varName])->setData(dynamic_cast<Interpreter::AbstractVectorNode*>(newNode)->getData());
             }
             else if (search->second->nType == Interpreter::INTMATNODE) {
                 newNode = new Interpreter::IntegerMatrixNode(getMatrixExprResult(Interpreter::MINT, matrixData), matrixData->getSizeX(), matrixData->getSizeY());
-                dynamic_cast<Interpreter::AbstractMatrixNode*>(varStor[varName])->setData(dynamic_cast<Interpreter::AbstractMatrixNode*>(newNode)->getData());
+                dynamic_cast<Interpreter::AbstractMatrixNode*>((*varStor)[varName])->setData(dynamic_cast<Interpreter::AbstractMatrixNode*>(newNode)->getData());
             }
             else if (search->second->nType == Interpreter::BOOLMATNODE) {
                 newNode = new Interpreter::IntegerMatrixNode(getMatrixExprResult(Interpreter::MBOOL, matrixData), matrixData->getSizeX(), matrixData->getSizeY());
-                dynamic_cast<Interpreter::AbstractMatrixNode*>(varStor[varName])->setData(dynamic_cast<Interpreter::AbstractMatrixNode*>(newNode)->getData());
+                dynamic_cast<Interpreter::AbstractMatrixNode*>((*varStor)[varName])->setData(dynamic_cast<Interpreter::AbstractMatrixNode*>(newNode)->getData());
             }
             else throw "Invalid variable type!";
         }

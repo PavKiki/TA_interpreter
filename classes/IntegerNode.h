@@ -1,6 +1,7 @@
 #pragma once
 #include <bitset>
 #include "Node.h"
+#include "FunctionNode.h"
 
 enum NumSys {
     binary, //0
@@ -31,7 +32,10 @@ public:
 
     NumSys getType() {return type;}
 
-    void setDecData(int dat) {type = decimal; data.dec = dat;}
+    void setDecData(int dat) {
+        type = decimal;
+        data.dec = dat;
+    }
 
     int getDecData() {return data.dec;}
 

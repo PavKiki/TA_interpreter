@@ -239,6 +239,7 @@ Interpreter::func_descript::func_descript(func_descript* ptr) {
     this->localIsConst = ptr->localIsConst;
     this->toExec = ptr->toExec;
 
+    //memory allocation for new variables in local storage
     for (auto it = ptr->localStorage.begin(); it != ptr->localStorage.end(); it++) {
         switch (it->second->nType)
         {
@@ -269,12 +270,9 @@ Interpreter::func_descript::func_descript(func_descript* ptr) {
     }
 }
 
+//here variables not 0
 void Interpreter::func_descript::init() {
     for (auto& assign: defaultAssigns) {
-        // auto tmp = dynamic_cast<Interpreter::VariableOperationNode*>(assign);
-        // std::ostringstream s;
-        // tmp->print(s);
-        // std::cout << s.str() << std::endl;
         assign->execute();
     }
 }
@@ -285,7 +283,8 @@ void Interpreter::func_descript::run() {
     Interpreter::isConstPtr = &this->localIsConst;
 
     init();
-    toExec->execute();
+
+    toExec->execute(); //здесь происходит дичь upd. УЖЕ НЕТ, УРАААААААААААААА
 
     Interpreter::storagePtr = &Interpreter::varStorage;
     Interpreter::isConstPtr = &Interpreter::isConst; 
@@ -301,27 +300,27 @@ Interpreter::callfunc::callfunc(std::string fname, std::vector<std::pair<varType
         if (rets[i].first != function->rets[i].first) throw "Type mismatch in return values!";
     }
     //passed parameter values assigns to function
+    Interpreter::storagePtr = &(function->localStorage);
+    Interpreter::isConstPtr = &(function->localIsConst);
     for (size_t i = 0; i < args.size(); i++) {
         if (args[i].first == expR) {
-            auto tmp = new Interpreter::VariableOperationNode(function->args[i].first, declare, function->args[i].second, args[i].second, &function->localStorage, &function->localIsConst);
+            auto tmp = new Interpreter::VariableOperationNode(function->args[i].first, declare, function->args[i].second, args[i].second/*, &function->localStorage, &function->localIsConst*/);
             function->defaultAssigns.push_back(tmp);
-            //#DELETE_LATER
-            // std::ostringstream s;
-            // args[i].second->print(s);
-            // std::cout << s.str();
         }
         else if (args[i].first == vectoR) {
-            auto tmp = new Interpreter::VariableOperationNode(function->args[i].first, declare, function->args[i].second, dynamic_cast<Interpreter::ContainerVectorNode*>(args[i].second), &function->localStorage, &function->localIsConst);
+            auto tmp = new Interpreter::VariableOperationNode(function->args[i].first, declare, function->args[i].second, dynamic_cast<Interpreter::ContainerVectorNode*>(args[i].second)/*, &function->localStorage, &function->localIsConst*/);
             function->defaultAssigns.push_back(tmp);
         }
         else if (args[i].first == matriX) {
-            auto tmp = new Interpreter::VariableOperationNode(function->args[i].first, declare, function->args[i].second, dynamic_cast<Interpreter::ContainerMatrixNode*>(args[i].second), &function->localStorage, &function->localIsConst);
+            auto tmp = new Interpreter::VariableOperationNode(function->args[i].first, declare, function->args[i].second, dynamic_cast<Interpreter::ContainerMatrixNode*>(args[i].second)/*, &function->localStorage, &function->localIsConst*/);
             function->defaultAssigns.push_back(tmp);
         }
         else if (args[i].first == defaulT) {
             continue;
         }
     }
+    Interpreter::storagePtr = &Interpreter::varStorage;
+    Interpreter::isConstPtr = &Interpreter::isConst; 
     //for each return value create a plug in global storage and pointer to this plug assigns with return value inside the function
     for (size_t i = 0; i < rets.size(); i++) {
         switch (rets[i].first)

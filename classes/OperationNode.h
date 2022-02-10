@@ -91,12 +91,12 @@ public:
     //constructor for vector 
     VariableOperationNode(varType vType, varOperName vopName, std::string name, ContainerVectorNode* data): 
                                 vType(vType), vopType(vopName), varName(name), vectorData(data) 
-                                                        {varSt = Interpreter::storagePtr; isCo = Interpreter::isConstPtr;};
+                                                        {varSt = nullptr; isCo = nullptr;};
 
     //constructor for matrix
     VariableOperationNode(varType vType, varOperName vopName, std::string name, ContainerMatrixNode* data):
                                 vType(vType), vopType(vopName), varName(name), matrixData(data)
-                                                        {varSt = Interpreter::storagePtr; isCo = Interpreter::isConstPtr;};
+                                                        {varSt = nullptr; isCo = nullptr;};
 
     //constructor for scalar upd
     VariableOperationNode(varType vType, varOperName vopName, std::string name, Node* data, std::unordered_map<std::string, Node*>* raz, std::unordered_map<std::string, bool>* dva):
