@@ -16,7 +16,10 @@ Interpreter::func_descript::func_descript(std::vector<std::pair<varType, std::st
     this->def_args = def_args;
     this->fname = fname;
     this->nType = Interpreter::FUNCNODE;
+    this->aboveStoragePtr = nullptr;
+    this->aboveIsConstPtr = nullptr;
 
+    //creating plugs for returning variables in local storage
     for (auto& retVariable: rets) {
         switch (retVariable.first)
         {
@@ -97,6 +100,7 @@ Interpreter::func_descript::func_descript(std::vector<std::pair<varType, std::st
             break;
         }
     }
+    //creating plugs for function parameters in local storage and creating nodes for assigning default values
     for (auto& argVariable: args) {
         switch (argVariable.first)
         {
@@ -233,41 +237,13 @@ Interpreter::func_descript::func_descript(std::vector<std::pair<varType, std::st
 Interpreter::func_descript::func_descript(func_descript* ptr) {
     this->rets = ptr->rets;
     this->args = ptr->args;
-    this->def_args = ptr->def_args;
+    this->def_args = ptr->def_args;                                     
     this->fname = ptr->fname;
     this->defaultAssigns = ptr->defaultAssigns;
     this->localIsConst = ptr->localIsConst;
-    this->toExec = ptr->toExec;
-
-    //memory allocation for new variables in local storage
-    for (auto it = ptr->localStorage.begin(); it != ptr->localStorage.end(); it++) {
-        switch (it->second->nType)
-        {
-        case Interpreter::INTNODE: {
-            auto tmp = dynamic_cast<Interpreter::IntegerNode*>(it->second)->copy();
-            this->localStorage.insert_or_assign(it->first, tmp);
-            break;
-        }
-        case Interpreter::BOOLNODE: {
-            auto tmp = dynamic_cast<Interpreter::BoolNode*>(it->second)->copy();
-            this->localStorage.insert_or_assign(it->first, tmp);
-            break;
-        }
-        case Interpreter::INTVECNODE: case Interpreter::BOOLVECNODE: {
-            auto tmp = dynamic_cast<Interpreter::AbstractVectorNode*>(it->second)->copy();
-            this->localStorage.insert_or_assign(it->first, tmp);
-            break;
-        }
-        case Interpreter::INTMATNODE: case Interpreter::BOOLMATNODE: {
-            auto tmp = dynamic_cast<Interpreter::AbstractMatrixNode*>(it->second)->copy();
-            this->localStorage.insert_or_assign(it->first, tmp);
-            break;
-        }
-        default:
-            throw "Incorrect variable type found while copying function descriptor!";
-            break;
-        }
-    }
+    this->toExec = nullptr;
+    this->aboveStoragePtr = nullptr;
+    this->aboveIsConstPtr = nullptr;
 }
 
 //here variables not 0
@@ -278,16 +254,15 @@ void Interpreter::func_descript::init() {
 }
 
 void Interpreter::func_descript::run() {
-    
     Interpreter::storagePtr = &this->localStorage;
     Interpreter::isConstPtr = &this->localIsConst;
 
     init();
 
-    toExec->execute(); //здесь происходит дичь upd. УЖЕ НЕТ, УРАААААААААААААА
+    dynamic_cast<Interpreter::func_descript*>(Interpreter::funcStorage[fname])->toExec->execute(); //здесь происходит дичь
 
-    Interpreter::storagePtr = &Interpreter::varStorage;
-    Interpreter::isConstPtr = &Interpreter::isConst; 
+    Interpreter::storagePtr = aboveStoragePtr;
+    Interpreter::isConstPtr = aboveIsConstPtr; 
 }
 
 Interpreter::callfunc::callfunc(std::string fname, std::vector<std::pair<varType, std::string>> rets, std::vector<std::pair<dataType, Node*>> args): Node(CALLFUNCNODE), fname(fname), rets(rets), args(args) {
@@ -300,8 +275,11 @@ Interpreter::callfunc::callfunc(std::string fname, std::vector<std::pair<varType
         if (rets[i].first != function->rets[i].first) throw "Type mismatch in return values!";
     }
     //passed parameter values assigns to function
+    this->function->aboveStoragePtr = Interpreter::storagePtr;
+    this->function->aboveIsConstPtr = Interpreter::isConstPtr;
     Interpreter::storagePtr = &(function->localStorage);
     Interpreter::isConstPtr = &(function->localIsConst);
+
     for (size_t i = 0; i < args.size(); i++) {
         if (args[i].first == expR) {
             auto tmp = new Interpreter::VariableOperationNode(function->args[i].first, declare, function->args[i].second, args[i].second/*, &function->localStorage, &function->localIsConst*/);
@@ -319,8 +297,10 @@ Interpreter::callfunc::callfunc(std::string fname, std::vector<std::pair<varType
             continue;
         }
     }
-    Interpreter::storagePtr = &Interpreter::varStorage;
-    Interpreter::isConstPtr = &Interpreter::isConst; 
+    
+    Interpreter::storagePtr = this->function->aboveStoragePtr;
+    Interpreter::isConstPtr = this->function->aboveIsConstPtr; 
+    
     //for each return value create a plug in global storage and pointer to this plug assigns with return value inside the function
     for (size_t i = 0; i < rets.size(); i++) {
         switch (rets[i].first)
@@ -407,6 +387,39 @@ Interpreter::callfunc::callfunc(std::string fname, std::vector<std::pair<varType
 
 
 int Interpreter::callfunc::execute() {
+
+    //memory allocation for new variables in local storage
+    auto ptr = dynamic_cast<Interpreter::func_descript*>(Interpreter::funcStorage[fname]);
+    for (auto it = ptr->localStorage.begin(); it != ptr->localStorage.end(); it++) {
+        switch (it->second->nType)
+        {
+        case Interpreter::INTNODE: {
+            auto tmp = dynamic_cast<Interpreter::IntegerNode*>(it->second)->copy();
+            function->localStorage.insert_or_assign(it->first, tmp);
+            break;
+        }
+        case Interpreter::BOOLNODE: {
+            auto tmp = dynamic_cast<Interpreter::BoolNode*>(it->second)->copy();
+            function->localStorage.insert_or_assign(it->first, tmp);
+            break;
+        }
+        case Interpreter::INTVECNODE: case Interpreter::BOOLVECNODE: {
+            auto tmp = dynamic_cast<Interpreter::AbstractVectorNode*>(it->second)->copy();
+            function->localStorage.insert_or_assign(it->first, tmp);
+            break;
+        }
+        case Interpreter::INTMATNODE: case Interpreter::BOOLMATNODE: {
+            auto tmp = dynamic_cast<Interpreter::AbstractMatrixNode*>(it->second)->copy();
+            function->localStorage.insert_or_assign(it->first, tmp);
+            break;
+        }
+        default:
+            throw "Incorrect variable type found while copying function descriptor!";
+            break;
+        }
+    }
+    function->localIsConst = ptr->localIsConst;
+
     function->run();
     return 0;
 }

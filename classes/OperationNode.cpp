@@ -216,6 +216,7 @@
 
         case gscalar: {
             auto search = Interpreter::storagePtr->find(varname);
+            std::cout << search->second->execute();
             return search->second->execute();
         }
 
@@ -441,12 +442,18 @@
     void Interpreter::VariableOperationNode::print(std::ostringstream& strm) {}
 
     int Interpreter::VariableOperationNode::execute() {
-        if (!isCo) isCo = Interpreter::isConstPtr;
-        if (!varSt) varSt = Interpreter::storagePtr;
+
+        std::unordered_map<std::string, bool>* isCon;
+        std::unordered_map<std::string, Interpreter::Node*>* varStor;
+
+        if (!isCo) isCon = Interpreter::isConstPtr;
+        else isCon = isCo;
+
+        if (!varSt) varStor = Interpreter::storagePtr;
+        else varStor = varSt;
+        
         if (vopType == declare) {
             Node* newNode = nullptr;
-            auto isCon = isCo;
-            auto varStor = varSt;
             switch (vType)
             {
             case Interpreter::INT: {
@@ -535,8 +542,6 @@
             }
         }
         else if (vopType == assign) {
-            auto isCon = isCo;
-            auto varStor = varSt;
             auto search = varStor->find(varName);
             if ((*isCon)[varName] == true) throw "Can not change constant variable!";
             Node* newNode = nullptr;

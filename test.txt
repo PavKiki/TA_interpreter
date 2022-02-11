@@ -1,14 +1,16 @@
-[int a, int b] = function calculate([int c = 10, int d]) begin
-a <- c + d
-b <- c - d
-int r = 122
-print(r)
+[int a, int i] = function recursion([int b]) begin
+
+print(b)
+
+if b
+beginif
+
+b <- b - 1
+print(b)
+int k, int l = recursion[b]
+
+endif
+
 end
 
-int e, int f = calculate[dflt, 2]
-
-print(e)
-print(f)
-
-bool r = true && false
-print(r)
+int a, int b = recursion[10]

@@ -47,6 +47,9 @@ class func_descript: public Node {
         std::unordered_map<std::string, Node*> localStorage;    //local visibility area for variables
         std::unordered_map<std::string, bool> localIsConst;     //local visibility area for understanding constant variable or not
 
+        std::unordered_map<std::string, Node*>* aboveStoragePtr;    //pointer to parent field of view
+        std::unordered_map<std::string, bool>* aboveIsConstPtr;     //same for is const
+
         Node* toExec;   //statements to do are stored here
 
         void print(std::ostringstream& strm) override {};
