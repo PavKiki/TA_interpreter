@@ -520,16 +520,16 @@ static const yytype_uint16 yyrline[] =
      151,   158,   165,   179,   180,   184,   185,   189,   190,   194,
      195,   199,   213,   216,   220,   228,   229,   230,   231,   232,
      236,   240,   244,   248,   253,   258,   266,   273,   280,   289,
-     290,   291,   292,   293,   294,   295,   296,   297,   302,   309,
-     311,   319,   320,   329,   339,   349,   358,   369,   380,   390,
-     400,   410,   420,   431,   442,   447,   452,   460,   464,   465,
-     472,   473,   483,   493,   503,   512,   523,   533,   543,   554,
-     558,   566,   570,   571,   578,   596,   607,   620,   631,   642,
-     653,   664,   678,   693,   702,   714,   721,   730,   742,   747,
-     750,   756,   757,   758,   759,   760,   764,   769,   775,   781,
-     787,   793,   799,   804,   810,   811,   816,   822,   830,   831,
-     832,   833,   834,   835,   836,   837,   838,   839,   840,   841,
-     845,   846
+     292,   295,   298,   301,   305,   309,   313,   317,   322,   329,
+     333,   341,   342,   351,   361,   371,   380,   391,   402,   412,
+     422,   432,   442,   453,   464,   469,   474,   482,   486,   487,
+     494,   495,   505,   515,   525,   534,   545,   555,   565,   576,
+     580,   588,   592,   593,   600,   618,   629,   642,   653,   664,
+     675,   686,   700,   715,   724,   736,   743,   752,   764,   769,
+     772,   778,   779,   780,   781,   782,   786,   791,   797,   803,
+     809,   815,   821,   826,   832,   833,   838,   844,   852,   853,
+     854,   855,   856,   857,   858,   859,   860,   861,   862,   863,
+     867,   868
 };
 #endif
 
@@ -2467,96 +2467,118 @@ yyreduce:
 
   case 59:
 #line 289 "interpreter.y" /* yacc.c:1652  */
-    {(yyval.ptr) = new Interpreter::callfunc_args(expR, (yyvsp[0].ptr));}
-#line 2472 "interpreter.tab.c" /* yacc.c:1652  */
+    {
+                                            (yyval.ptr) = new Interpreter::callfunc_args(expR, (yyvsp[0].ptr));
+                                        }
+#line 2474 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 60:
-#line 290 "interpreter.y" /* yacc.c:1652  */
-    {(yyval.ptr) = new Interpreter::callfunc_args(vectoR, (yyvsp[0].ptr));}
-#line 2478 "interpreter.tab.c" /* yacc.c:1652  */
+#line 292 "interpreter.y" /* yacc.c:1652  */
+    {
+                                            (yyval.ptr) = new Interpreter::callfunc_args(vectoR, (yyvsp[0].ptr));
+                                        }
+#line 2482 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 61:
-#line 291 "interpreter.y" /* yacc.c:1652  */
-    {(yyval.ptr) = new Interpreter::callfunc_args(matriX, (yyvsp[0].ptr));}
-#line 2484 "interpreter.tab.c" /* yacc.c:1652  */
-    break;
-
-  case 62:
-#line 292 "interpreter.y" /* yacc.c:1652  */
-    {(yyval.ptr) = new Interpreter::callfunc_args(defaulT, nullptr);}
+#line 295 "interpreter.y" /* yacc.c:1652  */
+    {
+                                            (yyval.ptr) = new Interpreter::callfunc_args(matriX, (yyvsp[0].ptr));
+                                        }
 #line 2490 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
+  case 62:
+#line 298 "interpreter.y" /* yacc.c:1652  */
+    {
+                                            (yyval.ptr) = new Interpreter::callfunc_args(defaulT, nullptr); 
+                                        }
+#line 2498 "interpreter.tab.c" /* yacc.c:1652  */
+    break;
+
   case 63:
-#line 293 "interpreter.y" /* yacc.c:1652  */
-    {dynamic_cast<Interpreter::callfunc_args*>((yyvsp[-2].ptr))->addArg(expR, (yyvsp[0].ptr)); (yyval.ptr) = (yyvsp[-2].ptr);}
-#line 2496 "interpreter.tab.c" /* yacc.c:1652  */
+#line 301 "interpreter.y" /* yacc.c:1652  */
+    {
+                                            dynamic_cast<Interpreter::callfunc_args*>((yyvsp[-2].ptr))->addArg(expR, (yyvsp[0].ptr));
+                                            (yyval.ptr) = (yyvsp[-2].ptr); 
+                                        }
+#line 2507 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 64:
-#line 294 "interpreter.y" /* yacc.c:1652  */
-    {dynamic_cast<Interpreter::callfunc_args*>((yyvsp[-2].ptr))->addArg(vectoR, (yyvsp[0].ptr)); (yyval.ptr) = (yyvsp[-2].ptr);}
-#line 2502 "interpreter.tab.c" /* yacc.c:1652  */
+#line 305 "interpreter.y" /* yacc.c:1652  */
+    {
+                                            dynamic_cast<Interpreter::callfunc_args*>((yyvsp[-2].ptr))->addArg(vectoR, (yyvsp[0].ptr)); 
+                                            (yyval.ptr) = (yyvsp[-2].ptr); 
+                                        }
+#line 2516 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 65:
-#line 295 "interpreter.y" /* yacc.c:1652  */
-    {dynamic_cast<Interpreter::callfunc_args*>((yyvsp[-2].ptr))->addArg(matriX, (yyvsp[0].ptr)); (yyval.ptr) = (yyvsp[-2].ptr);}
-#line 2508 "interpreter.tab.c" /* yacc.c:1652  */
+#line 309 "interpreter.y" /* yacc.c:1652  */
+    {
+                                            dynamic_cast<Interpreter::callfunc_args*>((yyvsp[-2].ptr))->addArg(matriX, (yyvsp[0].ptr)); 
+                                            (yyval.ptr) = (yyvsp[-2].ptr); 
+                                        }
+#line 2525 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 66:
-#line 296 "interpreter.y" /* yacc.c:1652  */
-    {dynamic_cast<Interpreter::callfunc_args*>((yyvsp[-2].ptr))->addArg(defaulT, nullptr); (yyval.ptr) = (yyvsp[-2].ptr);}
-#line 2514 "interpreter.tab.c" /* yacc.c:1652  */
+#line 313 "interpreter.y" /* yacc.c:1652  */
+    {
+                                            dynamic_cast<Interpreter::callfunc_args*>((yyvsp[-2].ptr))->addArg(defaulT, nullptr); 
+                                            (yyval.ptr) = (yyvsp[-2].ptr); 
+                                        }
+#line 2534 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 67:
-#line 297 "interpreter.y" /* yacc.c:1652  */
+#line 317 "interpreter.y" /* yacc.c:1652  */
     {
                                             std::cerr << "Error at line " << (yylsp[0]).first_line << std::endl;
                                             delete (yyvsp[-1].ptr);
                                             if (!(yyval.ptr)) delete (yyval.ptr); 
                                         }
-#line 2524 "interpreter.tab.c" /* yacc.c:1652  */
+#line 2544 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 68:
-#line 302 "interpreter.y" /* yacc.c:1652  */
+#line 322 "interpreter.y" /* yacc.c:1652  */
     {
                                             std::cerr << "Error at line " << (yylsp[0]).first_line << std::endl;
                                             if (!(yyval.ptr)) delete (yyval.ptr);
                                         }
-#line 2533 "interpreter.tab.c" /* yacc.c:1652  */
+#line 2553 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 69:
-#line 309 "interpreter.y" /* yacc.c:1652  */
-    {(yyval.ptr) = new Interpreter::callfunc(*(yyvsp[-3].varName), dynamic_cast<Interpreter::return_func*>((yyvsp[-5].ptr))->rets, 
-                                                                                                        dynamic_cast<Interpreter::callfunc_args*>((yyvsp[-1].ptr))->args);}
-#line 2540 "interpreter.tab.c" /* yacc.c:1652  */
+#line 329 "interpreter.y" /* yacc.c:1652  */
+    {
+                                                                (yyval.ptr) = new Interpreter::callfunc(*(yyvsp[-3].varName), dynamic_cast<Interpreter::return_func*>((yyvsp[-5].ptr))->rets, 
+                                                                dynamic_cast<Interpreter::callfunc_args*>((yyvsp[-1].ptr))->args);
+                                                            }
+#line 2562 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 70:
-#line 311 "interpreter.y" /* yacc.c:1652  */
+#line 333 "interpreter.y" /* yacc.c:1652  */
     {
                                                                 std::cerr << "Error at line " << (yylsp[-3]).first_line << std::endl;
                                                                 delete (yyvsp[-1].ptr);
                                                                 if (!(yyval.ptr)) delete (yyval.ptr);
                                                             }
-#line 2550 "interpreter.tab.c" /* yacc.c:1652  */
+#line 2572 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 71:
-#line 319 "interpreter.y" /* yacc.c:1652  */
+#line 341 "interpreter.y" /* yacc.c:1652  */
     {(yyval.ptr) = (yyvsp[-1].ptr);}
-#line 2556 "interpreter.tab.c" /* yacc.c:1652  */
+#line 2578 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 72:
-#line 320 "interpreter.y" /* yacc.c:1652  */
+#line 342 "interpreter.y" /* yacc.c:1652  */
     {   try {
                                                         std::vector<Interpreter::ContainerMatrixNode*> kids;
                                                         kids.push_back((Interpreter::ContainerMatrixNode*)((yyvsp[-4].ptr)));
@@ -2566,11 +2588,11 @@ yyreduce:
                                                         std::cerr << error << std::endl;
                                                     }
                                                 }
-#line 2570 "interpreter.tab.c" /* yacc.c:1652  */
+#line 2592 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 73:
-#line 329 "interpreter.y" /* yacc.c:1652  */
+#line 351 "interpreter.y" /* yacc.c:1652  */
     {
                                                     try {
                                                         std::vector<Interpreter::ContainerMatrixNode*> kids;
@@ -2581,11 +2603,11 @@ yyreduce:
                                                         std::cerr << error << std::endl;
                                                     }
                                                 }
-#line 2585 "interpreter.tab.c" /* yacc.c:1652  */
+#line 2607 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 74:
-#line 339 "interpreter.y" /* yacc.c:1652  */
+#line 361 "interpreter.y" /* yacc.c:1652  */
     {
                                                     try {
                                                         std::vector<Interpreter::ContainerMatrixNode*> kids;
@@ -2596,11 +2618,11 @@ yyreduce:
                                                         std::cerr << error << std::endl;
                                                     }
                                                 }
-#line 2600 "interpreter.tab.c" /* yacc.c:1652  */
+#line 2622 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 75:
-#line 349 "interpreter.y" /* yacc.c:1652  */
+#line 371 "interpreter.y" /* yacc.c:1652  */
     {
                                         try {
                                             std::vector<Interpreter::ContainerMatrixNode*> kids;
@@ -2610,11 +2632,11 @@ yyreduce:
                                             std::cerr << error << std::endl;
                                         }
                                     }
-#line 2614 "interpreter.tab.c" /* yacc.c:1652  */
+#line 2636 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 76:
-#line 358 "interpreter.y" /* yacc.c:1652  */
+#line 380 "interpreter.y" /* yacc.c:1652  */
     {
                                         try {
                                             std::vector<Interpreter::ContainerMatrixNode*> kids;
@@ -2626,11 +2648,11 @@ yyreduce:
                                             std::cerr << error << std::endl;
                                         }
                                     }
-#line 2630 "interpreter.tab.c" /* yacc.c:1652  */
+#line 2652 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 77:
-#line 369 "interpreter.y" /* yacc.c:1652  */
+#line 391 "interpreter.y" /* yacc.c:1652  */
     {
                                         try {
                                             std::vector<Interpreter::ContainerMatrixNode*> kids;
@@ -2642,11 +2664,11 @@ yyreduce:
                                             std::cerr << error << std::endl;
                                         }
                                     }
-#line 2646 "interpreter.tab.c" /* yacc.c:1652  */
+#line 2668 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 78:
-#line 380 "interpreter.y" /* yacc.c:1652  */
+#line 402 "interpreter.y" /* yacc.c:1652  */
     {
                                         try {
                                             std::vector<Interpreter::ContainerMatrixNode*> kids;
@@ -2657,11 +2679,11 @@ yyreduce:
                                             std::cerr << error << std::endl;
                                         }
                                     }
-#line 2661 "interpreter.tab.c" /* yacc.c:1652  */
+#line 2683 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 79:
-#line 390 "interpreter.y" /* yacc.c:1652  */
+#line 412 "interpreter.y" /* yacc.c:1652  */
     {
                                         try {
                                             std::vector<Interpreter::ContainerMatrixNode*> kids;
@@ -2672,11 +2694,11 @@ yyreduce:
                                             std::cerr << error << std::endl;
                                         }
                                     }
-#line 2676 "interpreter.tab.c" /* yacc.c:1652  */
+#line 2698 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 80:
-#line 400 "interpreter.y" /* yacc.c:1652  */
+#line 422 "interpreter.y" /* yacc.c:1652  */
     {
                                         try {
                                             std::vector<Interpreter::ContainerMatrixNode*> kids;
@@ -2687,11 +2709,11 @@ yyreduce:
                                             std::cerr << error << std::endl;
                                         }
                                     }
-#line 2691 "interpreter.tab.c" /* yacc.c:1652  */
+#line 2713 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 81:
-#line 410 "interpreter.y" /* yacc.c:1652  */
+#line 432 "interpreter.y" /* yacc.c:1652  */
     {
                                         try {
                                             std::vector<Interpreter::ContainerMatrixNode*> kids;
@@ -2702,11 +2724,11 @@ yyreduce:
                                             std::cerr << error << std::endl;
                                         }
                                     }
-#line 2706 "interpreter.tab.c" /* yacc.c:1652  */
+#line 2728 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 82:
-#line 420 "interpreter.y" /* yacc.c:1652  */
+#line 442 "interpreter.y" /* yacc.c:1652  */
     {
                                         try {
                                             std::vector<Interpreter::ContainerMatrixNode*> kids;
@@ -2718,11 +2740,11 @@ yyreduce:
                                             std::cerr << error << std::endl;
                                         }
                                     }
-#line 2722 "interpreter.tab.c" /* yacc.c:1652  */
+#line 2744 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 83:
-#line 431 "interpreter.y" /* yacc.c:1652  */
+#line 453 "interpreter.y" /* yacc.c:1652  */
     {
                                         try {
                                             std::vector<Interpreter::ContainerMatrixNode*> kids;
@@ -2734,71 +2756,71 @@ yyreduce:
                                             std::cerr << error << std::endl;
                                         }
                                     }
-#line 2738 "interpreter.tab.c" /* yacc.c:1652  */
+#line 2760 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 84:
-#line 442 "interpreter.y" /* yacc.c:1652  */
+#line 464 "interpreter.y" /* yacc.c:1652  */
     {
                                         std::cerr << "Error at line " << (yylsp[-1]).first_line << std::endl;
                                         if (!(yyvsp[0].ptr)) delete (yyvsp[0].ptr);
                                         if (!(yyval.ptr)) delete (yyval.ptr);
                                     }
-#line 2748 "interpreter.tab.c" /* yacc.c:1652  */
+#line 2770 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 85:
-#line 447 "interpreter.y" /* yacc.c:1652  */
+#line 469 "interpreter.y" /* yacc.c:1652  */
     {
                                         std::cerr << "Error at line " << (yylsp[-1]).first_line << std::endl;
                                         if (!(yyvsp[0].ptr)) delete (yyvsp[0].ptr);
                                         if (!(yyval.ptr)) delete (yyval.ptr);
                                     }
-#line 2758 "interpreter.tab.c" /* yacc.c:1652  */
+#line 2780 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 86:
-#line 452 "interpreter.y" /* yacc.c:1652  */
+#line 474 "interpreter.y" /* yacc.c:1652  */
     {
                                         std::cerr << "Error at line " << (yylsp[-1]).first_line << std::endl;
                                         if (!(yyvsp[0].ptr)) delete (yyvsp[0].ptr);
                                         if (!(yyval.ptr)) delete (yyval.ptr);
                                     }
-#line 2768 "interpreter.tab.c" /* yacc.c:1652  */
+#line 2790 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 87:
-#line 460 "interpreter.y" /* yacc.c:1652  */
+#line 482 "interpreter.y" /* yacc.c:1652  */
     {
                                             (yyval.ptr) = new Interpreter::ContainerMatrixNode(dynamic_cast<Interpreter::ContainerVectorNode*>((yyvsp[-2].ptr)));
                                             dynamic_cast<Interpreter::ContainerMatrixNode*>((yyval.ptr))->addData(dynamic_cast<Interpreter::ContainerVectorNode*>((yyvsp[0].ptr)));
                                         }
-#line 2777 "interpreter.tab.c" /* yacc.c:1652  */
+#line 2799 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 88:
-#line 464 "interpreter.y" /* yacc.c:1652  */
+#line 486 "interpreter.y" /* yacc.c:1652  */
     {dynamic_cast<Interpreter::ContainerMatrixNode*>((yyval.ptr))->addData(dynamic_cast<Interpreter::ContainerVectorNode*>((yyvsp[0].ptr)));}
-#line 2783 "interpreter.tab.c" /* yacc.c:1652  */
+#line 2805 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 89:
-#line 465 "interpreter.y" /* yacc.c:1652  */
+#line 487 "interpreter.y" /* yacc.c:1652  */
     {
                                             std::cerr << "Error at line " << (yylsp[0]).first_line << std::endl;
                                             delete (yyvsp[-1].ptr);
                                         }
-#line 2792 "interpreter.tab.c" /* yacc.c:1652  */
+#line 2814 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 90:
-#line 472 "interpreter.y" /* yacc.c:1652  */
+#line 494 "interpreter.y" /* yacc.c:1652  */
     {(yyval.ptr) = (yyvsp[-1].ptr);}
-#line 2798 "interpreter.tab.c" /* yacc.c:1652  */
+#line 2820 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 91:
-#line 473 "interpreter.y" /* yacc.c:1652  */
+#line 495 "interpreter.y" /* yacc.c:1652  */
     {
                                                     try {
                                                         std::vector<Interpreter::ContainerVectorNode*> kids;
@@ -2809,11 +2831,11 @@ yyreduce:
                                                         std::cerr << error << std::endl;
                                                     }
                                                 }
-#line 2813 "interpreter.tab.c" /* yacc.c:1652  */
+#line 2835 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 92:
-#line 483 "interpreter.y" /* yacc.c:1652  */
+#line 505 "interpreter.y" /* yacc.c:1652  */
     {
                                                     try {
                                                         std::vector<Interpreter::ContainerVectorNode*> kids;
@@ -2824,11 +2846,11 @@ yyreduce:
                                                         std::cerr << error << std::endl;
                                                     }
                                                 }
-#line 2828 "interpreter.tab.c" /* yacc.c:1652  */
+#line 2850 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 93:
-#line 493 "interpreter.y" /* yacc.c:1652  */
+#line 515 "interpreter.y" /* yacc.c:1652  */
     {
                                                     try {
                                                         std::vector<Interpreter::ContainerVectorNode*> kids;
@@ -2839,11 +2861,11 @@ yyreduce:
                                                         std::cerr << error << std::endl;
                                                     }
                                                 }
-#line 2843 "interpreter.tab.c" /* yacc.c:1652  */
+#line 2865 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 94:
-#line 503 "interpreter.y" /* yacc.c:1652  */
+#line 525 "interpreter.y" /* yacc.c:1652  */
     {
                                             try {
                                                 std::vector<Interpreter::ContainerVectorNode*> kids;
@@ -2853,11 +2875,11 @@ yyreduce:
                                                 std::cerr << error << std::endl;
                                             }
                                         }
-#line 2857 "interpreter.tab.c" /* yacc.c:1652  */
+#line 2879 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 95:
-#line 512 "interpreter.y" /* yacc.c:1652  */
+#line 534 "interpreter.y" /* yacc.c:1652  */
     {   
                                             try {
                                                 std::vector<Interpreter::ContainerVectorNode*> kids;
@@ -2869,11 +2891,11 @@ yyreduce:
                                                 std::cerr << error << std::endl;
                                             }
                                         }
-#line 2873 "interpreter.tab.c" /* yacc.c:1652  */
+#line 2895 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 96:
-#line 523 "interpreter.y" /* yacc.c:1652  */
+#line 545 "interpreter.y" /* yacc.c:1652  */
     {
                                             try {
                                                 std::vector<Interpreter::ContainerVectorNode*> kids;
@@ -2884,11 +2906,11 @@ yyreduce:
                                                 std::cerr << error << std::endl;
                                             }
                                         }
-#line 2888 "interpreter.tab.c" /* yacc.c:1652  */
+#line 2910 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 97:
-#line 533 "interpreter.y" /* yacc.c:1652  */
+#line 555 "interpreter.y" /* yacc.c:1652  */
     {
                                             try {
                                                 std::vector<Interpreter::ContainerVectorNode*> kids;
@@ -2899,11 +2921,11 @@ yyreduce:
                                                 std::cerr << error << std::endl;
                                             }
                                         }
-#line 2903 "interpreter.tab.c" /* yacc.c:1652  */
+#line 2925 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 98:
-#line 543 "interpreter.y" /* yacc.c:1652  */
+#line 565 "interpreter.y" /* yacc.c:1652  */
     {
                                             try {
                                                 std::vector<Interpreter::ContainerVectorNode*> kids;
@@ -2915,53 +2937,53 @@ yyreduce:
                                                 std::cerr << error << std::endl;
                                             }
                                         }
-#line 2919 "interpreter.tab.c" /* yacc.c:1652  */
+#line 2941 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 99:
-#line 554 "interpreter.y" /* yacc.c:1652  */
+#line 576 "interpreter.y" /* yacc.c:1652  */
     {
                                                std::cerr << "Error at line " << (yylsp[-1]).first_line << std::endl;
                                                delete (yyvsp[0].ptr); delete (yyval.ptr);
                                             }
-#line 2928 "interpreter.tab.c" /* yacc.c:1652  */
+#line 2950 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 100:
-#line 558 "interpreter.y" /* yacc.c:1652  */
+#line 580 "interpreter.y" /* yacc.c:1652  */
     {
                                                std::cerr << "Error at line " << (yylsp[-1]).first_line << std::endl;
                                                delete (yyvsp[0].ptr); delete (yyval.ptr);
                                             }
-#line 2937 "interpreter.tab.c" /* yacc.c:1652  */
+#line 2959 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 101:
-#line 566 "interpreter.y" /* yacc.c:1652  */
+#line 588 "interpreter.y" /* yacc.c:1652  */
     {
                                     (yyval.ptr) = new Interpreter::ContainerVectorNode((yyvsp[-2].ptr));
                                     dynamic_cast<Interpreter::ContainerVectorNode*>((yyval.ptr))->addData((yyvsp[0].ptr));
                                 }
-#line 2946 "interpreter.tab.c" /* yacc.c:1652  */
+#line 2968 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 102:
-#line 570 "interpreter.y" /* yacc.c:1652  */
+#line 592 "interpreter.y" /* yacc.c:1652  */
     {dynamic_cast<Interpreter::ContainerVectorNode*>((yyval.ptr))->addData((yyvsp[0].ptr));}
-#line 2952 "interpreter.tab.c" /* yacc.c:1652  */
+#line 2974 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 103:
-#line 571 "interpreter.y" /* yacc.c:1652  */
+#line 593 "interpreter.y" /* yacc.c:1652  */
     {
                                     std::cerr << "Error at line " << (yylsp[0]).first_line << std::endl;
                                     delete (yyvsp[-1].ptr);
                                 }
-#line 2961 "interpreter.tab.c" /* yacc.c:1652  */
+#line 2983 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 104:
-#line 578 "interpreter.y" /* yacc.c:1652  */
+#line 600 "interpreter.y" /* yacc.c:1652  */
     {
                                                     try {
                                                         if (!(*Interpreter::isConstPtr)[*(yyvsp[-5].varName)]) {
@@ -2980,11 +3002,11 @@ yyreduce:
                                                     }
                                                     
                                                 }
-#line 2984 "interpreter.tab.c" /* yacc.c:1652  */
+#line 3006 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 105:
-#line 596 "interpreter.y" /* yacc.c:1652  */
+#line 618 "interpreter.y" /* yacc.c:1652  */
     {
                                                                 if (!(*Interpreter::isConstPtr)[*(yyvsp[-8].varName)]) {
                                                                     std::vector<Interpreter::Node*> kids;
@@ -2996,11 +3018,11 @@ yyreduce:
                                                                     yyerror(tmp.c_str());
                                                                 }
                                                             }
-#line 3000 "interpreter.tab.c" /* yacc.c:1652  */
+#line 3022 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 106:
-#line 607 "interpreter.y" /* yacc.c:1652  */
+#line 629 "interpreter.y" /* yacc.c:1652  */
     {
                                                                 if (!(*Interpreter::isConstPtr)[*(yyvsp[-7].varName)]) {
                                                                     std::vector<Interpreter::Node*> kids;
@@ -3014,11 +3036,11 @@ yyreduce:
                                                                     yyerror(tmp.c_str());
                                                                 }
                                                             }
-#line 3018 "interpreter.tab.c" /* yacc.c:1652  */
+#line 3040 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 107:
-#line 620 "interpreter.y" /* yacc.c:1652  */
+#line 642 "interpreter.y" /* yacc.c:1652  */
     {
                                                                 if (!(*Interpreter::isConstPtr)[*(yyvsp[-8].varName)]) {
                                                                     std::vector<Interpreter::Node*> kids;
@@ -3030,11 +3052,11 @@ yyreduce:
                                                                     yyerror(tmp.c_str());
                                                                 }
                                                             }
-#line 3034 "interpreter.tab.c" /* yacc.c:1652  */
+#line 3056 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 108:
-#line 631 "interpreter.y" /* yacc.c:1652  */
+#line 653 "interpreter.y" /* yacc.c:1652  */
     {
                                                                 if (!(*Interpreter::isConstPtr)[*(yyvsp[-8].varName)]) {
                                                                     std::vector<Interpreter::Node*> kids;
@@ -3046,11 +3068,11 @@ yyreduce:
                                                                     yyerror(tmp.c_str());
                                                                 }
                                                             }
-#line 3050 "interpreter.tab.c" /* yacc.c:1652  */
+#line 3072 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 109:
-#line 642 "interpreter.y" /* yacc.c:1652  */
+#line 664 "interpreter.y" /* yacc.c:1652  */
     {
                                                                 if (!(*Interpreter::isConstPtr)[*(yyvsp[-8].varName)]) {
                                                                     std::vector<Interpreter::Node*> kids;
@@ -3062,11 +3084,11 @@ yyreduce:
                                                                     yyerror(tmp.c_str());
                                                                 }
                                                             }
-#line 3066 "interpreter.tab.c" /* yacc.c:1652  */
+#line 3088 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 110:
-#line 653 "interpreter.y" /* yacc.c:1652  */
+#line 675 "interpreter.y" /* yacc.c:1652  */
     {
                                                                 if (!(*Interpreter::isConstPtr)[*(yyvsp[-8].varName)]) {
                                                                     std::vector<Interpreter::Node*> kids;
@@ -3078,11 +3100,11 @@ yyreduce:
                                                                     yyerror(tmp.c_str());
                                                                 }
                                                             }
-#line 3082 "interpreter.tab.c" /* yacc.c:1652  */
+#line 3104 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 111:
-#line 664 "interpreter.y" /* yacc.c:1652  */
+#line 686 "interpreter.y" /* yacc.c:1652  */
     {
                                                                 if (!(*Interpreter::isConstPtr)[*(yyvsp[-5].varName)]) {
                                                                     std::vector<Interpreter::Node*> kids;
@@ -3094,11 +3116,11 @@ yyreduce:
                                                                     yyerror(tmp.c_str());
                                                                 }
                                                             }
-#line 3098 "interpreter.tab.c" /* yacc.c:1652  */
+#line 3120 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 112:
-#line 678 "interpreter.y" /* yacc.c:1652  */
+#line 700 "interpreter.y" /* yacc.c:1652  */
     {        
                                                     if ((yyvsp[-3].vtype) == Interpreter::INT || (yyvsp[-3].vtype) == Interpreter::CINT) {
                                                         auto plug = new Interpreter::IntegerNode();
@@ -3114,11 +3136,11 @@ yyreduce:
                                                     }
                                                     else yyerror("Type mismatch!");
                                                 }
-#line 3118 "interpreter.tab.c" /* yacc.c:1652  */
+#line 3140 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 113:
-#line 693 "interpreter.y" /* yacc.c:1652  */
+#line 715 "interpreter.y" /* yacc.c:1652  */
     {
                                                     if ((yyvsp[-3].vtype) == Interpreter::VINT || (yyvsp[-3].vtype) == Interpreter::CVINT || (yyvsp[-3].vtype) == Interpreter::VBOOL || (yyvsp[-3].vtype) == Interpreter::CVBOOL) {
                                                         auto plug = new Interpreter::AbstractVectorNode();
@@ -3128,11 +3150,11 @@ yyreduce:
                                                     }
                                                     else yyerror("Type mismatch!");
                                                 }
-#line 3132 "interpreter.tab.c" /* yacc.c:1652  */
+#line 3154 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 114:
-#line 702 "interpreter.y" /* yacc.c:1652  */
+#line 724 "interpreter.y" /* yacc.c:1652  */
     {
                                                     if ((yyvsp[-3].vtype) == Interpreter::MINT || (yyvsp[-3].vtype) == Interpreter::CMINT || (yyvsp[-3].vtype) == Interpreter::MBOOL || (yyvsp[-3].vtype) == Interpreter::CMBOOL) {
                                                         auto plug = new Interpreter::AbstractMatrixNode();
@@ -3142,11 +3164,11 @@ yyreduce:
                                                     }
                                                     else yyerror("Type mismatch!");
                                                 }
-#line 3146 "interpreter.tab.c" /* yacc.c:1652  */
+#line 3168 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 115:
-#line 714 "interpreter.y" /* yacc.c:1652  */
+#line 736 "interpreter.y" /* yacc.c:1652  */
     {
                                                 if (!(*Interpreter::isConstPtr)[*(yyvsp[-2].varName)]) (yyval.varOpPtr) = new Interpreter::VariableOperationNode(Interpreter::ABSTRACT, assign, *(yyvsp[-2].varName), (yyvsp[0].ptr));
                                                 else {
@@ -3154,11 +3176,11 @@ yyreduce:
                                                     yyerror(tmp.c_str());
                                                 }
                                             }
-#line 3158 "interpreter.tab.c" /* yacc.c:1652  */
+#line 3180 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 116:
-#line 721 "interpreter.y" /* yacc.c:1652  */
+#line 743 "interpreter.y" /* yacc.c:1652  */
     {
                                                 if (!(*Interpreter::isConstPtr)[*(yyvsp[-2].varName)]) {
                                                     (yyval.varOpPtr) = new Interpreter::VariableOperationNode(Interpreter::ABSTRACT, assign, *(yyvsp[-2].varName), dynamic_cast<Interpreter::ContainerVectorNode*>((yyvsp[0].ptr)));
@@ -3168,11 +3190,11 @@ yyreduce:
                                                     yyerror(tmp.c_str());
                                                 }
                                             }
-#line 3172 "interpreter.tab.c" /* yacc.c:1652  */
+#line 3194 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 117:
-#line 730 "interpreter.y" /* yacc.c:1652  */
+#line 752 "interpreter.y" /* yacc.c:1652  */
     {
                                                 if (!(*Interpreter::isConstPtr)[*(yyvsp[-2].varName)]) {
                                                     (yyval.varOpPtr) = new Interpreter::VariableOperationNode(Interpreter::ABSTRACT, assign, *(yyvsp[-2].varName), dynamic_cast<Interpreter::ContainerMatrixNode*>((yyvsp[0].ptr)));
@@ -3182,276 +3204,276 @@ yyreduce:
                                                     yyerror(tmp.c_str());
                                                 }
                                             }
-#line 3186 "interpreter.tab.c" /* yacc.c:1652  */
+#line 3208 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 118:
-#line 742 "interpreter.y" /* yacc.c:1652  */
+#line 764 "interpreter.y" /* yacc.c:1652  */
     {
                                     std::vector<Interpreter::Node*> kids; 
                                     kids.push_back((yyvsp[-1].ptr));
                                     (yyval.ptr) = new Interpreter::OperationNode(pprint, kids); 
                                 }
-#line 3196 "interpreter.tab.c" /* yacc.c:1652  */
-    break;
-
-  case 119:
-#line 747 "interpreter.y" /* yacc.c:1652  */
-    {
-                                    (yyval.ptr) = new Interpreter::OperationNode(pprint, *(yyvsp[-1].varName)); 
-                                }
-#line 3204 "interpreter.tab.c" /* yacc.c:1652  */
-    break;
-
-  case 120:
-#line 750 "interpreter.y" /* yacc.c:1652  */
-    {
-                                    (yyval.ptr) = new Interpreter::OperationNode(pprint, *(yyvsp[-1].varName));  
-                                }
-#line 3212 "interpreter.tab.c" /* yacc.c:1652  */
-    break;
-
-  case 121:
-#line 756 "interpreter.y" /* yacc.c:1652  */
-    {(yyval.ptr) = (yyvsp[0].ptr);}
 #line 3218 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
-  case 122:
-#line 757 "interpreter.y" /* yacc.c:1652  */
+  case 119:
+#line 769 "interpreter.y" /* yacc.c:1652  */
+    {
+                                    (yyval.ptr) = new Interpreter::OperationNode(pprint, *(yyvsp[-1].varName)); 
+                                }
+#line 3226 "interpreter.tab.c" /* yacc.c:1652  */
+    break;
+
+  case 120:
+#line 772 "interpreter.y" /* yacc.c:1652  */
+    {
+                                    (yyval.ptr) = new Interpreter::OperationNode(pprint, *(yyvsp[-1].varName));  
+                                }
+#line 3234 "interpreter.tab.c" /* yacc.c:1652  */
+    break;
+
+  case 121:
+#line 778 "interpreter.y" /* yacc.c:1652  */
     {(yyval.ptr) = (yyvsp[0].ptr);}
-#line 3224 "interpreter.tab.c" /* yacc.c:1652  */
+#line 3240 "interpreter.tab.c" /* yacc.c:1652  */
+    break;
+
+  case 122:
+#line 779 "interpreter.y" /* yacc.c:1652  */
+    {(yyval.ptr) = (yyvsp[0].ptr);}
+#line 3246 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 123:
-#line 758 "interpreter.y" /* yacc.c:1652  */
+#line 780 "interpreter.y" /* yacc.c:1652  */
     {(yyval.ptr) = (yyvsp[0].ptr);}
-#line 3230 "interpreter.tab.c" /* yacc.c:1652  */
+#line 3252 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 124:
-#line 759 "interpreter.y" /* yacc.c:1652  */
+#line 781 "interpreter.y" /* yacc.c:1652  */
     {(yyval.ptr) = (yyvsp[0].ptr);}
-#line 3236 "interpreter.tab.c" /* yacc.c:1652  */
+#line 3258 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 125:
-#line 760 "interpreter.y" /* yacc.c:1652  */
+#line 782 "interpreter.y" /* yacc.c:1652  */
     {
                                     (yyval.ptr) = new Interpreter::OperationNode(gscalar, *(yyvsp[0].varName));
                                 }
-#line 3244 "interpreter.tab.c" /* yacc.c:1652  */
+#line 3266 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 126:
-#line 764 "interpreter.y" /* yacc.c:1652  */
+#line 786 "interpreter.y" /* yacc.c:1652  */
     {
                                     std::vector<Interpreter::Node*> kids; 
                                     kids.push_back((yyvsp[0].ptr));
                                     (yyval.ptr) = new Interpreter::OperationNode(uminus, kids);
                                 }
-#line 3254 "interpreter.tab.c" /* yacc.c:1652  */
+#line 3276 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 127:
-#line 769 "interpreter.y" /* yacc.c:1652  */
+#line 791 "interpreter.y" /* yacc.c:1652  */
     {
                                     std::vector<Interpreter::Node*> kids; 
                                     kids.push_back((yyvsp[-2].ptr)); 
                                     kids.push_back((yyvsp[0].ptr));
                                     (yyval.ptr) = new Interpreter::OperationNode(plus, kids);
                                 }
-#line 3265 "interpreter.tab.c" /* yacc.c:1652  */
+#line 3287 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 128:
-#line 775 "interpreter.y" /* yacc.c:1652  */
+#line 797 "interpreter.y" /* yacc.c:1652  */
     {
                                     std::vector<Interpreter::Node*> kids; 
                                     kids.push_back((yyvsp[-2].ptr)); 
                                     kids.push_back((yyvsp[0].ptr));
                                     (yyval.ptr) = new Interpreter::OperationNode(minus, kids);
                                 }
-#line 3276 "interpreter.tab.c" /* yacc.c:1652  */
+#line 3298 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 129:
-#line 781 "interpreter.y" /* yacc.c:1652  */
+#line 803 "interpreter.y" /* yacc.c:1652  */
     {
                                     std::vector<Interpreter::Node*> kids; 
                                     kids.push_back((yyvsp[-2].ptr)); 
                                     kids.push_back((yyvsp[0].ptr));
                                     (yyval.ptr) = new Interpreter::OperationNode(divide, kids);
                                 }
-#line 3287 "interpreter.tab.c" /* yacc.c:1652  */
+#line 3309 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 130:
-#line 787 "interpreter.y" /* yacc.c:1652  */
+#line 809 "interpreter.y" /* yacc.c:1652  */
     {
                                     std::vector<Interpreter::Node*> kids; 
                                     kids.push_back((yyvsp[-2].ptr)); 
                                     kids.push_back((yyvsp[0].ptr));
                                     (yyval.ptr) = new Interpreter::OperationNode(less, kids);
                                 }
-#line 3298 "interpreter.tab.c" /* yacc.c:1652  */
+#line 3320 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 131:
-#line 793 "interpreter.y" /* yacc.c:1652  */
+#line 815 "interpreter.y" /* yacc.c:1652  */
     {
                                     std::vector<Interpreter::Node*> kids; 
                                     kids.push_back((yyvsp[-2].ptr)); 
                                     kids.push_back((yyvsp[0].ptr));
                                     (yyval.ptr) = new Interpreter::OperationNode(greater, kids);
                                 }
-#line 3309 "interpreter.tab.c" /* yacc.c:1652  */
+#line 3331 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 132:
-#line 799 "interpreter.y" /* yacc.c:1652  */
+#line 821 "interpreter.y" /* yacc.c:1652  */
     {
                                     std::vector<Interpreter::Node*> kids; 
                                     kids.push_back((yyvsp[0].ptr));
                                     (yyval.ptr) = new Interpreter::OperationNode(denial, kids); 
                                 }
-#line 3319 "interpreter.tab.c" /* yacc.c:1652  */
+#line 3341 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 133:
-#line 804 "interpreter.y" /* yacc.c:1652  */
+#line 826 "interpreter.y" /* yacc.c:1652  */
     {
                                     std::vector<Interpreter::Node*> kids; 
                                     kids.push_back((yyvsp[-2].ptr));
                                     kids.push_back((yyvsp[0].ptr));
                                     (yyval.ptr) = new Interpreter::OperationNode(conjunction, kids);
                                 }
-#line 3330 "interpreter.tab.c" /* yacc.c:1652  */
+#line 3352 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 134:
-#line 810 "interpreter.y" /* yacc.c:1652  */
+#line 832 "interpreter.y" /* yacc.c:1652  */
     {(yyval.ptr) = (yyvsp[-1].ptr);}
-#line 3336 "interpreter.tab.c" /* yacc.c:1652  */
+#line 3358 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 135:
-#line 811 "interpreter.y" /* yacc.c:1652  */
+#line 833 "interpreter.y" /* yacc.c:1652  */
     {
                                     std::vector<Interpreter::Node*> kids;
                                     kids.push_back((yyvsp[-1].ptr));
                                     (yyval.ptr) = new Interpreter::OperationNode(vgetexp, *(yyvsp[-3].varName), kids);
                                 }
-#line 3346 "interpreter.tab.c" /* yacc.c:1652  */
+#line 3368 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 136:
-#line 816 "interpreter.y" /* yacc.c:1652  */
+#line 838 "interpreter.y" /* yacc.c:1652  */
     {
                                             std::vector<Interpreter::Node*> kids;
                                             kids.push_back((yyvsp[-3].ptr));
                                             kids.push_back((yyvsp[-1].ptr));
                                             (yyval.ptr) = new Interpreter::OperationNode(mgetexp, *(yyvsp[-5].varName), kids);
                                         }
-#line 3357 "interpreter.tab.c" /* yacc.c:1652  */
+#line 3379 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 137:
-#line 822 "interpreter.y" /* yacc.c:1652  */
+#line 844 "interpreter.y" /* yacc.c:1652  */
     {
                                             std::cerr << "Error at line " << (yylsp[-1]).first_line << std::endl;
                                             if (!(yyvsp[0].ptr)) delete (yyvsp[0].ptr);
                                             if (!(yyval.ptr)) delete (yyval.ptr);
                                         }
-#line 3367 "interpreter.tab.c" /* yacc.c:1652  */
+#line 3389 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 138:
-#line 830 "interpreter.y" /* yacc.c:1652  */
+#line 852 "interpreter.y" /* yacc.c:1652  */
     {(yyval.vtype) = (yyvsp[0].vtype);}
-#line 3373 "interpreter.tab.c" /* yacc.c:1652  */
+#line 3395 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 139:
-#line 831 "interpreter.y" /* yacc.c:1652  */
+#line 853 "interpreter.y" /* yacc.c:1652  */
     {(yyval.vtype) = (yyvsp[0].vtype);}
-#line 3379 "interpreter.tab.c" /* yacc.c:1652  */
+#line 3401 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 140:
-#line 832 "interpreter.y" /* yacc.c:1652  */
+#line 854 "interpreter.y" /* yacc.c:1652  */
     {(yyval.vtype) = (yyvsp[0].vtype);}
-#line 3385 "interpreter.tab.c" /* yacc.c:1652  */
+#line 3407 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 141:
-#line 833 "interpreter.y" /* yacc.c:1652  */
+#line 855 "interpreter.y" /* yacc.c:1652  */
     {(yyval.vtype) = (yyvsp[0].vtype);}
-#line 3391 "interpreter.tab.c" /* yacc.c:1652  */
+#line 3413 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 142:
-#line 834 "interpreter.y" /* yacc.c:1652  */
+#line 856 "interpreter.y" /* yacc.c:1652  */
     {(yyval.vtype) = (yyvsp[0].vtype);}
-#line 3397 "interpreter.tab.c" /* yacc.c:1652  */
+#line 3419 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 143:
-#line 835 "interpreter.y" /* yacc.c:1652  */
+#line 857 "interpreter.y" /* yacc.c:1652  */
     {(yyval.vtype) = (yyvsp[0].vtype);}
-#line 3403 "interpreter.tab.c" /* yacc.c:1652  */
+#line 3425 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 144:
-#line 836 "interpreter.y" /* yacc.c:1652  */
+#line 858 "interpreter.y" /* yacc.c:1652  */
     {(yyval.vtype) = (yyvsp[0].vtype);}
-#line 3409 "interpreter.tab.c" /* yacc.c:1652  */
+#line 3431 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 145:
-#line 837 "interpreter.y" /* yacc.c:1652  */
+#line 859 "interpreter.y" /* yacc.c:1652  */
     {(yyval.vtype) = (yyvsp[0].vtype);}
-#line 3415 "interpreter.tab.c" /* yacc.c:1652  */
+#line 3437 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 146:
-#line 838 "interpreter.y" /* yacc.c:1652  */
+#line 860 "interpreter.y" /* yacc.c:1652  */
     {(yyval.vtype) = (yyvsp[0].vtype);}
-#line 3421 "interpreter.tab.c" /* yacc.c:1652  */
+#line 3443 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 147:
-#line 839 "interpreter.y" /* yacc.c:1652  */
+#line 861 "interpreter.y" /* yacc.c:1652  */
     {(yyval.vtype) = (yyvsp[0].vtype);}
-#line 3427 "interpreter.tab.c" /* yacc.c:1652  */
+#line 3449 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 148:
-#line 840 "interpreter.y" /* yacc.c:1652  */
+#line 862 "interpreter.y" /* yacc.c:1652  */
     {(yyval.vtype) = (yyvsp[0].vtype);}
-#line 3433 "interpreter.tab.c" /* yacc.c:1652  */
+#line 3455 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 149:
-#line 841 "interpreter.y" /* yacc.c:1652  */
+#line 863 "interpreter.y" /* yacc.c:1652  */
     {(yyval.vtype) = (yyvsp[0].vtype);}
-#line 3439 "interpreter.tab.c" /* yacc.c:1652  */
+#line 3461 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 150:
-#line 845 "interpreter.y" /* yacc.c:1652  */
+#line 867 "interpreter.y" /* yacc.c:1652  */
     {(yyval.ptr) = (yyvsp[0].intPtr);}
-#line 3445 "interpreter.tab.c" /* yacc.c:1652  */
+#line 3467 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
   case 151:
-#line 846 "interpreter.y" /* yacc.c:1652  */
+#line 868 "interpreter.y" /* yacc.c:1652  */
     {(yyval.ptr) = (yyvsp[0].boolPtr);}
-#line 3451 "interpreter.tab.c" /* yacc.c:1652  */
+#line 3473 "interpreter.tab.c" /* yacc.c:1652  */
     break;
 
 
-#line 3455 "interpreter.tab.c" /* yacc.c:1652  */
+#line 3477 "interpreter.tab.c" /* yacc.c:1652  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -3688,7 +3710,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 849 "interpreter.y" /* yacc.c:1918  */
+#line 871 "interpreter.y" /* yacc.c:1918  */
 
 
 void yyerror(const char* error) {

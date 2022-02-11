@@ -3,6 +3,8 @@
 #include "BoolNode.h"
 #include "OperationNode.h"
 
+
+
 namespace Interpreter {
 
 class return_func: public Node {
@@ -71,7 +73,8 @@ class func_descript: public Node {
 
 class callfunc_args: public Node {
     public:
-        std::vector<std::pair<dataType, Node*>> args;   //parameters to feed function
+        std::vector<std::pair<dataType, Node*>> args;           //parameters to feed function
+        std::vector<std::pair<dataType, std::string>> varArgs;  //variable parameters to feed function
 
         void addArg(dataType t, Node* src) {args.push_back({t, src});}; //add parameter to vector
 
@@ -88,6 +91,7 @@ class callfunc: public Node {
     public:
         std::vector<std::pair<varType, std::string>> rets;      //returning values in callfunction
         std::vector<std::pair<dataType, Node*>> args;           //parameters in callfunction
+        std::vector<parType> paramTypes;                        //vector which contains types of parameters
         func_descript* function;                                //reference to function
         std::string fname;                                      //function name
 
@@ -99,5 +103,7 @@ class callfunc: public Node {
         callfunc(std::string fname, std::vector<std::pair<varType, std::string>> rets, std::vector<std::pair<dataType, Node*>> args);
         ~callfunc() {};
 };
+
+
 
 }

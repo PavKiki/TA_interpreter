@@ -52,6 +52,11 @@ enum dataType {
     defaulT
 };
 
+enum parType {
+    var,
+    notvar
+};
+
 namespace Interpreter {
 
 enum nodeType {

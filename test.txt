@@ -6,11 +6,10 @@ if b
 beginif
 
 b <- b - 1
-print(b)
 int k, int l = recursion[b]
 
 endif
 
 end
 
-int a, int b = recursion[10]
+int y, int u = recursion[2]

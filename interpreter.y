@@ -286,14 +286,34 @@ function:
 ;
 
 callfunc_args:
-    expr                                {$$ = new Interpreter::callfunc_args(expR, $1);}
-    | vector                            {$$ = new Interpreter::callfunc_args(vectoR, $1);}
-    | matrix                            {$$ = new Interpreter::callfunc_args(matriX, $1);}
-    | DFLT                              {$$ = new Interpreter::callfunc_args(defaulT, nullptr);}
-    | callfunc_args ',' expr            {dynamic_cast<Interpreter::callfunc_args*>($1)->addArg(expR, $3); $$ = $1;}
-    | callfunc_args ',' vector          {dynamic_cast<Interpreter::callfunc_args*>($1)->addArg(vectoR, $3); $$ = $1;}
-    | callfunc_args ',' matrix          {dynamic_cast<Interpreter::callfunc_args*>($1)->addArg(matriX, $3); $$ = $1;}
-    | callfunc_args ',' DFLT            {dynamic_cast<Interpreter::callfunc_args*>($1)->addArg(defaulT, nullptr); $$ = $1;}
+    expr                                {
+                                            $$ = new Interpreter::callfunc_args(expR, $1);
+                                        }
+    | vector                            {
+                                            $$ = new Interpreter::callfunc_args(vectoR, $1);
+                                        }
+    | matrix                            {
+                                            $$ = new Interpreter::callfunc_args(matriX, $1);
+                                        }
+    | DFLT                              {
+                                            $$ = new Interpreter::callfunc_args(defaulT, nullptr); 
+                                        }
+    | callfunc_args ',' expr            {
+                                            dynamic_cast<Interpreter::callfunc_args*>($1)->addArg(expR, $3);
+                                            $$ = $1; 
+                                        }
+    | callfunc_args ',' vector          {
+                                            dynamic_cast<Interpreter::callfunc_args*>($1)->addArg(vectoR, $3); 
+                                            $$ = $1; 
+                                        }
+    | callfunc_args ',' matrix          {
+                                            dynamic_cast<Interpreter::callfunc_args*>($1)->addArg(matriX, $3); 
+                                            $$ = $1; 
+                                        }
+    | callfunc_args ',' DFLT            {
+                                            dynamic_cast<Interpreter::callfunc_args*>($1)->addArg(defaulT, nullptr); 
+                                            $$ = $1; 
+                                        }
     | callfunc_args error               {
                                             std::cerr << "Error at line " << @2.first_line << std::endl;
                                             delete $1;
@@ -306,8 +326,10 @@ callfunc_args:
 ;
 
 callfunction:
-    return_func DECLARE FVARIABLE '[' callfunc_args ']'     {$$ = new Interpreter::callfunc(*$3, dynamic_cast<Interpreter::return_func*>($1)->rets, 
-                                                                                                        dynamic_cast<Interpreter::callfunc_args*>($5)->args);}    
+    return_func DECLARE FVARIABLE '[' callfunc_args ']'     {
+                                                                $$ = new Interpreter::callfunc(*$3, dynamic_cast<Interpreter::return_func*>($1)->rets, 
+                                                                dynamic_cast<Interpreter::callfunc_args*>($5)->args);
+                                                            }    
     | error '[' callfunc_args ']'                           {
                                                                 std::cerr << "Error at line " << @1.first_line << std::endl;
                                                                 delete $3;

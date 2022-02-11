@@ -216,7 +216,7 @@
 
         case gscalar: {
             auto search = Interpreter::storagePtr->find(varname);
-            std::cout << search->second->execute();
+            // std::cout << search->second->execute();
             return search->second->execute();
         }
 
