@@ -1,16 +1,26 @@
-[int a, int i] = function recursion([int b]) begin
+mint a = {{0,1,2},{3,4,5},{6,7,8}}
+print(a)
 
-if b
-beginif
-
-print(b)
-b <- b - 1
+int b = a(1,1)
 print(b)
 
-int k, int l = recursion[b]
+vint c = a(1, [])
+print(c)
 
-endif
+vint d = a([], 1)
+print(d)
 
-end
+mint e = a({0,2}, [])
+print(e)
 
-int y, int u = recursion[4]
+mint f = a([], {0,2})
+print(f)
+
+mint g = a({{true, false, false},{false, true, false},{false, false, true}})
+print(g)
+
+mint h = a({true, true, false}, [])
+print(h)
+
+mint i = a([], {false, true, true})
+print(i)

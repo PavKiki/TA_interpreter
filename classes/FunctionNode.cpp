@@ -256,22 +256,9 @@ void Interpreter::func_descript::run() {
     Interpreter::storagePtr = &this->localStorage;
     Interpreter::isConstPtr = &this->localIsConst;
 
-    // for (auto it = Interpreter::storagePtr->begin(); it != Interpreter::storagePtr->end(); it++) {
-    //     std::ostringstream s;
-    //     (*it).second->print(s);
-    //     std::cout << s.str();
-    // }
-
-    // std::cout << Interpreter::out.str();
     init();
 
     dynamic_cast<Interpreter::func_descript*>(Interpreter::funcStorage[fname])->toExec->execute();
-
-    // for (auto it = Interpreter::storagePtr->begin(); it != Interpreter::storagePtr->end(); it++) {
-    //     std::ostringstream s;
-    //     (*it).second->print(s);
-    //     std::cout << s.str();
-    // }
 
     Interpreter::storagePtr = aboveStoragePtr;
     Interpreter::isConstPtr = aboveIsConstPtr; 

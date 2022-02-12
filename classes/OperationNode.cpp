@@ -217,7 +217,6 @@
 
         case gscalar: {
             auto search = Interpreter::storagePtr->find(varname);
-            // std::cout << search->second->execute();
             return search->second->execute();
         }
 
@@ -549,11 +548,6 @@
             if (search->second->nType == Interpreter::INTNODE) {
                 newNode = getScalarExprResult(Interpreter::INT, scalarData);
                 dynamic_cast<Interpreter::IntegerNode*>((*varStor)[varName])->setDecData(dynamic_cast<Interpreter::IntegerNode*>(newNode)->getDecData());
-
-                // std::ostringstream s;
-                // std::cout << varName << " ";
-                // (*varStor)[varName]->print(s);
-                // std::cout << s.str();
             }
             else if (search->second->nType == Interpreter::BOOLNODE) {
                 newNode = getScalarExprResult(Interpreter::BOOL, scalarData);

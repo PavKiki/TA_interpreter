@@ -1,4 +1,4 @@
-[bool rwall] = function exRwall ([int tmp]) begin
+[bool rwall, int t] = function exRwall ([int tmp]) begin
 rwall <- false
 right
 if !wall
@@ -8,7 +8,7 @@ endif
 left
 end
 
-[bool fwall] = function exFwall ([int ttmp]) begin
+[bool fwall, int v] = function exFwall ([int ttmp]) begin
 fwall <- false
 if !wall
 beginif
@@ -16,7 +16,7 @@ fwall <- true
 endif
 end
 
-[int tmpp] = function go ([bool r], [bool f]) begin
+[int tmpp, int tmppp] = function go ([bool r, bool f]) begin
 if r && f
 beginif
 left
@@ -35,28 +35,22 @@ endif
 
 end
 
-bool flag = false
+bool flag = true
 
 for int i = 0:25
 beginfor
 
-if flag
-beginif
-endif
-
-if exit
+if (exit && flag)
 beginif
 move(wall)
 flag <- true
 endif
 
-if !exit
+if ((!exit) && flag)
 beginif
-
-exRwall[1]
-exFwall[1]
-go[rwall, fwall]
-
+bool rw, int n = exRwall[1]
+bool fw, int m = exFwall[1]
+int z, int x = go[rw, fw]
 endif
 
 endfor

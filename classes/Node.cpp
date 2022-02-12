@@ -87,14 +87,19 @@ int Interpreter::ContainerVectorNode::execute() {
             break;
         }
         case vvecindex: {
-            auto search = Interpreter::storagePtr->find(VN);
-            if (search == Interpreter::storagePtr->end()) throw (std::string("Some mistake occured, variable ") + VN + "doesn't exist...");
-
+            if (VN != "") {
+                auto search = Interpreter::storagePtr->find(VN);
+                if (search == Interpreter::storagePtr->end()) throw (std::string("Some mistake occured, variable ") + VN + "doesn't exist...");
+            }
             kids[0]->execute();
             auto futureCondition = kids[0]; 
             nodeType typeCondition;
             AbstractVectorNode* vecCondition = Interpreter::VECgetNode_checkType(futureCondition, typeCondition);
-            auto vecSrc = dynamic_cast<Interpreter::AbstractVectorNode*>(search->second);
+            Interpreter::AbstractVectorNode* vecSrc;
+            if (VN == "") {
+                vecSrc = (Interpreter::AbstractVectorNode*)((Interpreter::Node*)(kids[1]));
+            }
+            else vecSrc = dynamic_cast<Interpreter::AbstractVectorNode*>((*Interpreter::storagePtr)[VN]);
 
             if (typeCondition == Interpreter::ABSTRACTVECNODE) throw "Error in index";
             if (typeCondition == Interpreter::INTVECNODE) {
@@ -127,7 +132,7 @@ int Interpreter::ContainerVectorNode::execute() {
             auto ssrc = dynamic_cast<Interpreter::AbstractMatrixNode*>(search->second);
             if (kids[0]->execute() < 0 || kids[0]->execute() >= ssrc->getSizeY()) throw "Out of range!";
             for (size_t i = 0; i < ssrc->getSizeX(); i++) {                   
-                this->addData(ssrc->getByIndex(i)->getByIndex(kids[1]->execute()));
+                this->addData(ssrc->getByIndex(i)->getByIndex(kids[0]->execute()));
             }
             break;
         }
@@ -394,13 +399,13 @@ int Interpreter::ContainerMatrixNode::execute() {
         auto search = Interpreter::storagePtr->find(VN);
         if (search == Interpreter::storagePtr->end()) throw (std::string("Some mistake occured, variable ") + VN + "doesn't exist...");
 
-        auto ssrc = dynamic_cast<Interpreter::AbstractMatrixNode*>(search->second);
-        auto vecCond = dynamic_cast<Interpreter::ContainerVectorNode*>((Node*)(kids[0]));
+        auto ssrc = dynamic_cast<Interpreter::AbstractMatrixNode*>(search->second);         //source matrix
+        auto vecCond = dynamic_cast<Interpreter::ContainerVectorNode*>((Node*)(kids[0]));   //in veccond store number if columns which we need
 
         for (size_t i = 0; i < ssrc->getSizeX(); i++) {
             std::vector<Interpreter::ContainerVectorNode*> kkids;
-            kkids.push_back((Interpreter::ContainerVectorNode*)((Interpreter::Node*)(ssrc->getByIndex(i))));
-            kkids.push_back((Interpreter::ContainerVectorNode*)(kids[0]));
+            kkids.push_back((Interpreter::ContainerVectorNode*)(kids[0]));                  //vector with numbers of columns
+            kkids.push_back((Interpreter::ContainerVectorNode*)((Interpreter::Node*)(ssrc->getByIndex(i))));    //row of matrix
 
             auto tmp = new Interpreter::ContainerVectorNode(kkids, vvecindex);
             tmp->execute();
@@ -467,8 +472,8 @@ int Interpreter::ContainerMatrixNode::execute() {
         this->y = trueAmount;
         for (size_t i = 0; i < ssrc->getSizeX(); i++) {
             std::vector<Interpreter::ContainerVectorNode*> kkids;
-            kkids.push_back(((Interpreter::ContainerVectorNode*)(ssrc->getByIndex(i))));
             kkids.push_back((*matCond)[i]);
+            kkids.push_back(((Interpreter::ContainerVectorNode*)(ssrc->getByIndex(i))));
             auto tmp = new Interpreter::ContainerVectorNode(kkids, vvecindex);
             tmp->execute();
             this->addData(tmp);

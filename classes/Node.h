@@ -129,7 +129,6 @@ public:
 
     void getVector(std::vector<Node*>&);
 
-
     size_t getSize() {return x;}
 
     Node*& operator[] (const size_t index) {return data[index];};
