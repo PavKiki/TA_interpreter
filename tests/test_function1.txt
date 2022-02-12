@@ -3,7 +3,7 @@ a <- c + d
 b <- c - d
 end
 
-int v, int u = calculate[10,2]
+(int v, int u) = calculate[10,2]
 
 print(v)
 print(u)

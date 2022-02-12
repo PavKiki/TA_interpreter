@@ -1,4 +1,4 @@
-[int a, int i] = function recursion([int b]) begin
+[int a] = function recursion([int b]) begin
 
 print(b)
 
@@ -7,10 +7,10 @@ beginif
 
 b <- b - 1
 
-int k, int l = recursion[b]
+(int k) = recursion[b]
 
 endif
 
 end
 
-int y, int u = recursion[4]
+(int y) = recursion[10]

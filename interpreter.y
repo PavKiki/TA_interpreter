@@ -326,16 +326,16 @@ callfunc_args:
 ;
 
 callfunction:
-    return_func DECLARE FVARIABLE '[' callfunc_args ']'     {
-                                                                $$ = new Interpreter::callfunc(*$3, dynamic_cast<Interpreter::return_func*>($1)->rets, 
-                                                                dynamic_cast<Interpreter::callfunc_args*>($5)->args);
-                                                            }    
-    | error '[' callfunc_args ']'                           {
-                                                                std::cerr << "Error at line " << @1.first_line << std::endl;
-                                                                delete $3;
-                                                                if (!$$) delete $$;
-                                                            }
-;
+    '(' return_func ')' DECLARE FVARIABLE '[' callfunc_args ']'     {
+                                                                        $$ = new Interpreter::callfunc(*$5, dynamic_cast<Interpreter::return_func*>($2)->rets, 
+                                                                        dynamic_cast<Interpreter::callfunc_args*>($7')->args);
+                                                                    }    
+    | error '[' callfunc_args ']'                                   {
+                                                                        std::cerr << "Error at line " << @1.first_line << std::endl;
+                                                                        delete $3;
+                                                                        if (!$$) delete $$;
+                                                                    }
+    ;
 
 matrix:
     '{' listexprs '}'           {$$ = $2;}

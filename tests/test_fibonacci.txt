@@ -1,0 +1,31 @@
+
+[int a] = function fibo([int n]) begin
+
+if (!n)
+beginif
+	a <- 0
+endif
+
+if (!(n-1))
+beginif
+	a <- 1
+endif
+
+if ((!(!n)) && (!(!(n-1))))
+beginif
+	int b = n-1
+	int c = n-2
+	(int d) = fibo[b]
+	(int e) = fibo[c]
+	a <- d + e	
+endif
+
+end
+
+for int i = 1 : 20
+beginfor
+
+(int m) = fibo[i]
+print(m)
+
+endfor
