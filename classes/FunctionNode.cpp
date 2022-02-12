@@ -256,7 +256,16 @@ void Interpreter::func_descript::run() {
     Interpreter::storagePtr = &this->localStorage;
     Interpreter::isConstPtr = &this->localIsConst;
 
+    // for (auto it = Interpreter::storagePtr->begin(); it != Interpreter::storagePtr->end(); it++) {
+    //     std::ostringstream s;
+    //     (*it).second->print(s);
+    //     std::cout << s.str();
+    // }
+
+    // std::cout << Interpreter::out.str();
     init();
+
+    dynamic_cast<Interpreter::func_descript*>(Interpreter::funcStorage[fname])->toExec->execute();
 
     // for (auto it = Interpreter::storagePtr->begin(); it != Interpreter::storagePtr->end(); it++) {
     //     std::ostringstream s;
@@ -264,68 +273,23 @@ void Interpreter::func_descript::run() {
     //     std::cout << s.str();
     // }
 
-    std::cout << Interpreter::out.str();
-
-    dynamic_cast<Interpreter::func_descript*>(Interpreter::funcStorage[fname])->toExec->execute();
-
     Interpreter::storagePtr = aboveStoragePtr;
     Interpreter::isConstPtr = aboveIsConstPtr; 
 }
 
 Interpreter::callfunc::callfunc(std::string fname, std::vector<std::pair<varType, std::string>> rets, std::vector<std::pair<dataType, Node*>> args):
                                                                 Node(CALLFUNCNODE), fname(fname), rets(rets), args(args) {
-    this->function = new Interpreter::func_descript(dynamic_cast<Interpreter::func_descript*>(Interpreter::funcStorage[fname]));
 
-    if (rets.size() != function->rets.size()) throw "Invalid amount of return values!";
-    if ((args.size()) != function->args.size()) throw "Invalid amount of parameters!";
+    auto ptr = dynamic_cast<Interpreter::func_descript*>(Interpreter::funcStorage[fname]);
+
+    if (rets.size() != ptr->rets.size()) throw "Invalid amount of return values!";
+    if ((args.size()) != ptr->args.size()) throw "Invalid amount of parameters!";
 
     for (size_t i = 0; i < rets.size(); i++) {
-        if (rets[i].first != function->rets[i].first) throw "Type mismatch in return values!";
+        if (rets[i].first != ptr->rets[i].first) throw "Type mismatch in return values!";
     }
     
-};
-
-
-int Interpreter::callfunc::execute() {
-
-    //assigning parent visibility area
-    this->function->aboveStoragePtr = Interpreter::storagePtr;
-    this->function->aboveIsConstPtr = Interpreter::isConstPtr;
-
-    //memory allocation for new variables in local storage
-    auto ptr = dynamic_cast<Interpreter::func_descript*>(Interpreter::funcStorage[fname]);
-    for (auto it = ptr->localStorage.begin(); it != ptr->localStorage.end(); it++) {
-        switch (it->second->nType)
-        {
-        case Interpreter::INTNODE: {
-            auto tmp = dynamic_cast<Interpreter::IntegerNode*>(it->second)->copy();
-            function->localStorage.insert_or_assign(it->first, tmp);
-            break;
-        }
-        case Interpreter::BOOLNODE: {
-            auto tmp = dynamic_cast<Interpreter::BoolNode*>(it->second)->copy();
-            function->localStorage.insert_or_assign(it->first, tmp);
-            break;
-        }
-        case Interpreter::INTVECNODE: case Interpreter::BOOLVECNODE: {
-            auto tmp = dynamic_cast<Interpreter::AbstractVectorNode*>(it->second)->copy();
-            function->localStorage.insert_or_assign(it->first, tmp);
-            break;
-        }
-        case Interpreter::INTMATNODE: case Interpreter::BOOLMATNODE: {
-            auto tmp = dynamic_cast<Interpreter::AbstractMatrixNode*>(it->second)->copy();
-            function->localStorage.insert_or_assign(it->first, tmp);
-            break;
-        }
-        default:
-            throw "Incorrect variable type found while copying function descriptor!";
-            break;
-        }
-    }
-    
-    function->localIsConst = ptr->localIsConst;
-
-    //for each return value create a plug in global storage and pointer to this plug assigns with return value inside the function
+    //for each return value create a plug in global storage
     for (size_t i = 0; i < rets.size(); i++) {
         switch (rets[i].first)
         {
@@ -405,6 +369,53 @@ int Interpreter::callfunc::execute() {
         default:
             break;
         }
+    }
+};
+
+
+int Interpreter::callfunc::execute() {
+
+    this->function = new Interpreter::func_descript(dynamic_cast<Interpreter::func_descript*>(Interpreter::funcStorage[fname]));
+
+    //assigning parent visibility area
+    this->function->aboveStoragePtr = Interpreter::storagePtr;
+    this->function->aboveIsConstPtr = Interpreter::isConstPtr;
+
+    //memory allocation for new variables in local storage
+    auto ptr = dynamic_cast<Interpreter::func_descript*>(Interpreter::funcStorage[fname]);
+    for (auto it = ptr->localStorage.begin(); it != ptr->localStorage.end(); it++) {
+        switch (it->second->nType)
+        {
+        case Interpreter::INTNODE: {
+            auto tmp = dynamic_cast<Interpreter::IntegerNode*>(it->second)->copy();
+            function->localStorage.insert_or_assign(it->first, tmp);
+            break;
+        }
+        case Interpreter::BOOLNODE: {
+            auto tmp = dynamic_cast<Interpreter::BoolNode*>(it->second)->copy();
+            function->localStorage.insert_or_assign(it->first, tmp);
+            break;
+        }
+        case Interpreter::INTVECNODE: case Interpreter::BOOLVECNODE: {
+            auto tmp = dynamic_cast<Interpreter::AbstractVectorNode*>(it->second)->copy();
+            function->localStorage.insert_or_assign(it->first, tmp);
+            break;
+        }
+        case Interpreter::INTMATNODE: case Interpreter::BOOLMATNODE: {
+            auto tmp = dynamic_cast<Interpreter::AbstractMatrixNode*>(it->second)->copy();
+            function->localStorage.insert_or_assign(it->first, tmp);
+            break;
+        }
+        default:
+            throw "Incorrect variable type found while copying function descriptor!";
+            break;
+        }
+    }
+    
+    function->localIsConst = ptr->localIsConst;
+
+    //for each return value create a pointer to plug which assigns it with return value inside the function
+    for (size_t i = 0; i < rets.size(); i++) {
         function->localStorage[function->rets[i].second] = (*Interpreter::storagePtr)[rets[i].second];
     }
 

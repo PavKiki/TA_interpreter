@@ -1,9 +1,9 @@
-[int a, int b] = function calculate([int c],[int d]) begin
+[int a, int b] = function calculate([int c, int d]) begin
 a <- c + d
 b <- c - d
 end
 
-calculate[10,2]
+int v, int u = calculate[10,2]
 
-print(a)
-print(b)
+print(v)
+print(u)

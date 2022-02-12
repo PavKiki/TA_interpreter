@@ -1,15 +1,16 @@
 [int a, int i] = function recursion([int b]) begin
 
-print(b)
-
 if b
 beginif
 
+print(b)
 b <- b - 1
+print(b)
+
 int k, int l = recursion[b]
 
 endif
 
 end
 
-int y, int u = recursion[2]
+int y, int u = recursion[4]

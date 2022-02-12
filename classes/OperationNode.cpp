@@ -132,6 +132,7 @@
                 throw "Semantic error! Wrong types of operands.";
             }
             else {
+                
                 return kids[0]->execute() - kids[1]->execute();
             }
         }
