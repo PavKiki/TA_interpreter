@@ -1,0 +1,7 @@
+for int a = 10 : 1
+beginfor
+
+int b = true
+
+endfor
+

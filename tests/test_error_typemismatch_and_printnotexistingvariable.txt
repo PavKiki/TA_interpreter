@@ -1,0 +1,3 @@
+int a = 100
+vint b = a
+print(b)

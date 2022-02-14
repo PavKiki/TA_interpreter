@@ -1,7 +1,0 @@
-[int a] = function calculate([int c, int d]) begin
-a <- c + d
-end
-
-(int v) = calculate[10,2]
-
-print(v)
